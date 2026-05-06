@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
-import "./globals.css";
-import ConditionalFooter from "@/components/ConditionalFooter";
+import "./(home)/globals.css";
+import ConditionalFooter from "@/components/shared/ConditionalFooter";
 
 const outfit = Outfit({
   subsets: ["latin"],
