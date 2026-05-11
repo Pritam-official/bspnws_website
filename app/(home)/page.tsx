@@ -224,7 +224,7 @@ export default function Home() {
             <div className="absolute -inset-8 bg-primary/20 rounded-full blur-3xl animate-pulse group-hover:bg-primary/30 transition-all duration-700"></div>
             <div className="absolute -inset-12 bg-secondary/10 rounded-full blur-[60px] animate-reverse-spin group-hover:bg-secondary/20 transition-all duration-1000"></div>
 
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[26rem] lg:h-[26rem] bg-white/90 backdrop-blur-2xl rounded-full border-[8px] sm:border-[16px] border-white/50 shadow-[0_32px_80px_rgba(0,0,0,0.12)] flex flex-col items-center justify-center text-center p-6 sm:p-12 transition-transform duration-700 hover:scale-[1.02] hover:rotate-1 overflow-hidden ring-1 ring-black/5">
+            <div className="relative w-[20rem] h-[20rem] sm:w-[22rem] sm:h-[22rem] lg:w-[26rem] lg:h-[26rem] bg-white/95 backdrop-blur-2xl rounded-full border-[6px] sm:border-[12px] lg:border-[16px] border-white/50 shadow-[0_32px_80px_rgba(0,0,0,0.12)] flex flex-col items-center justify-center text-center p-4 sm:p-12 transition-transform duration-700 hover:scale-[1.02] hover:rotate-1 overflow-hidden ring-1 ring-black/5">
 
               {/* Rotating Background Pattern */}
               <div className="absolute inset-0 opacity-[0.03] animate-spin-slow">
@@ -233,23 +233,23 @@ export default function Home() {
 
               {/* Functional Content Overlay */}
               <div className="relative z-10 flex flex-col items-center">
-                <div className="mb-6 overflow-hidden rounded-2xl shadow-xl border-4 border-white rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                  <Image src="/logo.jpg" alt="Small Logo" width={64} height={64} className="object-contain" />
+                <div className="mb-2 sm:mb-6 overflow-hidden rounded-xl sm:rounded-2xl shadow-xl border-2 sm:border-4 border-white rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                  <Image src="/logo.jpg" alt="Small Logo" width={56} height={56} className="sm:w-16 sm:h-16 object-contain" />
                 </div>
 
-                <div className="bg-gradient-to-r from-secondary to-pink-500 text-white py-1.5 px-6 rounded-full mb-6 text-[10px] font-black tracking-[0.3em] shadow-lg shadow-secondary/20">
+                <div className="bg-gradient-to-r from-secondary to-pink-500 text-white py-1 sm:py-1.5 px-4 sm:px-6 rounded-full mb-3 sm:mb-6 text-[9px] sm:text-[10px] font-black tracking-[0.3em] shadow-lg shadow-secondary/20">
                   OUR CORE PROJECTS
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-gray-900 leading-[1.1] tracking-tight">
+                <h1 className="text-xl sm:text-2xl md:text-5xl font-black text-gray-900 leading-[1.1] tracking-tight">
                   Empowering <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary to-green-700">Life,</span><br />
-                  <span className="italic font-serif text-xl sm:text-2xl md:text-3xl text-gray-500 mt-2 block">Building Future</span>
+                  <span className="italic font-serif text-lg sm:text-xl md:text-3xl text-gray-800 mt-0.5 sm:mt-2 block">Building Future</span>
                 </h1>
 
-                <div className="mt-8 flex gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 rounded-full bg-secondary animate-bounce delay-200"></div>
-                  <div className="w-2 h-2 rounded-full bg-primary animate-bounce delay-300"></div>
+                <div className="mt-4 sm:mt-8 flex gap-2">
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-bounce delay-100"></div>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-secondary animate-bounce delay-200"></div>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-bounce delay-300"></div>
                 </div>
               </div>
 
