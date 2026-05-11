@@ -6,7 +6,7 @@ export default function HelpUsPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative h-[400px] md:h-[500px] w-full bg-primary/95 overflow-hidden">
+      <div className="relative h-[280px] sm:h-[400px] md:h-[500px] w-full bg-primary/95 overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <Image
@@ -21,7 +21,7 @@ export default function HelpUsPage() {
 
         {/* Hero Content */}
         <div className="container mx-auto px-6 h-full flex flex-col justify-center relative z-10">
-          <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-7xl font-black text-white mb-4 tracking-tight">
             HELP US
           </h1>
           <div className="flex items-center text-white/80 text-sm md:text-base font-medium space-x-2">
@@ -32,7 +32,7 @@ export default function HelpUsPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-16 md:py-24">
+      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
 
@@ -54,7 +54,7 @@ export default function HelpUsPage() {
                 {/* Bank Transfer Details Card (Sharp Square) */}
                 <div className="bg-white rounded-none overflow-hidden group">
                   {/* Card Header */}
-                  <div className="px-10 py-10 border-b border-slate-100 flex items-center justify-between">
+                  <div className="px-5 sm:px-10 py-5 sm:py-10 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-6">
                       <div className="w-16 h-16 bg-[#e07b46] rounded-2xl flex items-center justify-center text-white shadow-xl shadow-orange-200/50">
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -72,11 +72,11 @@ export default function HelpUsPage() {
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-10 space-y-8">
+                  <div className="p-4 sm:p-10 space-y-6 sm:space-y-8">
                     <div className="space-y-6">
                       <div className="relative">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3 px-1">Beneficiary Account Name</p>
-                        <div className="bg-[#fffbfb] rounded-2xl p-8 border border-[#feedeb] transition-all hover:bg-white hover:border-orange-200">
+                        <div className="bg-[#fffbfb] rounded-2xl p-4 sm:p-8 border border-[#feedeb] transition-all hover:bg-white hover:border-orange-200">
                           <p className="font-black text-[#1e293b] text-2xl leading-[1.2]">
                             Burdwan Sadar Pyara Nutrition Welfare Society
                           </p>
@@ -103,7 +103,7 @@ export default function HelpUsPage() {
                           <p className="text-[9px] font-black text-white uppercase tracking-[0.25em]">Account Number</p>
                         </div>
                         <div className="bg-[#fffbfb] rounded-2xl p-7 border border-[#feedeb] transition-all hover:bg-white hover:border-orange-200">
-                          <p className="relative font-mono text-3xl md:text-5xl font-black text-[#0f172a] text-center tracking-[0.15em] md:tracking-[0.10em]">
+                          <p className="relative font-mono text-xl sm:text-3xl md:text-5xl font-black text-[#0f172a] text-center tracking-normal sm:tracking-[0.10em] break-all">
                             8734002100002391
                           </p>
                         </div>

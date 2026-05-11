@@ -39,7 +39,7 @@ export default function NoticePage() {
                     </div>
                     Add New Notice
                 </h2>
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                     <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Title</label>
                         <input
@@ -59,10 +59,10 @@ export default function NoticePage() {
                             className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-pink-50 file:text-pink-600"
                         />
                     </div>
-                    <div className="flex items-end">
+                    <div className="flex items-end pt-2 lg:pt-0">
                         <button
                             type="submit"
-                            className="px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-pink-500/20 hover:shadow-xl hover:shadow-pink-500/30 hover:-translate-y-0.5 transition-all duration-300"
+                            className="w-full lg:w-auto px-8 py-3.5 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-pink-500/20 hover:shadow-xl hover:shadow-pink-500/30 hover:-translate-y-0.5 transition-all duration-300"
                         >
                             Add Notice
                         </button>
@@ -77,9 +77,9 @@ export default function NoticePage() {
                 </div>
                 <div className="divide-y divide-gray-50">
                     {dummyNotices.map((notice) => (
-                        <div key={notice.id} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50 transition-colors">
+                        <div key={notice.id} className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-5 sm:py-4 gap-4 hover:bg-gray-50/50 transition-colors">
                             <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${notice.gradient} flex items-center justify-center text-white shadow-sm`}>
+                                <div className={`w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br ${notice.gradient} flex items-center justify-center text-white shadow-sm`}>
                                     {notice.type === 'PDF' ? (
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -90,8 +90,8 @@ export default function NoticePage() {
                                         </svg>
                                     )}
                                 </div>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-900">{notice.title}</p>
+                                <div className="min-w-0">
+                                    <p className="text-sm font-bold text-gray-900 truncate">{notice.title}</p>
                                     <div className="flex items-center gap-3 mt-1">
                                         <span className="text-[10px] font-bold text-gray-400">{notice.date}</span>
                                         <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
@@ -102,13 +102,13 @@ export default function NoticePage() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors group" title="Edit">
+                            <div className="flex items-center gap-2 self-end sm:self-auto">
+                                <button className="p-2.5 bg-gray-50 sm:bg-transparent hover:bg-blue-50 rounded-lg transition-colors group" title="Edit">
                                     <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                 </button>
-                                <button className="p-2 hover:bg-red-50 rounded-lg transition-colors group" title="Delete">
+                                <button className="p-2.5 bg-gray-50 sm:bg-transparent hover:bg-red-50 rounded-lg transition-colors group" title="Delete">
                                     <svg className="w-4 h-4 text-gray-400 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>

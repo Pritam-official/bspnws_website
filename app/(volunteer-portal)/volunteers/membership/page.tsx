@@ -13,6 +13,7 @@ export default function MembershipPage() {
     const [paidUpToMonth, setPaidUpToMonth] = useState<number>(-1);
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
     const [isFetching, setIsFetching] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const fetchMembershipData = async (phone: string, year: number) => {
         setIsFetching(true);
@@ -79,7 +80,7 @@ export default function MembershipPage() {
     return (
         <div className="min-h-screen relative bg-gray-50 flex overflow-hidden">
             {/* Sidebar - Fixed Left */}
-            <VolunteerSidebar />
+            <VolunteerSidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
             {/* Main Content Area */}
             <div className="flex-1 lg:ml-64 relative pb-20 overflow-y-auto">
@@ -90,16 +91,26 @@ export default function MembershipPage() {
                 </div>
 
                 {/* Navigation Header */}
-                <header className="relative z-20 bg-white/60 backdrop-blur-md border-b border-white/60 px-8 py-4">
+                <header className="relative z-20 bg-white/60 backdrop-blur-md border-b border-white/60 px-4 sm:px-8 py-4 sticky top-0">
                     <div className="max-w-7xl mx-auto flex items-center justify-between">
-                        <Link href="/" className="flex items-center gap-3 group">
-                            <div className="w-10 h-10 relative overflow-hidden rounded-xl shadow-lg transition-transform group-hover:scale-110">
-                                <Image src="/logo.jpg" alt="Logo" fill className="object-cover" />
-                            </div>
-                            <span className="text-xl font-black text-gray-900 tracking-tighter uppercase">Volunteer Portal</span>
-                        </Link>
+                        <div className="flex items-center gap-4">
+                            {/* Hamburger Menu - Mobile Only */}
+                            <button 
+                                onClick={() => setIsMobileMenuOpen(true)}
+                                className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-pink-600 transition-colors"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                            </button>
 
-                        <div className="flex items-center gap-6">
+                            <Link href="/" className="flex items-center gap-3 group">
+                                <div className="w-10 h-10 relative overflow-hidden rounded-xl shadow-lg transition-transform group-hover:scale-110">
+                                    <Image src="/logo.jpg" alt="Logo" fill className="object-cover" />
+                                </div>
+                                <span className="text-xl font-black text-gray-900 tracking-tighter uppercase hidden sm:block">Volunteer Portal</span>
+                            </Link>
+                        </div>
+
+                        <div className="flex items-center gap-4 sm:gap-6">
                             <button className="text-gray-400 hover:text-pink-600 font-bold transition-colors">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                             </button>
@@ -120,11 +131,11 @@ export default function MembershipPage() {
                     </div>
                 </header>
 
-                <main className="relative z-10 max-w-7xl mx-auto px-8 pt-12 space-y-12 animate-fade-in">
+                <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 space-y-8 sm:space-y-12 animate-fade-in pb-24 lg:pb-8">
                     {/* Page Title */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
-                            <h1 className="text-5xl font-black text-gray-900 tracking-tight leading-none mb-2">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-none mb-2">
                                 Membership <span className="text-pink-600">Plan</span>
                             </h1>
                             <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px]">

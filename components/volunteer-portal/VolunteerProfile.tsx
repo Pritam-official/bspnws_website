@@ -193,7 +193,7 @@ export default function VolunteerProfile() {
     if (!userData) return <div className="animate-pulse h-64 bg-white/20 rounded-3xl"></div>;
 
     return (
-        <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+        <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden group">
             {/* Crop Overlay */}
             {imageSrc && (
                 <div className="fixed inset-0 z-[100] bg-black/80 flex flex-col items-center justify-center p-4">
@@ -231,7 +231,7 @@ export default function VolunteerProfile() {
             <div className="flex flex-col md:flex-row items-start gap-8 relative z-10">
                 {/* Profile Image Section */}
                 <div className="relative group/image shrink-0 mx-auto md:mx-0">
-                    <div className="w-40 h-40 rounded-3xl overflow-hidden border-4 border-white shadow-2xl relative transition-transform duration-500 group-hover/image:scale-105">
+                    <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-3xl overflow-hidden border-4 border-white shadow-2xl relative transition-transform duration-500 group-hover/image:scale-105">
                         <Image
                             src={userData.profileImage || '/logo.jpg'}
                             alt="Profile"
@@ -253,18 +253,18 @@ export default function VolunteerProfile() {
                 {/* Details Section */}
                 <div className="flex-1 w-full space-y-6">
                     <div className="flex items-center justify-between">
-                        <div>
+                        <div className="flex-1 min-w-0">
                             {isEditing ? (
                                 <input
                                     type="text"
                                     value={userData.name}
                                     onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-                                    className="text-3xl font-black text-gray-900 leading-tight bg-white/50 border border-pink-600/20 rounded-lg px-2 py-1 focus:outline-none animate-pulse-subtle w-full"
+                                    className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight bg-white/50 border border-pink-600/20 rounded-lg px-2 py-1 focus:outline-none animate-pulse-subtle w-full"
                                 />
                             ) : (
-                                <h2 className="text-3xl font-black text-gray-900 leading-tight">{userData.name}</h2>
+                                <h2 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight truncate">{userData.name}</h2>
                             )}
-                            <p className="text-pink-600 font-bold tracking-wider text-sm uppercase mt-1">Active Volunteer</p>
+                            <p className="text-pink-600 font-bold tracking-wider text-[10px] sm:text-sm uppercase mt-1">Active Volunteer</p>
                         </div>
                         <button
                             onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
@@ -328,9 +328,9 @@ export default function VolunteerProfile() {
                     </div>
 
                     <div className="bg-pink-600/5 border border-pink-200 p-6 rounded-3xl flex items-center justify-between group/code transition-all hover:bg-pink-600/10">
-                        <div>
-                            <p className="text-[10px] font-black text-pink-600/60 uppercase tracking-widest mb-1.5">Membership Security Code</p>
-                            <p className="text-2xl font-mono font-black text-pink-600 tracking-tighter">
+                        <div className="min-w-0">
+                            <p className="text-[9px] sm:text-[10px] font-black text-pink-600/60 uppercase tracking-widest mb-1.5">Membership Security Code</p>
+                            <p className="text-xl sm:text-2xl font-mono font-black text-pink-600 tracking-tighter truncate">
                                 {showCode ? userData.membershipCode : '••••••••••••'}
                             </p>
                         </div>

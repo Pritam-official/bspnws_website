@@ -116,7 +116,7 @@ const AboutSection: React.FC = () => {
     const getColorStyles = (color: ColorKey) => colorStyles[color];
 
     return (
-        <section className="py-20 md:py-28 bg-white relative overflow-hidden">
+        <section className="py-16 sm:py-20 md:py-28 bg-white relative overflow-hidden">
             {/* Decorative Elements */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-primary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-amber-500/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
@@ -124,7 +124,7 @@ const AboutSection: React.FC = () => {
             {/* Subtle Grid Pattern */}
             <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
 
-            <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 {/* Header Section */}
                 <div className="max-w-5xl mx-auto text-center mb-16 md:mb-20">
                     <div className="inline-block mb-4">
@@ -132,11 +132,11 @@ const AboutSection: React.FC = () => {
                             Who We Are
                         </span>
                     </div>
-                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
+                    <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6 px-2">
                         Burdwan Sadar Pyara Nutrition{' '}
                         <span className="text-primary relative inline-block">
                             Welfare Society
-                            <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary/20" viewBox="0 0 200 8" preserveAspectRatio="none">
+                            <svg className="absolute -bottom-2 left-0 w-full h-2 sm:h-3 text-primary/20" viewBox="0 0 200 8" preserveAspectRatio="none">
                                 <path d="M0 4 C20 8, 40 0, 60 4 C80 8, 100 0, 120 4 C140 8, 160 0, 180 4 L200 4" fill="none" stroke="currentColor" strokeWidth="2" />
                             </svg>
                         </span>
@@ -200,13 +200,13 @@ const AboutSection: React.FC = () => {
                 {/* Description Text */}
                 <div className="max-w-4xl mx-auto mb-20">
                     <div className="bg-gradient-to-r from-gray-50 to-white rounded-3xl p-8 md:p-10 shadow-md border border-gray-100">
-                        <p className="text-gray-700 text-lg md:text-xl leading-relaxed mb-6">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed mb-6">
                             <span className="font-bold text-gray-900">Burdwan Sadar Pyara Nutrition Welfare Society (BSPNWS)</span> is a non-government organization working in the field of wellness for every person in the community. Therefore, BSPNWS means — <span className="font-bold italic text-primary">"a way to a healthy life"</span>.
                         </p>
-                        <p className="text-gray-700 text-lg md:text-xl leading-relaxed mb-6">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed mb-6">
                             Team BSPNWS is trying to improve the quality of life of vulnerable groups as well as ensure <span className="font-bold text-gray-900">women empowerment</span>. Not only that, Team BSPNWS is also working in the field of environment because, to live a healthy life, we need a better environment, and hygienic means must be followed to maintain a healthy environment. So make your surroundings <span className="font-bold text-green-600">cleaner and greener</span>.
                         </p>
-                        <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
                             Team Burdwan Sadar Pyara Nutrition Welfare Society is working hard to promote <span className="font-bold text-gray-900">nutrition education</span> as nutrition education is the only key factor which gives knowledge on how to lead a healthy life.
                         </p>
                     </div>
@@ -214,7 +214,7 @@ const AboutSection: React.FC = () => {
             </div>
 
             {/* Registration Section */}
-            <div className="w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 md:py-24 relative overflow-hidden">
+            <div className="w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-16 sm:py-20 md:py-24 relative overflow-hidden">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #fff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
@@ -223,7 +223,7 @@ const AboutSection: React.FC = () => {
                 {/* Top Accent */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-400 via-amber-500 to-orange-400"></div>
 
-                <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <div className="container mx-auto px-4 sm:px-6 relative z-10">
                     <div className="max-w-7xl mx-auto">
                         {/* Section Header */}
                         <div className="text-center mb-12">

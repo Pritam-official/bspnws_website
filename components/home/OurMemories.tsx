@@ -16,8 +16,8 @@ const memories = [
 
 const OurMemories = () => {
     return (
-        <section className="py-24 bg-gray-50/50">
-            <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
+        <section className="py-16 sm:py-24 bg-gray-50/50">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <div className="mb-12 text-center md:text-left">
                     <div className="text-sm font-black text-primary tracking-[0.2em] uppercase mb-3">Our Moments</div>

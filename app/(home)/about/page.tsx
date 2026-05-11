@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Navbar from '@/components/shared/Navbar';
 import {
   Target,
   Rocket,
@@ -218,8 +219,9 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
+      <Navbar />
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      <section className="relative pt-20 sm:pt-24 pb-16 sm:pb-20 lg:pt-32 lg:pb-28 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
         <div className="absolute inset-0 bg-grid-primary/[0.02] bg-[size:40px_40px]"></div>
         <div className="absolute top-40 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>

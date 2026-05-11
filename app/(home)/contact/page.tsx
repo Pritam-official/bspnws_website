@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Navbar from "@/components/shared/Navbar";
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -26,25 +27,9 @@ export default function ContactPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            {/* Navigation - Minimal for Contact Page or consistent with Layout */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-                <div className="max-w-[1400px] mx-auto px-4 h-20 flex items-center justify-between gap-4">
-                    <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
-                        <div className="relative w-12 h-12 transition-transform group-hover:scale-105">
-                            <Image src="/logo.jpg" alt="Logo" fill className="object-contain rounded-full border border-gray-100" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-lg font-black tracking-tighter text-gray-900 leading-none">BSPNWS</span>
-                            <span className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none mt-0.5">Welfare Society</span>
-                        </div>
-                    </Link>
-                    <Link href="/" className="text-sm font-bold text-gray-600 hover:text-primary transition-colors">
-                        Back to Home
-                    </Link>
-                </div>
-            </nav>
+            <Navbar />
 
-            <div className="pt-32 pb-24 container mx-auto px-4 max-w-6xl">
+            <div className="pt-20 sm:pt-24 pb-16 sm:pb-24 container mx-auto px-4 max-w-6xl">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
                     {/* Contact Information */}

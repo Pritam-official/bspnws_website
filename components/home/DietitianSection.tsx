@@ -106,7 +106,7 @@ export default function DietitianSection() {
               className={`group relative ${dietitian.bgColor} rounded-2xl border ${dietitian.borderColor} transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden`}
             >
               {/* Image Section */}
-              <div className="relative h-56 overflow-hidden bg-gradient-to-b from-gray-100 to-gray-50">
+              <div className="relative h-64 sm:h-72 md:h-56 overflow-hidden bg-gradient-to-b from-gray-100 to-gray-50">
                 <Image
                   src={dietitian.image}
                   alt={dietitian.name}

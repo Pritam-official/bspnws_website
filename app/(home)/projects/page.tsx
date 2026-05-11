@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Navbar from '@/components/shared/Navbar';
 
 interface Project {
     _id: string;
@@ -185,7 +186,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             {/* ── CONTENT ZONE ── */}
             <div className="px-6 pb-6 flex flex-col flex-1">
 
-                {/* Divider with dot */}Livelihood
+                {/* Divider with dot */}
                 <div className="flex items-center gap-3 mb-4">
                     <div className="h-px flex-1" style={{ background: theme.border }} />
                     <div className="w-2 h-2 rounded-full" style={{ background: theme.dot }} />
@@ -269,10 +270,11 @@ export default function ProjectsPage() {
             `}</style>
 
             <div className="min-h-screen" style={{ background: '#F1F5F9' }}>
+                <Navbar />
 
                 {/* ── HERO ── */}
                 <div className="bg-white border-b border-slate-100" style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.04)' }}>
-                    <div className="max-w-7xl mx-auto px-6 pt-28 pb-20">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 sm:pt-28 pb-12 sm:pb-20">
                         <div
                             ref={heroRef}
                             style={{

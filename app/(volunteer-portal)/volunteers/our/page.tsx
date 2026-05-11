@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Navbar from '@/components/shared/Navbar';
 import { ChevronLeft, Loader2, Users, Sparkles } from 'lucide-react';
 
 interface Volunteer {
@@ -97,7 +98,9 @@ export default function OurVolunteersPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gray-50/50 pt-32 pb-20 px-4 md:px-8 overflow-hidden">
+        <div className="min-h-screen bg-gray-50/50 overflow-hidden">
+            <Navbar />
+            <div className="pt-24 sm:pt-32 pb-20 px-4 md:px-8">
             {/* Ambient Background */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] animate-pulse"></div>
@@ -188,5 +191,6 @@ export default function OurVolunteersPage() {
                 </div>
             </div>
         </div>
+    </div>
     );
 }

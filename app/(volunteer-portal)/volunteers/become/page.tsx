@@ -1,11 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
+import Navbar from '@/components/shared/Navbar';
 import VolunteerForm from '@/components/volunteer-portal/VolunteerForm';
 import { ChevronLeft } from 'lucide-react';
 
 export default function BecomeVolunteerPage() {
   return (
-    <div className="min-h-screen bg-gray-50 pt-32 pb-20 px-4 md:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+      <Navbar />
+      <div className="pt-24 sm:pt-32 pb-20 px-4 md:px-8 relative z-10">
       {/* Background blobs for premium feel */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mt-64 animate-pulse"></div>
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] -ml-40 -mb-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
@@ -49,6 +52,7 @@ export default function BecomeVolunteerPage() {
              <div className="h-6 w-20 bg-gray-300 rounded-full"></div>
              <div className="h-6 w-28 bg-gray-300 rounded-full"></div>
           </div>
+        </div>
         </div>
       </div>
     </div>

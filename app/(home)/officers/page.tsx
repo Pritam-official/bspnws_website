@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Navbar from '@/components/shared/Navbar';
 
 interface Officer {
     _id: string;
@@ -36,12 +37,11 @@ export default function OfficersPage() {
         name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 
     return (
-        <div className="min-h-screen bg-[#F5F4F0] pt-28 pb-24 px-6">
+        <div className="min-h-screen bg-[#F5F4F0] overflow-x-hidden">
+            <Navbar />
 
-            {/* Thin top accent bar */}
-            <div className="fixed top-0 left-0 right-0 h-0.5 bg-[#1C1C1C] z-50" />
-
-            <div className="max-w-6xl mx-auto">
+            <div className="pt-20 sm:pt-28 pb-16 sm:pb-24 px-4 sm:px-6">
+                <div className="max-w-6xl mx-auto">
 
                 {/* ── Header ── */}
                 <header className="mb-20 border-b border-[#1C1C1C]/10 pb-10">
@@ -181,5 +181,6 @@ export default function OfficersPage() {
 
             </div>
         </div>
+    </div>
     );
 }

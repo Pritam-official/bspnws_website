@@ -52,8 +52,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <AdminSidebar />
 
             {/* Top Header Bar */}
-            <header className="fixed top-0 left-0 lg:left-[260px] right-0 h-16 bg-white/80 backdrop-blur-xl border-b border-gray-100 z-40 flex items-center justify-between px-6 lg:px-8">
-                <div>
+            <header className="fixed top-0 left-0 lg:left-[280px] right-0 h-16 bg-white/80 backdrop-blur-xl border-b border-gray-100 z-40 flex items-center justify-between px-6 lg:px-8">
+                <div className="pl-12 lg:pl-0">
                     <h1 className="text-sm font-black text-gray-900 uppercase tracking-widest">Admin Panel</h1>
                 </div>
                 <div className="flex items-center gap-4">
@@ -85,14 +85,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </header>
 
             {/* Main Content */}
-            <main className="lg:ml-[260px] pt-16 flex-grow">
+            <main className="lg:ml-[280px] pt-16 flex-grow">
                 <div className="p-6 lg:p-8">
                     {children}
                 </div>
             </main>
 
             {/* Footer */}
-            <div className="lg:ml-[260px]">
+            <div className="lg:ml-[280px]">
                 <Footer />
             </div>
         </div>

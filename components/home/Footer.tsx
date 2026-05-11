@@ -46,7 +46,7 @@ const Footer = () => {
     ];
 
     return (
-        <footer className="bg-[#0b0f1a] text-gray-300 py-8 px-6 md:px-12 lg:px-24 border-t border-white/5 relative overflow-hidden">
+        <footer className="bg-[#0b0f1a] text-gray-300 py-8 px-4 sm:px-6 md:px-12 lg:px-24 border-t border-white/5 relative overflow-hidden">
             {/* Background Decor */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
@@ -65,7 +65,7 @@ const Footer = () => {
                     </div>
 
                     {/* Social Media Links */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-3">
                         {[
                             { name: 'facebook', icon: '/social/facebook.svg', color: 'hover:bg-[#1877F2]', href: 'https://www.facebook.com/share/1856ZhMqPV/' },
                             { name: 'instagram', icon: '/social/instagram.svg', color: 'hover:bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888]', href: 'https://www.instagram.com/pyara_nutrition?igsh=MWg0N2NsZjRjM2xhcw==' },
