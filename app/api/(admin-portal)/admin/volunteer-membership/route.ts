@@ -8,12 +8,12 @@ export async function GET(req: NextRequest) {
         await connectDB();
 
         const { searchParams } = new URL(req.url);
-        const month = searchParams.get("month");
+        const date = searchParams.get("date");
 
         const query: Record<string, any> = {};
 
-        if (month && month !== "All") {
-            query.renewalMonth = month;
+        if (date && date !== "All") {
+            query.date = date;
         }
 
         const records = await VolunteerMembership.find(query).sort({ submittedAt: -1 });

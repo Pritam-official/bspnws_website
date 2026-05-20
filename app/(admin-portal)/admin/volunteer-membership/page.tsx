@@ -10,12 +10,16 @@ const months = [
 interface MembershipRecord {
     _id: string;
     name: string;
+    email?: string;
+    memberType?: string;
     phoneNumber: string;
     date: string;
     membershipStatus: string;
     renewalMonth: string;
+    renewalYear?: number;
     paymentMethod: string;
     amount: number;
+    receiptImage?: string;
     submittedAt: string;
 }
 
@@ -45,17 +49,17 @@ function getGradient(index: number) {
 
 export default function VolunteerMembershipPage() {
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterMonth, setFilterMonth] = useState('All');
+    const [filterDate, setFilterDate] = useState('All');
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
     const [memberships, setMemberships] = useState<MembershipRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchMemberships = useCallback(async (month: string) => {
+    const fetchMemberships = useCallback(async (date: string) => {
         setLoading(true);
         setError(null);
         try {
-            const query = month !== 'All' ? `?month=${encodeURIComponent(month)}` : '';
+            const query = date !== 'All' ? `?date=${encodeURIComponent(date)}` : '';
             const res = await fetch(`/api/admin/volunteer-membership${query}`);
             const data = await res.json();
             if (data.success) {
@@ -71,27 +75,20 @@ export default function VolunteerMembershipPage() {
     }, []);
 
     useEffect(() => {
-        fetchMemberships(filterMonth);
-    }, [filterMonth, fetchMemberships]);
+        fetchMemberships(filterDate);
+    }, [filterDate, fetchMemberships]);
 
     // Client-side search filter (month filter is handled by API)
     const filtered = memberships.filter((m) => {
         const term = searchTerm.toLowerCase();
         return (
             m.name.toLowerCase().includes(term) ||
-            m.phoneNumber.includes(searchTerm)
+            m.phoneNumber.includes(searchTerm) ||
+            (m.email && m.email.toLowerCase().includes(term))
         );
     });
 
     // Stats
-    const currentMonth = new Date().toLocaleString('default', { month: 'long' });
-    const currentMonthIndex = months.indexOf(currentMonth);
-
-    const upToDateMembers = memberships.filter((m) => {
-        const monthIndex = months.indexOf(m.renewalMonth);
-        return monthIndex >= currentMonthIndex;
-    }).length;
-
     const totalRevenue = memberships.reduce((sum, m) => sum + (m.amount || 0), 0);
 
     const formatDate = (dateStr: string) => {
@@ -132,7 +129,7 @@ export default function VolunteerMembershipPage() {
                 </div>
 
                 {/* Statistics Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mb-10">
                     <div className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
                         <div className="flex items-center justify-between mb-4">
                             <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
@@ -146,36 +143,6 @@ export default function VolunteerMembershipPage() {
                             {loading ? '—' : memberships.length}
                         </p>
                         <p className="text-sm font-medium text-slate-500">Total Records</p>
-                    </div>
-
-                    <div className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
-                                <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Current</span>
-                        </div>
-                        <p className="text-3xl font-bold text-slate-900 mb-1">
-                            {loading ? '—' : upToDateMembers}
-                        </p>
-                        <p className="text-sm font-medium text-slate-500">Up to Date</p>
-                    </div>
-
-                    <div className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
-                                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">Pending</span>
-                        </div>
-                        <p className="text-3xl font-bold text-slate-900 mb-1">
-                            {loading ? '—' : memberships.length - upToDateMembers}
-                        </p>
-                        <p className="text-sm font-medium text-slate-500">Awaiting Renewal</p>
                     </div>
 
                     <div className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
@@ -212,21 +179,27 @@ export default function VolunteerMembershipPage() {
                                 />
                             </div>
 
-                            {/* Month Filter */}
-                            <div className="relative">
-                                <select
-                                    value={filterMonth}
-                                    onChange={(e) => setFilterMonth(e.target.value)}
-                                    className="appearance-none bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-10 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer min-w-[160px]"
-                                >
-                                    <option value="All">All Months</option>
-                                    {months.map((m) => (
-                                        <option key={m} value={m}>{m}</option>
-                                    ))}
-                                </select>
-                                <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                </svg>
+                            {/* Daywise Date Filter */}
+                            <div className="flex items-center gap-2">
+                                <div className="relative">
+                                    <input
+                                        type="date"
+                                        value={filterDate === 'All' ? '' : filterDate}
+                                        onChange={(e) => setFilterDate(e.target.value || 'All')}
+                                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer min-w-[180px]"
+                                    />
+                                </div>
+                                {filterDate !== 'All' && (
+                                    <button
+                                        onClick={() => setFilterDate('All')}
+                                        className="px-3 py-3 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Clear Date
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -270,7 +243,7 @@ export default function VolunteerMembershipPage() {
                         </svg>
                         <p className="text-red-700 font-semibold">{error}</p>
                         <button
-                            onClick={() => fetchMemberships(filterMonth)}
+                            onClick={() => fetchMemberships(filterDate)}
                             className="mt-4 px-6 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors"
                         >
                             Retry
@@ -285,12 +258,22 @@ export default function VolunteerMembershipPage() {
                             <div key={m._id} className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300">
                                 <div className="p-6">
                                     <div className="flex items-center gap-4 mb-5">
-                                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-base font-bold shadow-md group-hover:scale-105 transition-transform duration-300`}>
+                                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-base font-bold shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0`}>
                                             {getInitials(m.name)}
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-bold text-slate-900 mb-0.5">{m.name}</h3>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                                                <h3 className="text-lg font-bold text-slate-900 truncate">{m.name}</h3>
+                                                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                                                    m.memberType === 'Executive Member'
+                                                        ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                                                        : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                                }`}>
+                                                    {m.memberType || 'Normal Member'}
+                                                </span>
+                                            </div>
                                             <p className="text-xs text-slate-500 font-medium">{m.phoneNumber}</p>
+                                            {m.email && <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5" title={m.email}>{m.email}</p>}
                                         </div>
                                     </div>
 
@@ -298,7 +281,7 @@ export default function VolunteerMembershipPage() {
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Paid Up To</span>
                                             <span className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-semibold">
-                                                {m.renewalMonth}
+                                                {m.renewalMonth} {m.renewalYear || ''}
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between">
@@ -321,11 +304,30 @@ export default function VolunteerMembershipPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="bg-slate-50 px-6 py-3 border-t border-slate-100">
-                                    <div className="flex items-center justify-between text-xs">
+                                <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-xs">
                                         <span className="text-slate-500 capitalize">{m.membershipStatus}</span>
-                                        <span className="text-emerald-600 font-medium">Complete</span>
+                                        <span className="text-emerald-600 font-medium bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">Complete</span>
                                     </div>
+                                    {m.receiptImage ? (
+                                        <button
+                                            onClick={() => {
+                                                const win = window.open();
+                                                if (win) {
+                                                    win.document.write(`<iframe src="${m.receiptImage}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                                                }
+                                            }}
+                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                                            title="View Receipt"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            Receipt
+                                        </button>
+                                    ) : (
+                                        <span className="text-[10px] text-slate-400 font-medium">No Receipt</span>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -346,6 +348,7 @@ export default function VolunteerMembershipPage() {
                                         <th className="text-left px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden lg:table-cell">Payment Date</th>
                                         <th className="text-left px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden lg:table-cell">Amount</th>
                                         <th className="text-left px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Method</th>
+                                        <th className="text-left px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receipt</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
@@ -353,16 +356,24 @@ export default function VolunteerMembershipPage() {
                                         <tr key={m._id} className="hover:bg-slate-50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-sm font-bold`}>
+                                                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
                                                         {getInitials(m.name)}
                                                     </div>
-                                                    <span className="text-sm font-semibold text-slate-900">{m.name}</span>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <span className="text-sm font-semibold text-slate-900 truncate">{m.name}</span>
+                                                        <span className="text-[10px] text-indigo-600 font-bold tracking-wider uppercase mt-0.5">
+                                                            {m.memberType || 'Normal Member'}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-slate-600 font-medium">{m.phoneNumber}</td>
+                                            <td className="px-6 py-4 text-sm text-slate-600 font-medium">
+                                                <div>{m.phoneNumber}</div>
+                                                {m.email && <div className="text-xs text-slate-400 font-normal truncate max-w-[180px] mt-0.5">{m.email}</div>}
+                                            </td>
                                             <td className="px-6 py-4 hidden md:table-cell">
                                                 <span className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-semibold">
-                                                    {m.renewalMonth}
+                                                    {m.renewalMonth} {m.renewalYear || ''}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 hidden md:table-cell">
@@ -375,6 +386,27 @@ export default function VolunteerMembershipPage() {
                                                     {m.paymentMethod === 'online' ? 'Online' : 'Offline'}
                                                 </span>
                                             </td>
+                                            <td className="px-6 py-4">
+                                                 {m.receiptImage ? (
+                                                     <button
+                                                         onClick={() => {
+                                                             const win = window.open();
+                                                             if (win) {
+                                                                 win.document.write(`<iframe src="${m.receiptImage}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                                                             }
+                                                         }}
+                                                         className="text-indigo-600 hover:text-indigo-800 transition-colors p-1 rounded hover:bg-indigo-50 inline-flex items-center gap-1.5 text-xs font-semibold"
+                                                         title="View Receipt"
+                                                     >
+                                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                         </svg>
+                                                         View
+                                                     </button>
+                                                 ) : (
+                                                     <span className="text-xs text-slate-400 font-medium">None</span>
+                                                 )}
+                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -393,8 +425,8 @@ export default function VolunteerMembershipPage() {
                         </div>
                         <h3 className="text-lg font-bold text-slate-900 mb-2">No records found</h3>
                         <p className="text-sm text-slate-500 font-medium">
-                            {filterMonth !== 'All'
-                                ? `No membership payments recorded for ${filterMonth}.`
+                            {filterDate !== 'All'
+                                ? `No membership payments recorded for ${formatDate(filterDate)}.`
                                 : 'No membership records exist yet.'}
                         </p>
                     </div>

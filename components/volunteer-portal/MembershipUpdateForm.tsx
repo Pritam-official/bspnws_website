@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 
 interface MembershipUpdateFormProps {
-    onRenewalMonthChange: (monthIndex: number) => void;
+    onRenewalMonthChange: (monthIndex: number, year?: number) => void;
 }
 
 const months = [
@@ -14,16 +14,20 @@ const months = [
 const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMonthChange }) => {
     const [formData, setFormData] = useState({
         name: '',
+        email: '',
+        memberType: '',
         phoneNumber: '',
         date: '',
         membershipStatus: '',
         renewalMonth: '',
+        renewalYear: String(new Date().getFullYear()),
         paymentMethod: '',
         amount: '',
     });
     const [receiptImage, setReceiptImage] = useState<string | null>(null);
     const [receiptFileName, setReceiptFileName] = useState<string>('');
     const [submitting, setSubmitting] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,6 +38,7 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
             setFormData(prev => ({
                 ...prev,
                 name: parsedData.name || '',
+                email: parsedData.email || '',
                 phoneNumber: parsedData.phoneNumber || parsedData.phone || '',
             }));
         }
@@ -46,11 +51,12 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const updated = { ...formData, [name]: value };
+        setFormData(updated);
 
-        // Live dashboard update when month is selected
-        if (name === 'renewalMonth' && value !== '') {
-            onRenewalMonthChange(parseInt(value));
+        // Live dashboard update when month or year is selected
+        if ((name === 'renewalMonth' || name === 'renewalYear') && updated.renewalMonth !== '') {
+            onRenewalMonthChange(parseInt(updated.renewalMonth), parseInt(updated.renewalYear));
         }
     };
 
@@ -59,9 +65,9 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Max 2MB size check
-        if (file.size > 2 * 1024 * 1024) {
-            showToast('error', 'Receipt image must be under 2MB.');
+        // Max 5MB size check
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('error', 'Receipt image must be under 5MB.');
             if (fileInputRef.current) fileInputRef.current.value = '';
             return;
         }
@@ -85,24 +91,63 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Proper validation for Email, Mobile Number, and Member Type
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            showToast('error', 'Please provide a valid email address.');
+            return;
+        }
+
+        if (formData.memberType !== "Normal Member" && formData.memberType !== "Executive Member") {
+            showToast('error', 'Please select a valid Member Type.');
+            return;
+        }
+
+        const cleanPhone = formData.phoneNumber.replace(/\s+/g, "");
+        if (cleanPhone.length < 8) {
+            showToast('error', 'Please provide a valid phone number.');
+            return;
+        }
+
         setSubmitting(true);
 
         try {
             const payload: Record<string, any> = {
                 name: formData.name,
+                email: formData.email,
+                memberType: formData.memberType,
                 phoneNumber: formData.phoneNumber,
                 date: formData.date,
                 membershipStatus: formData.membershipStatus,
                 renewalMonth: months[parseInt(formData.renewalMonth)], // Store as month name
+                renewalYear: Number(formData.renewalYear),
                 paymentMethod: formData.paymentMethod,
                 amount: Number(formData.amount),
             };
 
-            // Only include receipt if uploaded
+            // Step 1: If receipt image selected, upload to Cloudinary first
             if (receiptImage) {
-                payload.receiptImage = receiptImage;
+                setUploading(true);
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: receiptImage }),
+                });
+                const uploadData = await uploadRes.json();
+                setUploading(false);
+
+                if (!uploadRes.ok || !uploadData.success) {
+                    showToast('error', uploadData.message || 'Receipt upload failed. Please try again.');
+                    setSubmitting(false);
+                    return;
+                }
+
+                // Use the Cloudinary secure URL instead of base64
+                payload.receiptImage = uploadData.url;
             }
 
+            // Step 2: Submit membership record with Cloudinary URL
             const res = await fetch('/api/volunteers/membership', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -116,10 +161,13 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                 // Reset form
                 setFormData({
                     name: '',
+                    email: '',
+                    memberType: '',
                     phoneNumber: '',
                     date: '',
                     membershipStatus: '',
                     renewalMonth: '',
+                    renewalYear: String(new Date().getFullYear()),
                     paymentMethod: '',
                     amount: '',
                 });
@@ -133,6 +181,7 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
         } catch {
             showToast('error', 'Network error. Please check your connection.');
         } finally {
+            setUploading(false);
             setSubmitting(false);
         }
     };
@@ -196,6 +245,22 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                         />
                     </div>
 
+                    {/* Email — REQUIRED */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                            Email <span className="text-pink-600">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="john@example.com"
+                            className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 focus:outline-none focus:border-pink-600/30 transition-all font-bold text-gray-700"
+                            required
+                        />
+                    </div>
+
                     {/* Phone Number — REQUIRED */}
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
@@ -210,6 +275,24 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                             className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 focus:outline-none focus:border-pink-600/30 transition-all font-bold text-gray-700"
                             required
                         />
+                    </div>
+
+                    {/* Member Type — REQUIRED */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                            Member Type <span className="text-pink-600">*</span>
+                        </label>
+                        <select
+                            name="memberType"
+                            value={formData.memberType}
+                            onChange={handleChange}
+                            className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 focus:outline-none focus:border-pink-600/30 transition-all font-bold text-gray-700 appearance-none"
+                            required
+                        >
+                            <option value="">Select Member Type</option>
+                            <option value="Normal Member">Normal Member</option>
+                            <option value="Executive Member">Executive Member</option>
+                        </select>
                     </div>
 
                     {/* Payment Date — REQUIRED */}
@@ -274,6 +357,27 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                                 Dashboard preview updated above ↑
                             </p>
                         )}
+                    </div>
+
+                    {/* Renewal Year — REQUIRED — drives dashboard live preview */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                            Paid Up To Year <span className="text-pink-600">*</span>
+                        </label>
+                        <select
+                            name="renewalYear"
+                            value={formData.renewalYear}
+                            onChange={handleChange}
+                            className={`w-full border-2 rounded-2xl px-6 py-4 focus:outline-none transition-all font-bold text-gray-700 appearance-none ${formData.renewalYear !== ''
+                                    ? 'bg-green-50 border-green-300 focus:border-green-400'
+                                    : 'bg-gray-50 border-gray-100 focus:border-pink-600/30'
+                                }`}
+                            required
+                        >
+                            {[2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
                     </div>
 
                     {/* Payment Method — REQUIRED */}
@@ -363,7 +467,7 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                     <span className="text-sm font-bold text-gray-400 group-hover:text-pink-600 transition-colors">Click to upload receipt</span>
-                                    <span className="text-[10px] text-gray-300 font-medium">PNG, JPG, WEBP · Max 2MB</span>
+                                    <span className="text-[10px] text-gray-300 font-medium">PNG, JPG, WEBP · Max 5MB · Hosted on Cloudinary</span>
                                 </label>
                             </div>
                         )}
@@ -378,10 +482,18 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                 <div className="pt-2">
                     <button
                         type="submit"
-                        disabled={submitting}
+                        disabled={submitting || uploading}
                         className="w-full bg-pink-600 text-white rounded-2xl py-5 font-black uppercase tracking-widest shadow-xl shadow-pink-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-3"
                     >
-                        {submitting ? (
+                        {uploading ? (
+                            <>
+                                <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
+                                Uploading Receipt...
+                            </>
+                        ) : submitting ? (
                             <>
                                 <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />

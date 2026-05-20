@@ -6,6 +6,19 @@ const VolunteerMembershipSchema = new Schema(
             type: String,
             required: [true, "Please provide the volunteer's name"],
         },
+        email: {
+            type: String,
+            required: [true, "Please provide the email"],
+            match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email address"],
+        },
+        memberType: {
+            type: String,
+            enum: {
+                values: ["Normal Member", "Executive Member"],
+                message: "{VALUE} is not a valid member type",
+            },
+            required: [true, "Please provide the member type"],
+        },
         phoneNumber: {
             type: String,
             required: [true, "Please provide the phone number"],
@@ -22,6 +35,10 @@ const VolunteerMembershipSchema = new Schema(
         renewalMonth: {
             type: String, // Month name e.g. "April"
             required: [true, "Please provide the renewal month"],
+        },
+        renewalYear: {
+            type: Number,
+            required: [true, "Please provide the renewal year"],
         },
         paymentMethod: {
             type: String,

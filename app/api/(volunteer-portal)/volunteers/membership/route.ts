@@ -8,22 +8,50 @@ export async function POST(req: NextRequest) {
         await connectDB();
 
         const body = await req.json();
-        const { name, phoneNumber, date, membershipStatus, renewalMonth, paymentMethod, amount, receiptImage } =
+        const { name, email, memberType, phoneNumber, date, membershipStatus, renewalMonth, renewalYear, paymentMethod, amount, receiptImage } =
             body;
 
-        if (!name || !phoneNumber || !date || !membershipStatus || !renewalMonth || !paymentMethod || !amount) {
+        if (!name || !email || !memberType || !phoneNumber || !date || !membershipStatus || !renewalMonth || !renewalYear || !paymentMethod || !amount) {
             return NextResponse.json(
                 { success: false, message: "All fields are required." },
                 { status: 400 }
             );
         }
 
+        // Proper validation for Email, Mobile Number, and Member Type
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return NextResponse.json(
+                { success: false, message: "Invalid email format." },
+                { status: 400 }
+            );
+        }
+
+        if (memberType !== "Normal Member" && memberType !== "Executive Member") {
+            return NextResponse.json(
+                { success: false, message: "Invalid member type." },
+                { status: 400 }
+            );
+        }
+
+        // Basic phone validation: non-empty, and containing digits
+        const cleanPhone = phoneNumber.replace(/\s+/g, "");
+        if (cleanPhone.length < 8) {
+            return NextResponse.json(
+                { success: false, message: "Invalid phone number format." },
+                { status: 400 }
+            );
+        }
+
         const record = await VolunteerMembership.create({
             name,
+            email,
+            memberType,
             phoneNumber,
             date,
             membershipStatus,
             renewalMonth,
+            renewalYear: Number(renewalYear),
             paymentMethod,
             amount: Number(amount),
             ...(receiptImage ? { receiptImage } : {}), // optional

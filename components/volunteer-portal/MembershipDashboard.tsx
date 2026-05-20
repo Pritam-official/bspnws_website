@@ -35,7 +35,7 @@ const MembershipDashboard: React.FC<MembershipDashboardProps> = ({
 
                 <div className="flex items-center gap-4">
                     <div className="flex items-center bg-gray-50 border-2 border-gray-100 rounded-2xl p-1">
-                        {[2025, 2026, 2027].map((year) => (
+                        {[2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
                             <button
                                 key={year}
                                 onClick={() => onYearChange?.(year)}
