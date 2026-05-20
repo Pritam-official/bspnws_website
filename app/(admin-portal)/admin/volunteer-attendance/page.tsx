@@ -103,6 +103,31 @@ export default function VolunteerAttendancePage() {
     const totalPresent = allRecords.filter(r => r.status === 'Present').length;
     const totalAbsent = allRecords.filter(r => r.status === 'Absent').length;
 
+    const handleCloseSession = async (sessionId: string) => {
+        if (!confirm('Are you sure you want to close this session? All volunteers who haven\'t submitted will be marked as Absent immediately.')) return;
+
+        try {
+            const res = await fetch('/api/attendance/session', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId }),
+            });
+
+            if (res.ok) {
+                alert('Session closed and settled successfully');
+                fetchSessions();
+            } else {
+                const err = await res.json();
+                alert(`Error: ${err.error || 'Failed to close session'}`);
+            }
+        } catch (error) {
+            console.error('Error closing session:', error);
+            alert('Failed to close session');
+        }
+    };
+
+    const activeSessions = sessions.filter(s => s.status === 'Active');
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -227,6 +252,51 @@ export default function VolunteerAttendancePage() {
                     </div>
                 </div>
             </div>
+
+            {/* Active Sessions Section */}
+            {activeSessions.length > 0 && (
+                <div className="mb-8">
+                    <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                        Active Sessions
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {activeSessions.map((session) => (
+                            <div key={session._id} className="bg-white rounded-xl border border-blue-100 p-5 shadow-sm hover:shadow-md transition-all">
+                                <div className="flex justify-between items-start mb-3">
+                                    <h3 className="text-sm font-black text-gray-900">{session.projectName}</h3>
+                                    <span className="text-[9px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full uppercase">Active</span>
+                                </div>
+                                <div className="space-y-1 mb-4">
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Venue: {session.venue || 'TBA'}</p>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Date: {session.date}</p>
+                                </div>
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex gap-3">
+                                        <div className="text-center">
+                                            <p className="text-xs font-black text-green-600">{session.stats.present}</p>
+                                            <p className="text-[8px] font-bold text-gray-400 uppercase">Present</p>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-xs font-black text-red-600">{session.stats.absent}</p>
+                                            <p className="text-[8px] font-bold text-gray-400 uppercase">Absent</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => handleCloseSession(session._id)}
+                                        className="text-[9px] font-black uppercase tracking-widest px-3 py-2 bg-gray-900 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                    >
+                                        Close & Settle
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Filter */}
             <div className="mb-4 flex items-center gap-3">

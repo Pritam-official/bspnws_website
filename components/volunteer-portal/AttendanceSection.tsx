@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 interface AttendanceRecord {
     _id: string;
@@ -16,7 +16,23 @@ interface ActiveSession {
     description: string;
     venue: string;
     date: string;
+    createdAt: string; // needed for countdown
     hasSubmitted: boolean;
+}
+
+/** Returns a formatted countdown string like "11h 23m" or "45m" from a createdAt timestamp */
+function getCountdown(createdAt: string): { label: string; isUrgent: boolean } {
+    const expiresAt = new Date(new Date(createdAt).getTime() + 24 * 60 * 60 * 1000);
+    const diffMs = expiresAt.getTime() - Date.now();
+
+    if (diffMs <= 0) return { label: "Expired", isUrgent: true };
+
+    const totalMins = Math.floor(diffMs / 60000);
+    const hours = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
+
+    const label = hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`;
+    return { label, isUrgent: hours < 1 };
 }
 
 export default function AttendanceSection() {
@@ -25,6 +41,14 @@ export default function AttendanceSection() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState<string | null>(null);
     const [userData, setUserData] = useState<any>(null);
+    const [currentTime, setCurrentTime] = useState(Date.now());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 60000); // update every minute
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         const storedData = localStorage.getItem('volunteer_data');
@@ -102,6 +126,8 @@ export default function AttendanceSection() {
             if (res.ok) {
                 // Refresh data
                 fetchData(user.email || user.gmail);
+                // Notify header to refresh bell icon
+                window.dispatchEvent(new Event('attendanceSubmitted'));
             } else {
                 const err = await res.json();
                 alert(`Error: ${err.error || "Submission failed"}`);
@@ -145,8 +171,8 @@ export default function AttendanceSection() {
                                         <p className="text-[10px] font-black text-pink-600 uppercase tracking-widest mb-1">New Event</p>
                                         <h4 className="text-xl font-black text-gray-900 leading-tight">{session.projectName}</h4>
                                     </div>
-                                    <div className="bg-pink-50 px-3 py-1 rounded-full text-[10px] font-black text-pink-600 uppercase tracking-widest">
-                                        Active for 24h
+                                    <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${getCountdown(session.createdAt).isUrgent ? 'bg-rose-50 text-rose-600 animate-pulse' : 'bg-pink-50 text-pink-600'}`}>
+                                        {getCountdown(session.createdAt).label}
                                     </div>
                                 </div>
 
@@ -161,7 +187,7 @@ export default function AttendanceSection() {
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        {session.date || 'Today'}
+                                        {new Date(session.createdAt).toLocaleDateString()}
                                     </div>
                                 </div>
 

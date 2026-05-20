@@ -103,7 +103,7 @@ export default function HelpUsPage() {
                           <p className="text-[9px] font-black text-white uppercase tracking-[0.25em]">Account Number</p>
                         </div>
                         <div className="bg-[#fffbfb] rounded-2xl p-7 border border-[#feedeb] transition-all hover:bg-white hover:border-orange-200">
-                          <p className="relative font-mono text-xl sm:text-3xl md:text-5xl font-black text-[#0f172a] text-center tracking-normal sm:tracking-[0.10em] break-all">
+                          <p className="relative font-mono text-xl sm:text-3xl md:text-5xl font-black text-[#0f172a] text-center tracking-normal sm:tracking-[0.10em] whitespace-nowrap">
                             8734002100002391
                           </p>
                         </div>

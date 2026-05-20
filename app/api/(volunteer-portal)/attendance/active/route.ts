@@ -15,10 +15,11 @@ export async function GET(req: NextRequest) {
         const now = new Date();
         const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-        // Find all session broadcasts created in the last 24 hours
+        // Find all session broadcasts created in the last 24 hours that are NOT yet expired
         const activeSessions = await VolunteerAttendanceRecord.find({
             volunteerId: "SESSION_MASTER",
-            createdAt: { $gt: twentyFourHoursAgo }
+            createdAt: { $gt: twentyFourHoursAgo },
+            status: { $ne: "Expired" }
         }).sort({ createdAt: -1 });
 
         // For each active session broadcast, check if this volunteer already submitted a response

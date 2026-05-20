@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const navItems = [
     {
@@ -39,6 +39,12 @@ interface VolunteerSidebarProps {
 
 export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobileMenuOpen }: VolunteerSidebarProps) {
     const pathname = usePathname();
+    const router = useRouter();
+
+    const handleLogout = () => {
+        localStorage.removeItem('volunteer_data');
+        router.push('/login/volunteer');
+    };
 
     return (
         <>
@@ -91,7 +97,7 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                     })}
                 </nav>
 
-                <div className="p-6 mt-auto border-t border-gray-50">
+                <div className="p-6 mt-auto border-t border-gray-50 space-y-4">
                     <div className="bg-gradient-to-br from-pink-50 to-white rounded-3xl p-5 border border-pink-100 shadow-sm">
                         <p className="text-[10px] font-black text-pink-600 uppercase tracking-widest mb-2">Verified Account</p>
                         <div className="flex items-center gap-3">
@@ -99,6 +105,14 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                             <span className="text-xs font-bold text-gray-700">Active Volunteer</span>
                         </div>
                     </div>
+                    
+                    <button 
+                        onClick={handleLogout}
+                        className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-2xl bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 transition-all group active:scale-95 shadow-sm"
+                    >
+                        <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                        <span className="font-black text-xs uppercase tracking-widest">Logout Session</span>
+                    </button>
                 </div>
             </aside>
 
@@ -127,7 +141,7 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                         );
                     })}
                 </nav>
-                <div className="p-6">
+                <div className="p-6 mt-auto border-t border-gray-50 space-y-4">
                     <div className="bg-pink-50 rounded-2xl p-4 border border-pink-100">
                         <p className="text-[10px] font-black text-pink-600 uppercase tracking-widest mb-1">Status</p>
                         <div className="flex items-center gap-2">
@@ -135,6 +149,16 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                             <span className="text-xs font-bold text-gray-700">Verified Volunteer</span>
                         </div>
                     </div>
+
+                    <button 
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-rose-50 hover:text-rose-600 transition-all group"
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+                            <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                        </div>
+                        <span className="font-bold text-sm tracking-tight">Logout</span>
+                    </button>
                 </div>
             </aside>
 

@@ -12,6 +12,15 @@ interface DashboardStats {
     yearlyData: Record<number, MonthData[]>;
     projectSummary: ProjectSummary[];
 }
+interface ActiveSession {
+    _id: string;
+    projectName: string;
+    description: string;
+    venue: string;
+    date: string;
+    createdAt: string;
+    hasSubmitted: boolean;
+}
 
 // ── Stat Card ────────────────────────────────────────────────────────────────
 const TopStatCard = ({ title, value, icon, color, progress }: { title: string; value: string | number; icon: React.ReactNode; color: string; progress?: number; }) => (
@@ -43,11 +52,11 @@ const BarChart = ({ data }: { data: MonthData[] }) => {
         <div className="w-full h-full flex flex-col pt-4">
             <div className="flex-1 flex gap-4">
                 <div className="flex flex-col justify-between text-[11px] font-black text-gray-400 h-[calc(100%-36px)] pb-[2px] pr-4 border-r border-gray-100 mb-9">
-                    {ySteps.map(l => <span key={l} className="leading-none text-right w-5">{l}</span>)}
+                    {ySteps.map((l, i) => <span key={i} className="leading-none text-right w-5">{l}</span>)}
                 </div>
                 <div className="flex-1 relative flex items-end justify-between gap-4 h-full">
                     <div className="absolute inset-0 flex flex-col justify-between pointer-events-none h-[calc(100%-36px)] mb-9">
-                        {ySteps.map(l => <div key={l} className="w-full border-t border-gray-50/50" />)}
+                        {ySteps.map((l, i) => <div key={i} className="w-full border-t border-gray-50/50" />)}
                     </div>
                     {data.map((d, i) => (
                         <div key={i} className="flex-1 flex flex-col items-center group relative z-10 h-full justify-end">
@@ -139,27 +148,45 @@ const LiveCalendar = () => {
 // ── Main Dashboard ───────────────────────────────────────────────────────────
 export default function PerformanceDashboard() {
     const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-    const [selectedMonthIndex, setSelectedMonthIndex] = useState(new Date().getMonth());
+    const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(new Date().getMonth());
+    const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
-        const raw = localStorage.getItem('volunteer_data');
-        if (!raw) { setLoading(false); return; }
-        const { email } = JSON.parse(raw);
+        const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+        return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('volunteer_data');
+        if (!stored) { setLoading(false); return; }
+        const { email } = JSON.parse(stored);
         if (!email) { setLoading(false); return; }
 
-        fetch(`/api/volunteers/dashboard-stats?email=${encodeURIComponent(email)}`)
+        // Fetch Stats
+        const fetchStats = fetch(`/api/volunteers/dashboard-stats?email=${encodeURIComponent(email)}`)
             .then(r => r.json())
             .then((data: DashboardStats) => {
                 setStats(data);
-                // Default to latest year with data
                 const years = Object.keys(data.yearlyData).map(Number);
                 if (years.length) {
                     const latestYear = Math.max(...years);
                     setSelectedYear(latestYear);
                 }
-            })
+            });
+
+        // Fetch Active Sessions for Alerts
+        const fetchActive = fetch(`/api/attendance/active?email=${encodeURIComponent(email)}`)
+            .then(r => r.json())
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setActiveSessions(data.filter(s => !s.hasSubmitted));
+                }
+            });
+
+        Promise.all([fetchStats, fetchActive])
             .catch(console.error)
             .finally(() => setLoading(false));
     }, []);
@@ -306,7 +333,40 @@ export default function PerformanceDashboard() {
                                 <svg className="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                             </div>
                         </div>
-                        <p className="text-gray-500 font-bold text-sm text-center py-8">No new alerts at this time.</p>
+                        <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                            {activeSessions.length > 0 ? (
+                                activeSessions.map((session) => {
+                                    const expiresAt = new Date(new Date(session.createdAt).getTime() + 24 * 60 * 60 * 1000);
+                                    const diffMs = expiresAt.getTime() - currentTime.getTime();
+                                    const hoursLeft = Math.max(0, Math.floor(diffMs / 3600000));
+                                    const minsLeft = Math.max(0, Math.floor((diffMs % 3600000) / 60000));
+
+                                    return (
+                                        <div key={session._id} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all group/alert">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2 h-2 bg-pink-500 rounded-full animate-ping" />
+                                                    <h4 className="text-white font-black text-sm uppercase tracking-tight">Attendance Required</h4>
+                                                </div>
+                                                <span className={`text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-widest ${hoursLeft < 1 ? 'bg-rose-500 text-white animate-pulse' : 'bg-white/10 text-gray-400'}`}>
+                                                    {hoursLeft}h {minsLeft}m Left
+                                                </span>
+                                            </div>
+                                            <p className="text-gray-300 font-black text-lg leading-none mb-2">{session.projectName}</p>
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                                    {session.venue}
+                                                </div>
+                                                <a href="/volunteers/attendance" className="ml-auto text-[10px] font-black text-pink-500 uppercase tracking-widest hover:text-pink-400 transition-colors border-b border-pink-500/20">Take Action</a>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="text-gray-500 font-bold text-sm text-center py-8">No new alerts at this time.</p>
+                            )}
+                        </div>
                     </div>
                     <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-pink-600/10 rounded-full blur-[100px] -mr-48 -mt-48 group-hover:bg-pink-600/20 transition-all duration-700" />
                 </div>

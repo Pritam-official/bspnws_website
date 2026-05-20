@@ -40,6 +40,10 @@ const VolunteerAttendanceRecordSchema = new Schema(
             type: Date,
             default: Date.now,
         },
+        settledAt: {
+            type: Date,
+            required: false, // Set when a SESSION_MASTER is auto-settled (expired + absents written)
+        },
     },
     { timestamps: true }
 );
