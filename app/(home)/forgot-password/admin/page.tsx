@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-export default function VolunteerForgotPasswordPage() {
+export default function AdminForgotPasswordPage() {
     const [formData, setFormData] = useState({
         membershipCode: '',
         phone: '',
@@ -65,7 +65,7 @@ export default function VolunteerForgotPasswordPage() {
 
             setSuccess(true);
             setTimeout(() => {
-                router.push('/login/volunteer');
+                router.push('/login/admin');
             }, 2000);
         } catch (err: any) {
             setError(err.message);
@@ -94,7 +94,7 @@ export default function VolunteerForgotPasswordPage() {
                 className="absolute top-8 right-8 z-20 flex items-center justify-center w-12 h-12 bg-white/80 backdrop-blur-md border border-white/60 rounded-2xl shadow-lg hover:bg-white hover:scale-110 transition-all duration-300 group"
                 title="Go to Home"
             >
-                <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
             </Link>
@@ -103,11 +103,11 @@ export default function VolunteerForgotPasswordPage() {
 
                 {/* Left Side: Illustration / Image Card */}
                 <div className="hidden lg:flex flex-1 relative group w-full max-w-[550px] aspect-square">
-                    <div className="absolute inset-0 bg-emerald-600/5 rounded-[48px] blur-3xl group-hover:bg-emerald-600/10 transition-all duration-700"></div>
+                    <div className="absolute inset-0 bg-purple-600/5 rounded-[48px] blur-3xl group-hover:bg-purple-600/10 transition-all duration-700"></div>
                     <div className="relative w-full h-full rounded-[48px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-[12px] border-white group-hover:scale-[1.01] transition-transform duration-500">
                         <Image
                             src="/showcase-plants.jpg"
-                            alt="Community Impact"
+                            alt="Security Control"
                             fill
                             className="object-cover"
                         />
@@ -123,8 +123,8 @@ export default function VolunteerForgotPasswordPage() {
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                         <div className="absolute bottom-12 left-12 right-12 text-white">
-                            <h2 className="text-4xl font-black leading-tight mb-4 drop-shadow-lg">Secure Your Legacy</h2>
-                            <p className="text-lg font-medium opacity-90 drop-shadow-md">Keep your account safe and continue making an impact.</p>
+                            <h2 className="text-4xl font-black leading-tight mb-4 drop-shadow-lg">Security & Governance</h2>
+                            <p className="text-lg font-medium opacity-90 drop-shadow-md">Empowering administrators to drive meaningful community impact.</p>
                         </div>
                     </div>
                 </div>
@@ -135,7 +135,7 @@ export default function VolunteerForgotPasswordPage() {
                         {/* Header */}
                         <div className="relative z-10 text-center mb-10">
                             <h1 className="text-3xl font-black text-gray-900 mb-2">Reset Password</h1>
-                            <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Volunteer Portal</p>
+                            <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Administrator Portal</p>
                             
                             {error && (
                                 <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-bold rounded-xl animate-shake">
@@ -144,8 +144,8 @@ export default function VolunteerForgotPasswordPage() {
                             )}
 
                             {success && (
-                                <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-bold rounded-xl flex items-center justify-center gap-2 animate-pulse">
-                                    <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="mt-4 p-3 bg-purple-50 border border-purple-200 text-purple-600 text-xs font-bold rounded-xl flex items-center justify-center gap-2 animate-pulse">
+                                    <svg className="w-4 h-4 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                                     </svg>
                                     Password reset successful
@@ -163,7 +163,7 @@ export default function VolunteerForgotPasswordPage() {
                                         name="membershipCode"
                                         value={formData.membershipCode}
                                         onChange={handleChange}
-                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:bg-white focus:border-emerald-600/10 transition-all duration-300"
+                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-600/5 focus:bg-white focus:border-purple-600/10 transition-all duration-300"
                                         placeholder="Enter membership code"
                                         required
                                         autoComplete="off"
@@ -180,7 +180,7 @@ export default function VolunteerForgotPasswordPage() {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:bg-white focus:border-emerald-600/10 transition-all duration-300"
+                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-600/5 focus:bg-white focus:border-purple-600/10 transition-all duration-300"
                                         placeholder="Enter phone number"
                                         required
                                     />
@@ -196,7 +196,7 @@ export default function VolunteerForgotPasswordPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:bg-white focus:border-emerald-600/10 transition-all duration-300"
+                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-600/5 focus:bg-white focus:border-purple-600/10 transition-all duration-300"
                                         placeholder="example@gmail.com"
                                         required
                                     />
@@ -212,14 +212,14 @@ export default function VolunteerForgotPasswordPage() {
                                         name="newPassword"
                                         value={formData.newPassword}
                                         onChange={handleChange}
-                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:bg-white focus:border-emerald-600/10 transition-all duration-300"
+                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-600/5 focus:bg-white focus:border-purple-600/10 transition-all duration-300"
                                         placeholder="••••••••••••"
                                         required
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowNewPassword(!showNewPassword)}
-                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-emerald-600 transition-colors"
+                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-purple-600 transition-colors"
                                     >
                                         {showNewPassword ? (
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268-2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -239,14 +239,14 @@ export default function VolunteerForgotPasswordPage() {
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
-                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:bg-white focus:border-emerald-600/10 transition-all duration-300"
+                                        className="w-full bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-600/5 focus:bg-white focus:border-purple-600/10 transition-all duration-300"
                                         placeholder="••••••••••••"
                                         required
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-emerald-600 transition-colors"
+                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-purple-600 transition-colors"
                                     >
                                         {showConfirmPassword ? (
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268-2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -260,7 +260,7 @@ export default function VolunteerForgotPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={loading || success}
-                                className={`w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 rounded-[20px] shadow-[0_12px_24px_-8px_rgba(5,150,105,0.3)] hover:shadow-[0_20px_40px_-12px_rgba(5,150,105,0.4)] transition-all duration-300 transform active:scale-[0.98] text-lg uppercase tracking-widest mt-4 flex items-center justify-center gap-3 ${loading || success ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-5 rounded-[20px] shadow-[0_12px_24px_-8px_rgba(147,51,234,0.3)] hover:shadow-[0_20px_40px_-12px_rgba(147,51,234,0.4)] transition-all duration-300 transform active:scale-[0.98] text-lg uppercase tracking-widest mt-4 flex items-center justify-center gap-3 ${loading || success ? 'opacity-70 cursor-not-allowed' : ''}`}
                             >
                                 {loading && (
                                     <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -275,7 +275,7 @@ export default function VolunteerForgotPasswordPage() {
                         <div className="mt-10 text-center">
                             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">
                                 Remember your password?{' '}
-                                <Link href="/login/volunteer" className="text-emerald-600 hover:text-emerald-700 transition-colors border-b-2 border-transparent hover:border-emerald-600 pb-0.5 font-black">
+                                <Link href="/login/admin" className="text-purple-600 hover:text-purple-700 transition-colors border-b-2 border-transparent hover:border-purple-600 pb-0.5 font-black">
                                     Back to Login
                                 </Link>
                             </p>
