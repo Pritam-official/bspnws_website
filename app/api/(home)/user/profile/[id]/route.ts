@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export async function GET(
     req: Request,
@@ -40,7 +41,20 @@ export async function PUT(
         if (lastName) updateData.lastName = lastName;
         if (phone) updateData.phone = phone;
         if (address) updateData.address = address;
-        if (profilePic) updateData.profilePic = profilePic;
+        
+        if (profilePic) {
+            if (profilePic.startsWith("data:")) {
+                try {
+                    const cloudinaryUrl = await uploadToCloudinary(profilePic, "volunteer_profiles");
+                    updateData.profilePic = cloudinaryUrl;
+                } catch (err: any) {
+                    console.error("Cloudinary upload failed for user profile update. Saving Base64 fallback.", err);
+                    updateData.profilePic = profilePic;
+                }
+            } else {
+                updateData.profilePic = profilePic;
+            }
+        }
 
         const updatedUser = await User.findByIdAndUpdate(
             id,

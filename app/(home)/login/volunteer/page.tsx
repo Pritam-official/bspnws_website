@@ -49,7 +49,7 @@ export default function VolunteerLoginPage() {
       localStorage.setItem('volunteer_data', JSON.stringify({
         ...data.user,
         name: `${data.user.firstName} ${data.user.lastName}`,
-        profileImage: '/logo.jpg',
+        profileImage: data.user.profilePic || '/logo.jpg',
         signupDate: new Date().toLocaleDateString('en-GB') // Mock for display
       }));
 

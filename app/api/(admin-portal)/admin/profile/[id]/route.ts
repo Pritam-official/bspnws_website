@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Admin from "@/models/Admin";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export async function GET(
     req: Request,
@@ -32,8 +33,8 @@ export async function PUT(
         const { id } = await params;
         const body = await req.json();
 
-        // Allow updating core profile fields including phone and membershipCode for admins
-        const { firstName, lastName, email, phone, membershipCode } = body;
+        // Allow updating core profile fields including phone, membershipCode, and profilePic for admins
+        const { firstName, lastName, email, phone, membershipCode, profilePic } = body;
 
         const updateData: any = {};
         if (firstName) updateData.firstName = firstName;
@@ -41,6 +42,20 @@ export async function PUT(
         if (email) updateData.email = email;
         if (phone) updateData.phone = phone;
         if (membershipCode) updateData.membershipCode = membershipCode;
+
+        if (profilePic) {
+            if (profilePic.startsWith("data:")) {
+                try {
+                    const cloudinaryUrl = await uploadToCloudinary(profilePic, "admin_profiles");
+                    updateData.profilePic = cloudinaryUrl;
+                } catch (err: any) {
+                    console.error("Cloudinary upload failed for admin profile. Saving Base64 fallback.", err);
+                    updateData.profilePic = profilePic;
+                }
+            } else {
+                updateData.profilePic = profilePic;
+            }
+        }
 
         const updatedAdmin = await Admin.findByIdAndUpdate(
             id,

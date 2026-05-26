@@ -139,7 +139,7 @@ export default function AboutPage() {
       id: "1",
       title: "Baristha Vandana",
       icon: Heart,
-      image: "/baristha.jpg",
+      image: "/home-bg.jpg",
       desc: "A dedicated initiative supporting elderly individuals from underprivileged backgrounds.",
       activities: ["Essential food supplies", "Clothing and basic necessities", "Regular health check-ups"],
       objective: "To ensure dignity, care, and basic living support for senior citizens lacking family or financial support.",
@@ -256,8 +256,7 @@ export default function AboutPage() {
               </h1>
 
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
-                Burdwan Sadar Pyara Nutrition Welfare Society (BSPNWS) is a grassroots NGO based in Purba Bardhaman,
-                West Bengal, dedicated to social justice and holistic community development.
+                Burdwan Sadar Pyara Nutrition Welfare Society (BSPNWS), established in 2000, is a grassroots NGO based in Purba Bardhaman, West Bengal, dedicated to social justice and holistic community development.
               </p>
 
               <div className="bg-white p-5 rounded-xl shadow-lg border-l-4 border-primary inline-block mx-auto lg:mx-0">

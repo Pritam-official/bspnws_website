@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
       localStorage.setItem('admin_data', JSON.stringify({
         ...data.user,
         name: `${data.user.firstName} ${data.user.lastName}`,
-        profileImage: '/logo.jpg',
+        profileImage: data.user.profilePic || '/logo.jpg',
         role: 'admin',
         signupDate: new Date().toLocaleDateString('en-GB')
       }));

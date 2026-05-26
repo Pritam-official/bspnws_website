@@ -38,6 +38,7 @@ export async function POST(req: Request) {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 role: user.role,
+                profilePic: user.profilePic,
             },
         }, { status: 200 });
 

@@ -18,11 +18,50 @@ const Footer = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Footer contact form submitted:", formData);
-        alert("Thank you for your message! We will get back to you soon.");
-        setFormData({ name: "", email: "", company: "", subject: "", message: "" });
+        if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            // Append company name to message if provided
+            let messageContent = formData.message;
+            if (formData.company) {
+                messageContent = `[Company / Organization: ${formData.company}]\n\n${formData.message}`;
+            }
+
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    subject: formData.subject,
+                    message: messageContent,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert(data.message || "Thank you for your message! We will get back to you soon.");
+                setFormData({ name: "", email: "", company: "", subject: "", message: "" });
+            } else {
+                alert(`Failed to send message: ${data.error || "Please try again."}`);
+            }
+        } catch (error) {
+            console.error("Footer message submission failed:", error);
+            alert("An error occurred while sending your message. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const projects = [
@@ -40,9 +79,11 @@ const Footer = () => {
         { name: "About us", href: "/about" },
         { name: "Notice", href: "/notice" },
         { name: "Our Volunteers", href: "/volunteers/our" },
-        { name: "Our Materials", href: "/our-materials" },
+        { name: "Our Handmade Materials", href: "/our-handmade-materials" },
         { name: "Contact us", href: "/contact" },
         { name: "Help us", href: "/help" },
+        { name: "Privacy Policy", href: "/privacy" },
+        { name: "Terms of Service", href: "/terms" },
     ];
 
     return (
@@ -208,9 +249,10 @@ const Footer = () => {
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-emerald-900/20 active:scale-[0.98]"
+                            disabled={isSubmitting}
+                            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-emerald-900/20 active:scale-[0.98] disabled:opacity-50"
                         >
-                            Send message
+                            {isSubmitting ? "Sending..." : "Send message"}
                         </button>
                     </form>
                 </div>

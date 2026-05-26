@@ -14,6 +14,7 @@ const navLinks = [
     label: "About",
     children: [
       { label: "About Us", href: "/about" },
+      { label: "Board of Directors", href: "/about/board-of-directors" },
       { label: "Officers", href: "/officers" },
     ],
   },
@@ -45,7 +46,7 @@ const navLinks = [
       { label: "Annual Reports", href: "/notice/annual-reports" },
     ],
   },
-  { label: "Our Materials", href: "/our-materials" },
+  { label: "Our Handmade Materials", href: "/our-handmade-materials" },
   { label: "Help Us", href: "/help", highlight: true },
 ];
 

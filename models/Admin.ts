@@ -31,6 +31,9 @@ const AdminSchema = new Schema(
             type: String,
             default: "admin",
         },
+        profilePic: {
+            type: String,
+        },
     },
     { timestamps: true }
 );

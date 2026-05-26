@@ -66,6 +66,7 @@ export default function AdminEditProfilePage() {
                             const finalData = {
                                 ...dbData,
                                 name: `${dbData.firstName} ${dbData.lastName}`,
+                                profileImage: dbData.profilePic || parsed.profileImage || "/logo.jpg",
                                 joinDate: joinedDate,
                                 lastActive: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                             };
@@ -73,7 +74,10 @@ export default function AdminEditProfilePage() {
                             // Sync localStorage
                             localStorage.setItem('admin_data', JSON.stringify(finalData));
                         } else {
-                            setAdminData(parsed);
+                            setAdminData({
+                                ...parsed,
+                                profileImage: parsed.profilePic || parsed.profileImage || "/logo.jpg"
+                            });
                         }
                     } catch (error) {
                         console.error("Failed to fetch admin profile:", error);
@@ -151,7 +155,8 @@ export default function AdminEditProfilePage() {
                     lastName: adminData.lastName,
                     email: adminData.email,
                     phone: adminData.phone,
-                    membershipCode: adminData.membershipCode
+                    membershipCode: adminData.membershipCode,
+                    profilePic: adminData.profileImage
                 })
             });
 
@@ -161,6 +166,7 @@ export default function AdminEditProfilePage() {
                     ...adminData,
                     ...updatedFromDb,
                     name: `${adminData.firstName} ${adminData.lastName}`,
+                    profileImage: updatedFromDb.profilePic || adminData.profileImage || "/logo.jpg",
                     lastActive: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                 };
                 localStorage.setItem('admin_data', JSON.stringify(updated));

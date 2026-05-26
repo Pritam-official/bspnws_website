@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Officer from "@/models/Officer";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 // GET all officers
 export async function GET() {
@@ -21,6 +22,16 @@ export async function POST(req: Request) {
         
         if (!data.name || !data.designation || !data.joiningDate) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        // Upload to Cloudinary if image is provided as Base64 data URI
+        if (data.image && data.image.startsWith("data:")) {
+            try {
+                const cloudinaryUrl = await uploadToCloudinary(data.image, "officers");
+                data.image = cloudinaryUrl;
+            } catch (err: any) {
+                console.error("Cloudinary upload failed for Officer. Falling back to original payload.", err);
+            }
         }
 
         const newOfficer = await Officer.create(data);

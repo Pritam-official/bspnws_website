@@ -9,20 +9,74 @@ export default function ContactPage() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        phone: "",
         subject: "",
         message: "",
     });
+    const [screenshotBase64, setScreenshotBase64] = useState("");
+    const [screenshotPreview, setScreenshotPreview] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64 = reader.result as string;
+                setScreenshotBase64(base64);
+                setScreenshotPreview(base64);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle form submission logic here
-        console.log("Form submitted:", formData);
-        alert("Thank you for your message! We will get back to you soon.");
+        if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    screenshot: screenshotBase64,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert(data.message || "Thank you for your message! We will get back to you soon.");
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    subject: "",
+                    message: "",
+                });
+                setScreenshotBase64("");
+                setScreenshotPreview("");
+            } else {
+                alert(`Failed to send message: ${data.error || "Please try again."}`);
+            }
+        } catch (error) {
+            console.error("Contact form API submission failed:", error);
+            alert("An error occurred while sending your message. Please check your connection and try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -53,9 +107,7 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900 text-lg mb-1">Visit Us</h3>
-                                    <p className="text-gray-600">Burdwan Sadar Pyara Nutrition Welfare Society,<br />3 No Shankari Pukur
-                                        PO. Sripally, East
-                                        Burdwan, Pin-713103 W.B   India</p>
+                                    <p className="text-gray-600">Burdwan Sadar Pyara Nutrition Welfare Society,<br />3 No Shankari Pukur PO. Sripally, East Burdwan, Pin-713103 W.B India</p>
                                 </div>
                             </div>
 
@@ -92,7 +144,7 @@ export default function ContactPage() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label htmlFor="name" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Your Name</label>
+                                    <label htmlFor="name" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Your Name*</label>
                                     <input
                                         type="text"
                                         id="name"
@@ -105,7 +157,7 @@ export default function ContactPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label htmlFor="email" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Your Email</label>
+                                    <label htmlFor="email" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Your Email*</label>
                                     <input
                                         type="email"
                                         id="email"
@@ -119,25 +171,40 @@ export default function ContactPage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <label htmlFor="subject" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Subject</label>
-                                <select
-                                    id="subject"
-                                    name="subject"
-                                    value={formData.subject}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-2 border-gray-100 focus:border-primary focus:bg-white outline-none transition-all font-medium text-gray-900 appearance-none"
-                                >
-                                    <option value="" disabled>Select a topic</option>
-                                    <option value="general">General Inquiry</option>
-                                    <option value="volunteer">Volunteering</option>
-                                    <option value="donation">Donations</option>
-
-                                </select>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label htmlFor="phone" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Phone Number</label>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border-2 border-gray-100 focus:border-primary focus:bg-white outline-none transition-all font-medium text-gray-900"
+                                        placeholder="(+91) 98765 43210"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="subject" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Subject*</label>
+                                    <select
+                                        id="subject"
+                                        name="subject"
+                                        value={formData.subject}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border-2 border-gray-100 focus:border-primary focus:bg-white outline-none transition-all font-medium text-gray-900 appearance-none"
+                                    >
+                                        <option value="" disabled>Select a topic</option>
+                                        <option value="General Inquiry">General Inquiry</option>
+                                        <option value="Volunteering">Volunteering</option>
+                                        <option value="Donations">Donations</option>
+                                        <option value="Handmade Materials">Handmade Materials</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label htmlFor="message" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Message</label>
+                                <label htmlFor="message" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Message*</label>
                                 <textarea
                                     id="message"
                                     name="message"
@@ -150,11 +217,39 @@ export default function ContactPage() {
                                 ></textarea>
                             </div>
 
+                            <div className="space-y-2">
+                                <label htmlFor="screenshot" className="text-sm font-bold text-gray-700 uppercase tracking-wide">Upload Screenshot (Optional)</label>
+                                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                                    <div className="flex-1 w-full">
+                                        <input
+                                            type="file"
+                                            id="screenshot"
+                                            accept="image/*"
+                                            onChange={handleScreenshotChange}
+                                            className="w-full px-4 py-3 rounded-xl bg-gray-50 border-2 border-gray-100 focus:border-primary focus:bg-white outline-none transition-all font-medium text-gray-900 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer"
+                                        />
+                                    </div>
+                                    {screenshotPreview && (
+                                        <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-200 shrink-0 shadow-md">
+                                            <img src={screenshotPreview} alt="Screenshot Preview" className="w-full h-full object-cover" />
+                                            <button 
+                                                type="button" 
+                                                onClick={() => { setScreenshotBase64(""); setScreenshotPreview(""); }}
+                                                className="absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-md transition-all active:scale-90"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
                             <button
                                 type="submit"
-                                className="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-600 hover:shadow-primary/30 transition-all hover:-translate-y-1"
+                                disabled={isSubmitting}
+                                className="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-600 hover:shadow-primary/30 transition-all hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
                             >
-                                Send Message
+                                {isSubmitting ? "Sending Message..." : "Send Message"}
                             </button>
                         </form>
                     </div>

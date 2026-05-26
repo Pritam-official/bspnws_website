@@ -1,71 +1,143 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const dummyRecentlyHeld = [
-    {
-        id: 1,
-        image: "/logo.jpg",
-        title: "Tree Plantation 2024",
-        date: "2024-03-15",
-        venue: "Burdwan University Campus",
-        description: "Successfully planted 500+ saplings with the help of student volunteers across three zones of the campus."
-    },
-    {
-        id: 2,
-        image: "/logo.jpg",
-        title: "Health Camp Q1",
-        date: "2024-02-10",
-        venue: "Sadar Hospital Ground",
-        description: "Free health checkup and medicine distribution for 200+ local residents in collaboration with district health officials."
-    },
-    {
-        id: 3,
-        image: "/logo.jpg",
-        title: "Annual Cultural Fest",
-        date: "2024-01-22",
-        venue: "Town Hall Auditorium",
-        description: "A vibrant celebration of art, music, and culture attended by over 800 participants from across the district."
-    },
-];
-
-function formatDate(dateStr: string) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+interface Programme {
+    _id: string;
+    title: string;
+    shortDescription: string;
+    fullDescription: string;
+    date: string;
+    location: string;
+    image?: string;
+    type: "recently-held" | "upcoming";
 }
 
-export default function RecentlyHeldPage() {
+function formatDate(dateStr: string) {
+    try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch {
+        return dateStr;
+    }
+}
+
+export default function RecentlyHeldAdminPage() {
+    const [programmes, setProgrammes] = useState<Programme[]>([]);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         title: '',
         date: '',
-        venue: '',
-        description: '',
-        images: [] as string[],
+        location: '',
+        shortDescription: '',
+        fullDescription: '',
+        image: '',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editId, setEditId] = useState<string | null>(null);
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const files = Array.from(e.target.files);
-            const promises = files.map(file => new Promise<string>((resolve) => {
-                const r = new FileReader();
-                r.onloadend = () => resolve(r.result as string);
-                r.readAsDataURL(file);
-            }));
-            const base64 = await Promise.all(promises);
-            setFormData(prev => ({ ...prev, images: [...prev.images, ...base64] }));
+    useEffect(() => {
+        fetchProgrammes();
+    }, []);
+
+    const fetchProgrammes = async () => {
+        try {
+            const res = await fetch('/api/admin/programmes?type=recently-held');
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setProgrammes(data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch recently held programmes:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({ ...prev, image: reader.result as string }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const { title, date, location, shortDescription, fullDescription } = formData;
+        if (!title || !date || !location || !shortDescription || !fullDescription) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
         setIsSubmitting(true);
-        setTimeout(() => {
+        try {
+            const method = editId ? 'PUT' : 'POST';
+            const url = editId ? `/api/admin/programmes/${editId}` : '/api/admin/programmes';
+
+            const payload = {
+                ...formData,
+                type: 'recently-held'
+            };
+
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+                alert(editId ? 'Programme updated successfully!' : 'Programme added successfully!');
+                setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '' });
+                setEditId(null);
+                fetchProgrammes();
+            } else {
+                const errData = await res.json();
+                alert(`Error: ${errData.error || 'Failed to submit'}`);
+            }
+        } catch (error) {
+            console.error("Failed to submit programme:", error);
+            alert("An error occurred. Please try again.");
+        } finally {
             setIsSubmitting(false);
-            setFormData({ title: '', date: '', venue: '', description: '', images: [] });
-            alert('Programme added successfully!');
-        }, 800);
+        }
+    };
+
+    const handleEdit = (prog: Programme) => {
+        setEditId(prog._id);
+        setFormData({
+            title: prog.title,
+            date: prog.date,
+            location: prog.location,
+            shortDescription: prog.shortDescription,
+            fullDescription: prog.fullDescription,
+            image: prog.image || ''
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this programme?")) return;
+
+        try {
+            const res = await fetch(`/api/admin/programmes/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (res.ok) {
+                fetchProgrammes();
+                alert("Programme deleted successfully!");
+            } else {
+                alert("Failed to delete programme");
+            }
+        } catch (error) {
+            console.error("Failed to delete programme:", error);
+        }
     };
 
     return (
@@ -205,8 +277,7 @@ export default function RecentlyHeldPage() {
                     box-shadow: 0 0 0 3px rgba(176,108,64,0.08);
                     background: #fff;
                 }
-                .rhp-input[type="date"] { color: #5c5146; }
-                .rhp-textarea { resize: none; height: 120px; }
+                .rhp-textarea { resize: none; }
                 .rhp-file-wrapper input[type="file"] {
                     width: 100%;
                     background: #faf8f5;
@@ -254,18 +325,6 @@ export default function RecentlyHeldPage() {
                     flex-shrink: 0;
                 }
                 .rhp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-                .rhp-thumb-remove {
-                    position: absolute;
-                    top: 3px; right: 3px;
-                    background: rgba(255,255,255,0.92);
-                    border: none;
-                    border-radius: 50%;
-                    width: 18px; height: 18px;
-                    display: flex; align-items: center; justify-content: center;
-                    cursor: pointer;
-                    color: #c0392b;
-                    padding: 0;
-                }
 
                 /* Submit */
                 .rhp-submit {
@@ -345,13 +404,6 @@ export default function RecentlyHeldPage() {
                     display: block;
                 }
                 .prog-card:hover .prog-image img { transform: scale(1.05); }
-                .prog-no-image {
-                    width: 100%; height: 100%;
-                    display: flex; flex-direction: column;
-                    align-items: center; justify-content: center;
-                    color: #c4bcb0; gap: 8px;
-                }
-                .prog-no-image span { font-size: 12px; font-weight: 500; letter-spacing: 0.05em; }
 
                 /* Date badge on image */
                 .prog-date-overlay {
@@ -429,30 +481,6 @@ export default function RecentlyHeldPage() {
                     -webkit-box-orient: vertical;
                     overflow: hidden;
                 }
-                .prog-footer {
-                    margin-top: auto;
-                    padding-top: 14px;
-                    border-top: 1px solid #ede8e1;
-                }
-                .prog-add-image-btn {
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 7px;
-                    background: #f9ede3;
-                    border: 1.5px dashed #d4b89a;
-                    border-radius: 10px;
-                    padding: 10px 0;
-                    font-size: 11px;
-                    font-weight: 700;
-                    letter-spacing: 0.08em;
-                    text-transform: uppercase;
-                    color: #b06c40;
-                    cursor: pointer;
-                    transition: background 0.15s, border-color 0.15s;
-                }
-                .prog-add-image-btn:hover { background: #f0ddd0; border-color: #c09070; }
 
                 /* Empty */
                 .rhp-empty {
@@ -482,14 +510,14 @@ export default function RecentlyHeldPage() {
                         <p className="rhp-subtitle">Manage and view all completed society programmes</p>
                     </div>
                     <div className="rhp-count-badge">
-                        <span>{dummyRecentlyHeld.length}</span>
-                        {dummyRecentlyHeld.length === 1 ? 'Programme' : 'Programmes'}
+                        <span>{programmes.length}</span>
+                        {programmes.length === 1 ? 'Programme' : 'Programmes'}
                     </div>
                 </div>
 
-                {/* ── Add Form ── */}
+                {/* ── Add/Edit Form ── */}
                 <div className="rhp-form-card">
-                    <div className="section-label">Add New Programme</div>
+                    <div className="section-label">{editId ? 'Edit Programme' : 'Add New Programme'}</div>
                     <form onSubmit={handleSubmit}>
                         <div className="rhp-form-grid">
 
@@ -517,55 +545,57 @@ export default function RecentlyHeldPage() {
                             </div>
 
                             <div className="rhp-form-group">
-                                <label className="rhp-label">Venue *</label>
+                                <label className="rhp-label">Venue/Location *</label>
                                 <input
                                     type="text"
                                     required
-                                    value={formData.venue}
-                                    onChange={e => setFormData({ ...formData, venue: e.target.value })}
+                                    value={formData.location}
+                                    onChange={e => setFormData({ ...formData, location: e.target.value })}
                                     className="rhp-input"
                                     placeholder="e.g. Burdwan University Campus"
                                 />
                             </div>
 
                             <div className="rhp-form-group">
-                                <label className="rhp-label">Upload Images</label>
+                                <label className="rhp-label">Upload Featured Image (Cloudinary Auto-Upload)</label>
                                 <div className="rhp-file-wrapper">
-                                    <input type="file" multiple accept="image/*" onChange={handleFileChange} />
+                                    <input type="file" accept="image/*" onChange={handleFileChange} />
                                 </div>
                             </div>
 
                             <div className="rhp-form-group full">
-                                <label className="rhp-label">Description *</label>
-                                <textarea
+                                <label className="rhp-label">Short Description * (For listings preview)</label>
+                                <input
+                                    type="text"
                                     required
-                                    value={formData.description}
-                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    className="rhp-textarea"
-                                    placeholder="Describe the programme — outcomes, participation, highlights..."
+                                    value={formData.shortDescription}
+                                    onChange={e => setFormData({ ...formData, shortDescription: e.target.value })}
+                                    className="rhp-input"
+                                    placeholder="Brief single-sentence overview of the event"
                                 />
                             </div>
 
-                            {formData.images.length > 0 && (
+                            <div className="rhp-form-group full">
+                                <label className="rhp-label">Full Description * (Supports paragraphs)</label>
+                                <textarea
+                                    required
+                                    value={formData.fullDescription}
+                                    onChange={e => setFormData({ ...formData, fullDescription: e.target.value })}
+                                    className="rhp-textarea"
+                                    placeholder="Describe the full programme — outcomes, key accomplishments, participation..."
+                                />
+                            </div>
+
+                            {formData.image && (
                                 <div className="rhp-previews">
-                                    {formData.images.map((img, idx) => (
-                                        <div key={idx} className="rhp-thumb">
-                                            <img src={img} alt="Preview" />
-                                            <button
-                                                type="button"
-                                                className="rhp-thumb-remove"
-                                                onClick={() => setFormData(p => ({ ...p, images: p.images.filter((_, i) => i !== idx) }))}
-                                            >
-                                                <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    ))}
+                                    <span className="rhp-label block w-full">Cover Preview</span>
+                                    <div className="rhp-thumb">
+                                        <img src={formData.image} alt="Preview" />
+                                    </div>
                                 </div>
                             )}
 
-                            <div style={{ gridColumn: '1 / -1' }}>
+                            <div style={{ gridColumn: '1 / -1' }} className="flex gap-4">
                                 <button type="submit" disabled={isSubmitting} className="rhp-submit">
                                     {isSubmitting ? (
                                         <><span className="rhp-spinner" /> Submitting…</>
@@ -574,10 +604,22 @@ export default function RecentlyHeldPage() {
                                             <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                                             </svg>
-                                            Submit Programme
+                                            {editId ? 'Update Programme' : 'Submit Programme'}
                                         </>
                                     )}
                                 </button>
+                                {editId && (
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            setEditId(null);
+                                            setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '' });
+                                        }}
+                                        className="bg-gray-100 text-gray-600 border border-gray-200 rounded-xl px-6 py-3 font-semibold uppercase tracking-wider hover:bg-gray-200 transition-all text-xs"
+                                    >
+                                        Cancel Edit
+                                    </button>
+                                )}
                             </div>
 
                         </div>
@@ -586,21 +628,31 @@ export default function RecentlyHeldPage() {
 
                 {/* ── All Programmes ── */}
                 <div className="rhp-list-card">
-                    <div className="section-label">All Programmes</div>
+                    <div className="section-label">All Recently Held Programmes</div>
 
-                    {dummyRecentlyHeld.length === 0 ? (
+                    {loading ? (
+                        <div className="text-center py-12">
+                            <span className="text-sm font-bold text-pink-500 animate-pulse">Loading programmes...</span>
+                        </div>
+                    ) : programmes.length === 0 ? (
                         <div className="rhp-empty">
                             <div className="rhp-empty-icon">🗂️</div>
                             <p>No programmes have been added yet.</p>
                         </div>
                     ) : (
                         <div className="rhp-grid">
-                            {dummyRecentlyHeld.map(prog => (
-                                <div key={prog.id} className="prog-card">
+                            {programmes.map(prog => (
+                                <div key={prog._id} className="prog-card">
 
                                     {/* Image */}
-                                    <div className="prog-image">
-                                        <Image src={prog.image} alt={prog.title} fill style={{ objectFit: 'cover' }} />
+                                    <div className="prog-image bg-slate-200">
+                                        {prog.image ? (
+                                            <img src={prog.image} alt={prog.title} />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                                <span>📸 No Image</span>
+                                            </div>
+                                        )}
                                         <div className="prog-date-overlay">
                                             <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -614,12 +666,12 @@ export default function RecentlyHeldPage() {
                                         <div className="prog-header">
                                             <h3 className="prog-title">{prog.title}</h3>
                                             <div className="prog-actions">
-                                                <button className="prog-action-btn edit" title="Edit">
+                                                <button onClick={() => handleEdit(prog)} className="prog-action-btn edit" title="Edit">
                                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                     </svg>
                                                 </button>
-                                                <button className="prog-action-btn" title="Delete">
+                                                <button onClick={() => handleDelete(prog._id)} className="prog-action-btn" title="Delete">
                                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
@@ -632,19 +684,10 @@ export default function RecentlyHeldPage() {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            {prog.venue}
+                                            {prog.location}
                                         </div>
 
-                                        <p className="prog-desc">{prog.description}</p>
-
-                                        <div className="prog-footer">
-                                            <button className="prog-add-image-btn">
-                                                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                                </svg>
-                                                Add Images to this Event
-                                            </button>
-                                        </div>
+                                        <p className="prog-desc">{prog.shortDescription}</p>
                                     </div>
 
                                 </div>
