@@ -26,6 +26,11 @@ const VolunteerSchema = new Schema(
             type: Date,
             default: Date.now,
         },
+        role: {
+            type: String,
+            enum: ["volunteer", "staff"],
+            default: "volunteer",
+        },
     },
     { timestamps: true }
 );

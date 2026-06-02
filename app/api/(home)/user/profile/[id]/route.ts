@@ -59,7 +59,7 @@ export async function PUT(
         const updatedUser = await User.findByIdAndUpdate(
             id,
             { $set: updateData },
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         ).select("-password");
 
         if (!updatedUser) {

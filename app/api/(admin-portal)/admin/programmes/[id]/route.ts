@@ -38,7 +38,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             }
         }
 
-        const updatedProgramme = await Programme.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+        const updatedProgramme = await Programme.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
 
         if (!updatedProgramme) {
             return NextResponse.json({ error: "Programme not found" }, { status: 404 });

@@ -15,7 +15,7 @@ interface Notice {
     createdAt: string;
 }
 
-export default function NoticePage() {
+export default function StaffNoticePage() {
     const [notices, setNotices] = useState<Notice[]>([]);
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,7 +27,7 @@ export default function NoticePage() {
         file: '', // Google Drive Link
         fileType: 'None' as 'PDF' | 'Image' | 'None',
         date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-        targetAudience: 'all' as 'all' | 'volunteer' | 'staff',
+        targetAudience: 'staff' as 'all' | 'volunteer' | 'staff', // default to staff
         status: 'published' as 'draft' | 'published'
     });
 
@@ -40,10 +40,13 @@ export default function NoticePage() {
             const res = await fetch('/api/admin/notices');
             const data = await res.json();
             if (Array.isArray(data)) {
-                setNotices(data);
+                // Filter notices targeted specifically to 'staff' (or optionally show 'all' as well, but 'staff' is specific to Staff Notices)
+                // Let's filter for targetAudience === 'staff' to make this page highly focused
+                const staffOnlyNotices = data.filter((notice: Notice) => notice.targetAudience === 'staff');
+                setNotices(staffOnlyNotices);
             }
         } catch (error) {
-            console.error("Failed to fetch notices:", error);
+            console.error("Failed to fetch staff notices:", error);
         } finally {
             setLoading(false);
         }
@@ -57,7 +60,7 @@ export default function NoticePage() {
             file: notice.file || '',
             fileType: notice.fileType || 'None',
             date: notice.date || new Date().toISOString().split('T')[0],
-            targetAudience: notice.targetAudience || 'all',
+            targetAudience: notice.targetAudience || 'staff',
             status: notice.status || 'published'
         });
         // Scroll smoothly to form
@@ -76,7 +79,7 @@ export default function NoticePage() {
             file: '', 
             fileType: 'None', 
             date: new Date().toISOString().split('T')[0],
-            targetAudience: 'all',
+            targetAudience: 'staff',
             status: 'published'
         });
     };
@@ -103,13 +106,13 @@ export default function NoticePage() {
                 resetForm();
                 setEditingId(null);
                 fetchNotices();
-                alert(editingId ? 'Notice updated successfully!' : 'Notice broadcasted successfully!');
+                alert(editingId ? 'Staff notice updated successfully!' : 'Staff notice broadcasted successfully!');
             } else {
                 const error = await res.json();
                 alert(`Error: ${error.error}`);
             }
         } catch (error) {
-            console.error("Failed to save notice:", error);
+            console.error("Failed to save staff notice:", error);
             alert("An error occurred. Please try again.");
         } finally {
             setIsSubmitting(false);
@@ -143,7 +146,7 @@ export default function NoticePage() {
             const res = await fetch(`/api/admin/notices?id=${id}`, { method: 'DELETE' });
             if (res.ok) {
                 fetchNotices();
-                alert('Notice deleted successfully!');
+                alert('Staff notice deleted successfully!');
                 if (editingId === id) {
                     handleCancelEdit();
                 }
@@ -166,10 +169,10 @@ export default function NoticePage() {
             {/* Page Header */}
             <div className="mb-8">
                 <h1 className="text-3xl font-black text-gray-900 tracking-tight uppercase">
-                    Notice <span className="text-pink-600">Management</span>
+                    Staff Notice <span className="text-pink-600">Management</span>
                 </h1>
                 <p className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">
-                    Create, edit, publish, and delete notices with optional attachments
+                    Create, edit, publish, and delete notices specifically for staff members
                 </p>
             </div>
 
@@ -180,7 +183,7 @@ export default function NoticePage() {
                         <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center text-white">
                             {editingId ? <Edit3 className="w-4 h-4 text-white" /> : <Plus className="w-4 h-4 text-white" />}
                         </div>
-                        {editingId ? 'Edit Notice' : 'Broadcast New Notice'}
+                        {editingId ? 'Edit Staff Notice' : 'Broadcast New Staff Notice'}
                     </span>
                     {editingId && (
                         <button 
@@ -216,7 +219,6 @@ export default function NoticePage() {
                                     onChange={(e) => setFormData(prev => ({ 
                                         ...prev, 
                                         file: e.target.value,
-                                        // Auto select type if a link is typed and type is 'None'
                                         fileType: prev.fileType === 'None' && e.target.value ? 'PDF' : prev.fileType
                                     }))}
                                     placeholder="https://drive.google.com/file/d/..."
@@ -268,9 +270,8 @@ export default function NoticePage() {
                                     onChange={(e) => setFormData(prev => ({ ...prev, targetAudience: e.target.value as any }))}
                                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all text-gray-700 h-[48px]"
                                 >
-                                    <option value="all">All Users</option>
-                                    <option value="volunteer">Volunteers Only</option>
                                     <option value="staff">Staff Only</option>
+                                    <option value="all">All Users</option>
                                 </select>
 
                                 <select
@@ -305,7 +306,7 @@ export default function NoticePage() {
                                 {isSubmitting ? 'Saving...' : (
                                     <>
                                         <Send className="w-4 h-4" />
-                                        {editingId ? 'Save Changes' : 'Broadcast Notice'}
+                                        {editingId ? 'Save Changes' : 'Broadcast Staff Notice'}
                                     </>
                                 )}
                             </button>
@@ -317,7 +318,7 @@ export default function NoticePage() {
             {/* List */}
             <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-xl shadow-gray-100/40">
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center text-[#111827]">
-                    <h2 className="text-sm font-black uppercase tracking-widest">Current Bulletins</h2>
+                    <h2 className="text-sm font-black uppercase tracking-widest">Staff Bulletins</h2>
                     {!loading && <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{notices.length} Announcements</span>}
                 </div>
                 <div className="divide-y divide-gray-50">
@@ -326,7 +327,7 @@ export default function NoticePage() {
                             <Loader2 className="w-4 h-4 animate-spin text-pink-600" /> Loading notices...
                         </div>
                     ) : notices.length === 0 ? (
-                        <div className="p-12 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">No active notices found.</div>
+                        <div className="p-12 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">No active staff notices found.</div>
                     ) : (
                         notices.map((notice) => (
                             <div key={notice._id} className="flex flex-col md:flex-row md:items-center justify-between px-6 py-5 gap-4 hover:bg-gray-50/50 transition-colors">
@@ -365,13 +366,12 @@ export default function NoticePage() {
                                             </span>
                                             <span className="text-[10px] font-bold text-gray-300">•</span>
                                             <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-600 text-[9px] font-black uppercase tracking-wider">
-                                                To: {notice.targetAudience || 'all'}
+                                                To: {notice.targetAudience || 'staff'}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2 self-end md:self-auto shrink-0">
-                                    {/* Inline Publish status toggler */}
                                     <button
                                         onClick={() => togglePublishStatus(notice)}
                                         className={`p-2 rounded-lg transition-colors flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider ${
@@ -384,7 +384,6 @@ export default function NoticePage() {
                                         {notice.status === 'published' ? <ToggleRight className="w-6 h-6 text-green-500" /> : <ToggleLeft className="w-6 h-6 text-gray-300" />}
                                     </button>
 
-                                    {/* View Link if exists */}
                                     {notice.file && (
                                         <a 
                                             href={notice.file} 
@@ -397,7 +396,6 @@ export default function NoticePage() {
                                         </a>
                                     )}
 
-                                    {/* Edit notice */}
                                     <button 
                                         onClick={() => handleEdit(notice)}
                                         className="p-2 hover:bg-pink-50 rounded-lg text-gray-400 hover:text-pink-600 transition-colors" 
@@ -406,7 +404,6 @@ export default function NoticePage() {
                                         <Edit3 className="w-4.5 h-4.5" />
                                     </button>
 
-                                    {/* Delete notice */}
                                     <button 
                                         onClick={() => handleDelete(notice._id)}
                                         className="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-650 transition-colors" 

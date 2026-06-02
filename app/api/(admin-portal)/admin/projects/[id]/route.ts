@@ -37,7 +37,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                 images: data.images || [],
                 pdf: data.pdf || null
             },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!updatedProject) {

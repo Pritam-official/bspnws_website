@@ -20,7 +20,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             }
         }
 
-        const updatedMaterial = await HandmadeMaterial.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+        const updatedMaterial = await HandmadeMaterial.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
 
         if (!updatedMaterial) {
             return NextResponse.json({ error: "Material not found" }, { status: 404 });

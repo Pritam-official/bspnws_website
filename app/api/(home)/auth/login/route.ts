@@ -3,13 +3,22 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import Admin from "@/models/Admin";
 import bcrypt from "bcryptjs";
+import { verifyCaptcha } from "@/lib/captcha";
 
 export async function POST(req: Request) {
     try {
-        const { phone, membershipCode, password, role } = await req.json();
+        const { phone, membershipCode, password, role, captchaAnswer, captchaToken } = await req.json();
 
         if (!phone || !membershipCode || !password) {
             return NextResponse.json({ error: "Missing identity or password" }, { status: 400 });
+        }
+
+        if (!captchaAnswer || !captchaToken) {
+            return NextResponse.json({ error: "Captcha is required" }, { status: 400 });
+        }
+
+        if (!verifyCaptcha(captchaToken, captchaAnswer)) {
+            return NextResponse.json({ error: "Incorrect or expired captcha" }, { status: 400 });
         }
 
         await connectDB();

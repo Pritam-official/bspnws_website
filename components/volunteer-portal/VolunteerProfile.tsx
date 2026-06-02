@@ -21,6 +21,7 @@ export default function VolunteerProfile() {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [isSavingImage, setIsSavingImage] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -125,29 +126,50 @@ export default function VolunteerProfile() {
 
     const handleSaveCrop = async () => {
         if (imageSrc && croppedAreaPixels) {
-            const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-            const updatedData = { ...userData!, profileImage: croppedImage };
+            setIsSavingImage(true);
+            try {
+                const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
+                const updatedData = { ...userData!, profileImage: croppedImage };
 
-            const storedData = localStorage.getItem('volunteer_data');
-            if (storedData) {
-                const parsed = JSON.parse(storedData);
-                const userId = parsed.id || parsed._id;
-                if (userId) {
-                    try {
-                        await fetch(`/api/user/profile/${userId}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ profilePic: croppedImage })
-                        });
-                    } catch (error) {
-                        console.error("Error saving cropped image:", error);
+                const storedData = localStorage.getItem('volunteer_data');
+                if (storedData) {
+                    const parsed = JSON.parse(storedData);
+                    const userId = parsed.id || parsed._id;
+                    if (userId) {
+                        try {
+                            await fetch(`/api/user/profile/${userId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ profilePic: croppedImage })
+                            });
+                        } catch (error) {
+                            console.error("Error saving cropped image:", error);
+                        }
                     }
                 }
-            }
 
-            setUserData(updatedData);
-            localStorage.setItem('volunteer_data', JSON.stringify(updatedData));
-            setImageSrc(null);
+                setUserData(updatedData);
+
+                // Merge into existing volunteer_data to preserve session details like 'role'
+                let finalData = { ...updatedData };
+                if (storedData) {
+                    try {
+                        const parsed = JSON.parse(storedData);
+                        finalData = {
+                            ...parsed,
+                            ...updatedData
+                        };
+                    } catch (err) {
+                        console.error("Error merging volunteer_data on crop:", err);
+                    }
+                }
+                localStorage.setItem('volunteer_data', JSON.stringify(finalData));
+                setImageSrc(null);
+            } catch (error) {
+                console.error("Error during crop save:", error);
+            } finally {
+                setIsSavingImage(false);
+            }
         }
     };
 
@@ -184,7 +206,21 @@ export default function VolunteerProfile() {
                 }
             }
 
-            localStorage.setItem('volunteer_data', JSON.stringify(userData));
+            // Merge into existing volunteer_data to preserve session details like 'role'
+            let finalData = { ...userData };
+            if (storedData) {
+                try {
+                    const parsed = JSON.parse(storedData);
+                    finalData = {
+                        ...parsed,
+                        ...userData
+                    };
+                } catch (err) {
+                    console.error("Error merging volunteer_data on profile save:", err);
+                }
+            }
+
+            localStorage.setItem('volunteer_data', JSON.stringify(finalData));
             setIsEditing(false);
             window.location.reload();
         }
@@ -211,15 +247,27 @@ export default function VolunteerProfile() {
                     <div className="flex gap-4 w-full max-w-xl">
                         <button
                             onClick={() => setImageSrc(null)}
-                            className="flex-1 bg-white/10 hover:bg-white/20 text-white py-4 rounded-2xl font-black uppercase tracking-widest transition-all"
+                            disabled={isSavingImage}
+                            className="flex-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 text-white py-4 rounded-2xl font-black uppercase tracking-widest transition-all"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleSaveCrop}
-                            className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-pink-600/20 transition-all"
+                            disabled={isSavingImage}
+                            className="flex-1 bg-pink-600 hover:bg-pink-700 disabled:opacity-75 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-pink-600/20 transition-all flex items-center justify-center gap-2"
                         >
-                            Crop & Save
+                            {isSavingImage ? (
+                                <>
+                                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Saving...
+                                </>
+                            ) : (
+                                'Crop & Save'
+                            )}
                         </button>
                     </div>
                 </div>

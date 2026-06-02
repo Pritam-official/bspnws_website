@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -32,6 +32,29 @@ const navItems = [
     },
 ];
 
+const staffNavItems = [
+    {
+        name: 'Staff Attendance', href: '/volunteers/staff/attendance', icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        )
+    },
+    {
+        name: 'Leave Request', href: '/volunteers/staff/leave', icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        )
+    },
+    {
+        name: 'Payslip', href: '/volunteers/staff/payslip', icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+        )
+    },
+    {
+        name: 'Staff Notice', href: '/volunteers/staff/notice', icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882v13.358a1.76 1.76 0 01-3.417.592l-2.147-6.167a2.405 2.405 0 00-1.712-1.558L1.1 11.111A1.76 1.76 0 011.1 7.778l2.724-.722a2.405 2.405 0 001.712-1.558L7.683 2.1a1.76 1.76 0 013.417.592z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        )
+    },
+];
+
 interface VolunteerSidebarProps {
     isMobileMenuOpen?: boolean;
     setIsMobileMenuOpen?: (isOpen: boolean) => void;
@@ -40,6 +63,23 @@ interface VolunteerSidebarProps {
 export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobileMenuOpen }: VolunteerSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
+    const [isStaff, setIsStaff] = useState(false);
+
+    useEffect(() => {
+        const storedData = localStorage.getItem('volunteer_data');
+        if (storedData) {
+            try {
+                const parsed = JSON.parse(storedData);
+                if (parsed.role === 'staff') {
+                    setIsStaff(true);
+                }
+            } catch (err) {
+                console.error("Error parsing volunteer data in sidebar:", err);
+            }
+        }
+    }, []);
+
+    const activeNavItems = isStaff ? [...navItems, ...staffNavItems] : navItems;
 
     const handleLogout = () => {
         localStorage.removeItem('volunteer_data');
@@ -76,7 +116,7 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                 </div>
                 
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                    {navItems.map((item) => {
+                    {activeNavItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link
@@ -119,7 +159,7 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
             {/* Desktop Sidebar */}
             <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 z-50 flex-col pt-24">
                 <nav className="flex-1 px-4 space-y-2">
-                    {navItems.map((item) => {
+                    {activeNavItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link
@@ -165,8 +205,8 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
             {/* Mobile Bottom Tab Bar - Redesigned */}
             <div className="lg:hidden fixed bottom-6 left-4 right-4 z-[50]">
                 <nav className="bg-white/80 backdrop-blur-2xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.12)] rounded-[2.5rem] px-2 py-2">
-                    <div className="flex items-center justify-around">
-                        {navItems.map((item) => {
+                    <div className="flex items-center justify-around overflow-x-auto gap-1">
+                        {activeNavItems.map((item) => {
                             const isActive = pathname === item.href;
                             return (
                                 <Link

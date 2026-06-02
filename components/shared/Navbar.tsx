@@ -103,8 +103,8 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm sm:text-base lg:text-lg font-black tracking-tighter text-gray-900 leading-none truncate">
-                <span className="hidden sm:inline">Burdawn Sadar Pyara Nutrition</span>
-                <span className="sm:hidden">BSPNWS</span>
+                <span className="hidden 2xl:inline">Burdawn Sadar Pyara Nutrition</span>
+                <span className="2xl:hidden">BSPNWS</span>
               </span>
               <span className="text-[9px] sm:text-[10px] font-bold text-primary uppercase tracking-widest leading-none mt-0.5">
                 Welfare Society
@@ -113,13 +113,13 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center space-x-1 xl:space-x-3 flex-nowrap py-2">
+          <div className="hidden xl:flex items-center space-x-0.5 xl:space-x-1.5 2xl:space-x-3 flex-nowrap py-2">
             {navLinks.map((link) =>
               link.children ? (
                 <div key={link.label} className="relative group py-2">
                   <button
                     onClick={() => toggleDropdown(link.label)}
-                    className={`px-3 flex items-center text-[13px] xl:text-sm font-bold transition-colors whitespace-nowrap ${
+                    className={`px-1.5 xl:px-2.5 flex items-center text-[11px] xl:text-[12px] 2xl:text-sm font-bold transition-colors whitespace-nowrap ${
                       activeDropdown === link.label ? "text-primary" : "text-gray-600 hover:text-primary"
                     }`}
                   >
@@ -150,7 +150,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href!}
-                  className={`px-3 py-2 text-[13px] xl:text-sm font-bold whitespace-nowrap transition-colors ${
+                  className={`px-1.5 xl:px-2.5 py-2 text-[11px] xl:text-[12px] 2xl:text-sm font-bold whitespace-nowrap transition-colors ${
                     link.highlight
                       ? "text-primary font-black hover:scale-105 transition-transform"
                       : pathname === link.href
@@ -165,25 +165,25 @@ export default function Navbar() {
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex-shrink-0 flex items-center gap-2 sm:gap-4">
-            {/* Contact Us — hidden on very small screens */}
+          <div className="flex-shrink-0 flex items-center gap-1.5 sm:gap-4">
+            {/* Contact Us */}
             <Link
               href="/contact"
-              className="hidden sm:inline-flex bg-primary text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold hover:bg-green-600 transition-all shadow-lg shadow-primary/20 text-sm whitespace-nowrap"
+              className="inline-flex bg-primary text-white px-2.5 py-1.5 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold hover:bg-green-600 transition-all shadow-lg shadow-primary/20 text-[9px] sm:text-sm whitespace-nowrap animate-fade-in"
             >
               Contact Us
             </Link>
 
             {/* Login Dropdown */}
-            <div className="relative login-group group hidden sm:block">
-              <button className="flex items-center bg-white/70 backdrop-blur-md border border-gray-100 shadow-xl rounded-2xl px-3 sm:px-5 py-2 sm:py-2.5 hover:bg-white transition-all">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white mr-2 sm:mr-3">
-                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="relative login-group group block">
+              <button className="flex items-center bg-white/70 backdrop-blur-md border border-gray-100 shadow-md sm:shadow-xl rounded-lg sm:rounded-2xl px-2 py-1.5 sm:px-5 sm:py-2.5 hover:bg-white transition-all">
+                <div className="w-5 h-5 sm:w-8 sm:h-8 bg-gray-900 rounded-md sm:rounded-lg flex items-center justify-center text-white mr-1 sm:mr-3">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
                   </svg>
                 </div>
-                <span className="text-sm font-black text-gray-900 uppercase tracking-widest mr-2">Login</span>
-                <svg className="w-4 h-4 text-gray-400 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span className="text-[9px] sm:text-sm font-black text-gray-900 uppercase tracking-wider sm:tracking-widest mr-1 sm:mr-2">Login</span>
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
@@ -220,15 +220,15 @@ export default function Navbar() {
             {/* Hamburger — mobile only */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="xl:hidden flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
               aria-label="Toggle navigation"
             >
               {mobileOpen ? (
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
@@ -240,14 +240,14 @@ export default function Navbar() {
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          className="xl:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Mobile Drawer */}
       <div
-        className={`lg:hidden fixed top-0 right-0 h-full w-[85vw] max-w-[340px] bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+        className={`xl:hidden fixed top-0 right-0 h-full w-[85vw] max-w-[340px] bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -13,8 +13,27 @@ export default function AdminLoginPage() {
   });
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [captcha, setCaptcha] = useState<{ question: string; token: string } | null>(null);
+  const [captchaAnswer, setCaptchaAnswer] = useState('');
 
   const router = useRouter();
+
+  const fetchCaptcha = async () => {
+    try {
+      const res = await fetch('/api/auth/captcha');
+      if (res.ok) {
+        const data = await res.json();
+        setCaptcha(data);
+        setCaptchaAnswer('');
+      }
+    } catch (err) {
+      console.error('Failed to fetch captcha:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,7 +55,12 @@ export default function AdminLoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, role: 'admin' })
+        body: JSON.stringify({ 
+          ...formData, 
+          role: 'admin',
+          captchaAnswer,
+          captchaToken: captcha?.token
+        })
       });
 
       const data = await res.json();
@@ -58,6 +82,7 @@ export default function AdminLoginPage() {
       router.push('/admin/dashboard');
     } catch (err: any) {
       setError(err.message);
+      fetchCaptcha();
     } finally {
       setLoading(false);
     }
@@ -188,6 +213,33 @@ export default function AdminLoginPage() {
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268-2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                     )}
                   </button>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Verify you are human</label>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center bg-gray-100 border border-gray-200 rounded-[20px] px-6 py-4 font-black text-lg text-purple-700 tracking-wider select-none min-w-[120px] text-center">
+                    {captcha ? captcha.question : '...'}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={fetchCaptcha}
+                    className="p-4 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-2xl border border-gray-100 hover:border-gray-200 transition-colors flex items-center justify-center h-[58px] w-[58px] shrink-0"
+                    title="Refresh Captcha"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m-3-3v12" />
+                    </svg>
+                  </button>
+                  <input
+                    type="text"
+                    value={captchaAnswer}
+                    onChange={(e) => setCaptchaAnswer(e.target.value)}
+                    className="flex-1 bg-gray-50/50 border border-transparent rounded-[20px] px-6 py-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-600/5 focus:bg-white focus:border-purple-600/10 transition-all duration-300 font-bold"
+                    placeholder="Answer"
+                    required
+                  />
                 </div>
               </div>
 

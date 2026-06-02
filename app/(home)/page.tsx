@@ -57,13 +57,13 @@ const ProjectIcon = ({ name, image }: { name: string; image?: string }) => {
 };
 
 const ProjectCard = ({ name, image, side, delay }: { name: string; image?: string; side: "left" | "right", delay: string }) => (
-  <div className={`relative flex items-center gap-5 bg-white p-5 rounded-[2rem] shadow-[0_12px_32px_rgba(0,0,0,0.1)] border-2 border-gray-100 hover:shadow-[0_24px_48px_rgba(0,0,0,0.15)] hover:-translate-y-2 hover:scale-[1.04] hover:border-primary/40 transition-all duration-500 cursor-pointer group ${side === "left" ? "animate-slide-left" : "animate-slide-right"} ${delay} text-left`}>
-    <div className={`w-16 h-16 relative flex-shrink-0 bg-gray-100 rounded-2xl overflow-hidden shadow-inner group-hover:shadow-2xl transition-all duration-500 ring-4 ring-primary/10 group-hover:ring-primary/20`}>
+  <div className={`relative flex items-center gap-2 sm:gap-5 bg-white p-2 sm:p-5 rounded-xl sm:rounded-[2rem] shadow-[0_4px_12px_rgba(0,0,0,0.05)] sm:shadow-[0_12px_32px_rgba(0,0,0,0.1)] border-2 border-gray-100 hover:shadow-[0_24px_48px_rgba(0,0,0,0.15)] hover:-translate-y-1 sm:hover:-translate-y-2 hover:scale-[1.02] sm:hover:scale-[1.04] hover:border-primary/40 transition-all duration-500 cursor-pointer group ${side === "left" ? "animate-slide-left" : "animate-slide-right"} ${delay} text-left`}>
+    <div className={`w-8 h-8 sm:w-16 sm:h-16 relative flex-shrink-0 bg-gray-100 rounded-lg sm:rounded-2xl overflow-hidden shadow-inner group-hover:shadow-2xl transition-all duration-500 ring-2 sm:ring-4 ring-primary/10 group-hover:ring-primary/20`}>
       <ProjectIcon name={name} image={image} />
     </div>
-    <div className="flex-1">
-      <div className="text-[10px] font-black tracking-[0.2em] uppercase mb-1.5 transition-colors text-primary group-hover:text-primary/70">Initiative Portfolio</div>
-      <h3 className="text-sm md:text-base font-black tracking-tight text-[#0F172A] leading-tight">{name}</h3>
+    <div className="flex-1 min-w-0">
+      <div className="text-[7px] sm:text-[10px] font-black tracking-[0.2em] uppercase mb-0.5 sm:mb-1.5 transition-colors text-primary group-hover:text-primary/70 truncate">Initiative Portfolio</div>
+      <h3 className="text-[9px] sm:text-sm md:text-base font-black tracking-tight text-[#0F172A] leading-tight truncate">{name}</h3>
     </div>
   </div>
 );
@@ -210,10 +210,10 @@ export default function Home() {
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-        <div className="container mx-auto px-4 relative z-10 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-24">
+        <div className="container mx-auto px-4 relative z-10 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-6 xl:gap-10 2xl:gap-20">
 
           {/* Left Grid — visible on all screens, responsive grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8 w-full max-w-5xl lg:max-w-[320px] order-2 lg:order-1">
+          <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-6 lg:gap-8 w-full max-w-5xl lg:max-w-[260px] xl:max-w-[290px] 2xl:max-w-[320px] order-2 lg:order-1">
             {leftProjects.map((p: any, index) => (
               <ProjectCard key={p.name} name={p.name} image={p.image} side="left" delay={`delay-${(index + 1) * 100}`} />
             ))}
@@ -225,7 +225,7 @@ export default function Home() {
             <div className="absolute -inset-8 bg-primary/20 rounded-full blur-3xl animate-pulse group-hover:bg-primary/30 transition-all duration-700"></div>
             <div className="absolute -inset-12 bg-secondary/10 rounded-full blur-[60px] animate-reverse-spin group-hover:bg-secondary/20 transition-all duration-1000"></div>
 
-            <div className="relative w-[20rem] h-[20rem] sm:w-[22rem] sm:h-[22rem] lg:w-[26rem] lg:h-[26rem] bg-white/95 backdrop-blur-2xl rounded-full border-[6px] sm:border-[12px] lg:border-[16px] border-white/50 shadow-[0_32px_80px_rgba(0,0,0,0.12)] flex flex-col items-center justify-center text-center p-4 sm:p-12 transition-transform duration-700 hover:scale-[1.02] hover:rotate-1 overflow-hidden ring-1 ring-black/5">
+            <div className="relative w-[11rem] h-[11rem] sm:w-[20rem] sm:h-[20rem] lg:w-[20rem] lg:h-[20rem] xl:w-[23rem] xl:h-[23rem] 2xl:w-[26rem] 2xl:h-[26rem] bg-white/95 backdrop-blur-2xl rounded-full border-4 sm:border-[10px] xl:border-[14px] 2xl:border-[16px] border-white/50 shadow-[0_32px_80px_rgba(0,0,0,0.12)] flex flex-col items-center justify-center text-center p-2 sm:p-6 lg:p-8 xl:p-10 2xl:p-12 transition-transform duration-700 hover:scale-[1.02] hover:rotate-1 overflow-hidden ring-1 ring-black/5">
 
               {/* Rotating Background Pattern */}
               <div className="absolute inset-0 opacity-[0.03] animate-spin-slow">
@@ -234,23 +234,23 @@ export default function Home() {
 
               {/* Functional Content Overlay */}
               <div className="relative z-10 flex flex-col items-center">
-                <div className="mb-2 sm:mb-6 overflow-hidden rounded-xl sm:rounded-2xl shadow-xl border-2 sm:border-4 border-white rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                  <Image src="/logo.jpg" alt="Small Logo" width={56} height={56} className="sm:w-16 sm:h-16 object-contain" />
+                <div className="mb-1 sm:mb-4 overflow-hidden rounded-lg sm:rounded-2xl shadow-xl border sm:border-4 border-white rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                  <Image src="/logo.jpg" alt="Small Logo" width={64} height={64} className="w-8 h-8 sm:w-12 sm:h-12 xl:w-16 xl:h-16 object-contain" />
                 </div>
 
-                <div className="bg-gradient-to-r from-secondary to-pink-500 text-white py-1 sm:py-1.5 px-4 sm:px-6 rounded-full mb-3 sm:mb-6 text-[9px] sm:text-[10px] font-black tracking-[0.3em] shadow-lg shadow-secondary/20">
+                <div className="bg-gradient-to-r from-secondary to-pink-500 text-white py-0.5 sm:py-1.5 px-2 sm:px-6 rounded-full mb-1 sm:mb-4 text-[6px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.3em] shadow-lg shadow-secondary/20">
                   OUR CORE PROJECTS
                 </div>
 
-                <h1 className="text-xl sm:text-2xl md:text-5xl font-black text-gray-900 leading-[1.1] tracking-tight">
+                <h1 className="text-xs sm:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-black text-gray-900 leading-[1.1] tracking-tight">
                   Empowering <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary to-green-700">Life,</span><br />
-                  <span className="italic font-serif text-lg sm:text-xl md:text-3xl text-gray-800 mt-0.5 sm:mt-2 block">Building Future</span>
+                  <span className="italic font-serif text-[9px] sm:text-lg lg:text-lg xl:text-xl 2xl:text-2xl text-gray-800 mt-0.5 sm:mt-2 block">Building Future</span>
                 </h1>
 
-                <div className="mt-4 sm:mt-8 flex gap-2">
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-bounce delay-100"></div>
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-secondary animate-bounce delay-200"></div>
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-bounce delay-300"></div>
+                <div className="mt-1 sm:mt-6 flex gap-1 sm:gap-2">
+                  <div className="w-1 h-1 sm:w-2 sm:h-2 rounded-full bg-primary animate-bounce delay-100"></div>
+                  <div className="w-1 h-1 sm:w-2 sm:h-2 rounded-full bg-secondary animate-bounce delay-200"></div>
+                  <div className="w-1 h-1 sm:w-2 sm:h-2 rounded-full bg-primary animate-bounce delay-300"></div>
                 </div>
               </div>
 
@@ -260,7 +260,7 @@ export default function Home() {
           </div>
 
           {/* Right Grid — visible on all screens, responsive grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8 w-full max-w-5xl lg:max-w-[320px] order-3">
+          <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-6 lg:gap-8 w-full max-w-5xl lg:max-w-[260px] xl:max-w-[290px] 2xl:max-w-[320px] order-3">
             {rightProjects.map((p: any, index) => (
               <ProjectCard key={p.name} name={p.name} image={p.image} side="right" delay={`delay-${(index + 1) * 100}`} />
             ))}
@@ -268,12 +268,12 @@ export default function Home() {
         </div>
 
         {/* Hero Footer Buttons */}
-        <div className="mt-8 md:mt-16 flex flex-col sm:flex-row gap-4 relative z-10">
-          <Link href="/projects" className="bg-primary text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-600 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1">
-            Explore our projects <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        <div className="mt-6 md:mt-16 grid grid-cols-2 sm:flex sm:flex-row gap-2 sm:gap-4 justify-center items-center relative z-10 w-full max-w-[340px] sm:max-w-none px-4">
+          <Link href="/projects" className="bg-primary text-white px-3 sm:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-xl font-bold flex items-center justify-center gap-1 sm:gap-2 hover:bg-green-600 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 text-[11px] sm:text-sm whitespace-nowrap">
+            Explore our projects <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </Link>
-          <Link href="/contact" className="bg-white text-gray-900 border-2 border-gray-100 px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:border-primary transition-all hover:-translate-y-1">
-            Contact Us <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          <Link href="/contact" className="bg-white text-gray-900 border-2 border-gray-100 px-3 sm:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-xl font-bold flex items-center justify-center gap-1 sm:gap-2 hover:border-primary transition-all hover:-translate-y-1 text-[11px] sm:text-sm whitespace-nowrap">
+            Contact Us <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </Link>
         </div>
       </main>

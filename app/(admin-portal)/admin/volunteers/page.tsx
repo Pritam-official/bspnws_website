@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Loader2, Trash2, Search } from 'lucide-react';
+import { Loader2, Trash2, Search, UserCheck } from 'lucide-react';
 
 export default function AllVolunteersPage() {
     const [volunteers, setVolunteers] = useState<any[]>([]);
@@ -37,6 +37,27 @@ export default function AllVolunteersPage() {
             }
         } catch (error) {
             console.error('Delete error:', error);
+        }
+    };
+
+    const handleAssignStaff = async (id: string) => {
+        if (!confirm('Are you sure you want to assign this volunteer as staff?')) return;
+        try {
+            const res = await fetch('/api/admin/volunteers/assign-staff', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            });
+            if (res.ok) {
+                alert('Volunteer assigned as staff successfully!');
+                fetchVolunteers();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Failed to assign volunteer as staff');
+            }
+        } catch (error) {
+            console.error('Assign staff error:', error);
+            alert('An error occurred while assigning volunteer as staff');
         }
     };
 
@@ -116,6 +137,19 @@ export default function AllVolunteersPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-end gap-2">
+                                            {v.role === 'staff' ? (
+                                                <span className="px-2.5 py-1 rounded-lg bg-pink-100 text-pink-700 text-[10px] font-black uppercase tracking-widest">
+                                                    Staff
+                                                </span>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => handleAssignStaff(v._id)}
+                                                    className="p-2 hover:bg-pink-50 rounded-lg transition-colors group" 
+                                                    title="Assign as Staff"
+                                                >
+                                                    <UserCheck className="w-4 h-4 text-gray-400 group-hover:text-pink-600" />
+                                                </button>
+                                            )}
                                             <button 
                                                 onClick={() => handleDelete(v._id)}
                                                 className="p-2 hover:bg-red-50 rounded-lg transition-colors group" 

@@ -16,6 +16,7 @@ export default function BoardOfDirectorsAdminPage() {
     const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({ name: '', designation: '', date: '', image: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editId, setEditId] = useState<string | null>(null);
 
     // Cropping States
     const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -119,22 +120,26 @@ export default function BoardOfDirectorsAdminPage() {
                 ...(formData.date ? { joiningDate: formData.date } : {})
             };
 
-            const res = await fetch('/api/admin/board-members', {
-                method: 'POST',
+            const url = editId ? `/api/admin/board-members/${editId}` : '/api/admin/board-members';
+            const method = editId ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
 
             if (res.ok) {
                 setFormData({ name: '', designation: '', date: '', image: '' });
+                setEditId(null);
                 fetchMembers();
-                alert("Board member added successfully!");
+                alert(editId ? "Board member updated successfully!" : "Board member added successfully!");
             } else {
                 const error = await res.json();
                 alert(`Error: ${error.error}`);
             }
         } catch (error) {
-            console.error("Failed to add board member:", error);
+            console.error("Failed to save board member:", error);
             alert("An error occurred. Please try again.");
         } finally {
             setIsSubmitting(false);
@@ -158,6 +163,21 @@ export default function BoardOfDirectorsAdminPage() {
         } catch (error) {
             console.error("Failed to delete board member:", error);
         }
+    };
+
+    const handleEdit = (member: BoardMember) => {
+        setEditId(member._id);
+        setFormData({
+            name: member.name,
+            designation: member.designation,
+            date: member.joiningDate || '',
+            image: member.image || ''
+        });
+    };
+
+    const handleCancelEdit = () => {
+        setEditId(null);
+        setFormData({ name: '', designation: '', date: '', image: '' });
     };
 
     const getInitials = (name: string) => {
@@ -226,10 +246,14 @@ export default function BoardOfDirectorsAdminPage() {
                 <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg flex items-center justify-center text-white">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            {editId ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            ) : (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            )}
                         </svg>
                     </div>
-                    Add New Governing Member
+                    {editId ? 'Edit Governing Member' : 'Add New Governing Member'}
                 </h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="space-y-1.5">
@@ -291,14 +315,23 @@ export default function BoardOfDirectorsAdminPage() {
                             </div>
                         </div>
                     </div>
-                    <div className="md:col-span-2 lg:col-span-4">
+                    <div className="md:col-span-2 lg:col-span-4 flex flex-wrap gap-4">
                         <button
                             type="submit"
                             disabled={isSubmitting}
                             className="px-8 py-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-pink-500/20 hover:shadow-2xl hover:shadow-pink-500/30 hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:hover:translate-y-0"
                         >
-                            {isSubmitting ? 'Processing...' : 'Add Director to Board'}
+                            {isSubmitting ? 'Processing...' : editId ? 'Update Board Member' : 'Add Director to Board'}
                         </button>
+                        {editId && (
+                            <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                className="px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-black uppercase tracking-widest hover:-translate-y-1 transition-all duration-300 shadow-md shadow-gray-100/20 hover:shadow-lg"
+                            >
+                                Cancel Edit
+                            </button>
+                        )}
                     </div>
                 </form>
             </div>
@@ -353,14 +386,24 @@ export default function BoardOfDirectorsAdminPage() {
                                     </td>
                                     <td className="px-6 py-5 text-xs text-gray-500 font-bold hidden sm:table-cell">{m.joiningDate || "Active"}</td>
                                     <td className="px-6 py-5 text-right">
-                                        <button 
-                                            onClick={() => handleDelete(m._id)}
-                                            className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-xl transition-all hover:scale-110 active:scale-95 group/del border border-gray-100 hover:border-red-100" title="Remove Director"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
+                                        <div className="flex justify-end gap-2">
+                                            <button 
+                                                onClick={() => handleEdit(m)}
+                                                className="p-2.5 bg-gray-50 hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-xl transition-all hover:scale-110 active:scale-95 group/edit border border-gray-100 hover:border-blue-100" title="Edit Director"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDelete(m._id)}
+                                                className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-xl transition-all hover:scale-110 active:scale-95 group/del border border-gray-100 hover:border-red-100" title="Remove Director"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
