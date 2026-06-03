@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import VolunteerAttendanceRecord from "@/models/VolunteerAttendanceRecord";
+import Volunteer from "@/models/Volunteer";
 import { settleAttendance } from "@/lib/attendance-logic";
 
 export async function PATCH(req: NextRequest) {
@@ -63,20 +64,45 @@ export async function GET() {
             volunteerId: "SESSION_MASTER"
         }).sort({ createdAt: -1 });
 
-        // Fetch stats for each session broadcast
-        const sessionsWithStats = await Promise.all(sessions.map(async (s) => {
-            const records = await VolunteerAttendanceRecord.find({
-                sessionId: s._id.toString(),
-                volunteerId: { $ne: "SESSION_MASTER" } // Exclude the broadcast itself
-            });
+        // Find all attendance submissions across all sessions
+        const allRecords = await VolunteerAttendanceRecord.find({
+            volunteerId: { $ne: "SESSION_MASTER" }
+        }).lean();
 
+        // Get all unique volunteer emails
+        const emails = Array.from(new Set(allRecords.map((r: any) => r.email).filter(Boolean)));
+
+        // Fetch all matching volunteers to get profilePic
+        const volunteers = await Volunteer.find({ email: { $in: emails } }).select("email profilePic").lean();
+        const profilePicMap: Record<string, string> = {};
+        volunteers.forEach((v: any) => {
+            if (v.email) {
+                profilePicMap[v.email.toLowerCase()] = v.profilePic || "";
+            }
+        });
+
+        // Group records by sessionId and assign profilePic
+        const recordsBySession: Record<string, any[]> = {};
+        allRecords.forEach((r: any) => {
+            const emailKey = r.email ? r.email.toLowerCase() : "";
+            const recordWithPic = {
+                ...r,
+                profilePic: emailKey ? (profilePicMap[emailKey] || "") : ""
+            };
+            if (!recordsBySession[r.sessionId]) {
+                recordsBySession[r.sessionId] = [];
+            }
+            recordsBySession[r.sessionId].push(recordWithPic);
+        });
+
+        // Map sessions with stats and their records
+        const sessionsWithStats = sessions.map((s) => {
+            const records = recordsBySession[s._id.toString()] || [];
             const presentCount = records.filter(r => r.status === 'Present').length;
-            // absentCount includes both manually submitted Absent + auto-generated Absent records
             const absentCount = records.filter(r => r.status === 'Absent').length;
 
             return {
                 ...s.toObject(),
-                // Expose status ("Active" | "Expired") and settledAt for admin UI
                 status: s.status,
                 settledAt: s.settledAt || null,
                 stats: {
@@ -84,9 +110,9 @@ export async function GET() {
                     present: presentCount,
                     absent: absentCount
                 },
-                records // Full record list for the admin history view
+                records // Full record list with profilePic for the admin history view
             };
-        }));
+        });
 
         return NextResponse.json(sessionsWithStats, { status: 200 });
     } catch (error: any) {

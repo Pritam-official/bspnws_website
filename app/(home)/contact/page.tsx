@@ -120,7 +120,7 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-bold text-gray-900 text-lg mb-1">Email Us</h3>
                                     <p className="text-gray-600">bspnws@gmail.com</p>
-                                    <p className="text-gray-600">bspnws@gmail.com</p>
+
                                 </div>
                             </div>
 
@@ -232,8 +232,8 @@ export default function ContactPage() {
                                     {screenshotPreview && (
                                         <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-200 shrink-0 shadow-md">
                                             <img src={screenshotPreview} alt="Screenshot Preview" className="w-full h-full object-cover" />
-                                            <button 
-                                                type="button" 
+                                            <button
+                                                type="button"
                                                 onClick={() => { setScreenshotBase64(""); setScreenshotPreview(""); }}
                                                 className="absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-md transition-all active:scale-90"
                                             >

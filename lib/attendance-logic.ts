@@ -39,9 +39,9 @@ export async function settleAttendance(sessionId?: string) {
         return { settled: 0, absentRecordsCreated: 0 };
     }
 
-    // Step 1: Fetch all valid volunteer accounts from the User table
-    // This ensures only "official" volunteers are processed
-    const allVolunteers = await User.find({ role: "volunteer" }).lean();
+    // Step 1: Fetch all valid volunteer and staff accounts from the User table
+    // This ensures only "official" volunteers and staff are processed
+    const allVolunteers = await User.find({ role: { $in: ["volunteer", "staff"] } }).lean();
     
     let totalAbsentCreated = 0;
     let totalSessionsSettled = 0;

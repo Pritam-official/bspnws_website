@@ -21,6 +21,7 @@ interface MembershipRecord {
     amount: number;
     receiptImage?: string;
     submittedAt: string;
+    profilePic?: string;
 }
 
 function getInitials(name: string) {
@@ -258,9 +259,17 @@ export default function VolunteerMembershipPage() {
                             <div key={m._id} className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300">
                                 <div className="p-6">
                                     <div className="flex items-center gap-4 mb-5">
-                                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-base font-bold shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0`}>
-                                            {getInitials(m.name)}
-                                        </div>
+                                        {m.profilePic ? (
+                                            <img
+                                                src={m.profilePic}
+                                                alt={m.name}
+                                                className="w-14 h-14 rounded-xl object-cover shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0"
+                                            />
+                                        ) : (
+                                            <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-base font-bold shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0`}>
+                                                {getInitials(m.name)}
+                                            </div>
+                                        )}
                                         <div className="min-w-0 flex-1">
                                             <div className="flex flex-wrap items-center gap-2 mb-0.5">
                                                 <h3 className="text-lg font-bold text-slate-900 truncate">{m.name}</h3>
@@ -356,9 +365,17 @@ export default function VolunteerMembershipPage() {
                                         <tr key={m._id} className="hover:bg-slate-50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
-                                                        {getInitials(m.name)}
-                                                    </div>
+                                                    {m.profilePic ? (
+                                                        <img
+                                                            src={m.profilePic}
+                                                            alt={m.name}
+                                                            className="w-10 h-10 rounded-lg object-cover shrink-0"
+                                                        />
+                                                    ) : (
+                                                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
+                                                            {getInitials(m.name)}
+                                                        </div>
+                                                    )}
                                                     <div className="flex flex-col min-w-0">
                                                         <span className="text-sm font-semibold text-slate-900 truncate">{m.name}</span>
                                                         <span className="text-[10px] text-indigo-600 font-bold tracking-wider uppercase mt-0.5">

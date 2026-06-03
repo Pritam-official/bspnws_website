@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
-const stats = [
+const statsConfig = [
     {
         title: 'All Volunteers',
-        count: 124,
+        key: 'volunteers',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -13,12 +14,11 @@ const stats = [
         ),
         accent: '#4a7ab5',
         bg: '#eef4fc',
-        trend: '+12 this month',
         trendUp: true,
     },
     {
         title: 'Volunteer Requests',
-        count: 8,
+        key: 'requests',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -26,12 +26,11 @@ const stats = [
         ),
         accent: '#c47d2e',
         bg: '#fdf3e7',
-        trend: '3 pending review',
         trendUp: null,
     },
     {
         title: 'Total Notices',
-        count: 15,
+        key: 'notices',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -39,12 +38,11 @@ const stats = [
         ),
         accent: '#b06c40',
         bg: '#f9ede3',
-        trend: '+3 this week',
         trendUp: true,
     },
     {
         title: 'Annual Reports',
-        count: 6,
+        key: 'reports',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -52,12 +50,11 @@ const stats = [
         ),
         accent: '#4a9e72',
         bg: '#eaf6f0',
-        trend: 'Last: Mar 2026',
         trendUp: null,
     },
     {
         title: 'Total Programmes',
-        count: 22,
+        key: 'programmes',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -65,12 +62,11 @@ const stats = [
         ),
         accent: '#7b5ea7',
         bg: '#f2edf9',
-        trend: '4 upcoming',
         trendUp: true,
     },
     {
         title: 'Total Projects',
-        count: 9,
+        key: 'projects',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -78,12 +74,11 @@ const stats = [
         ),
         accent: '#2e9aaa',
         bg: '#e7f6f8',
-        trend: '2 in progress',
         trendUp: null,
     },
     {
         title: 'Our Materials',
-        count: 34,
+        key: 'materials',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -91,12 +86,11 @@ const stats = [
         ),
         accent: '#c0514a',
         bg: '#fdecea',
-        trend: '+5 added',
         trendUp: true,
     },
     {
         title: 'Officers',
-        count: 12,
+        key: 'officers',
         icon: (
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -104,39 +98,14 @@ const stats = [
         ),
         accent: '#7a6e3c',
         bg: '#f6f3e7',
-        trend: 'All active',
         trendUp: true,
     },
 ];
 
-const recentVolunteers = [
-    { name: 'Rahul Sharma', date: '28 Mar 2026', status: 'Active', initials: 'RS', color: '#4a7ab5' },
-    { name: 'Priya Das', date: '26 Mar 2026', status: 'Active', initials: 'PD', color: '#b06c40' },
-    { name: 'Amit Kumar', date: '25 Mar 2026', status: 'Active', initials: 'AK', color: '#4a9e72' },
-    { name: 'Sneha Roy', date: '24 Mar 2026', status: 'Pending', initials: 'SR', color: '#7b5ea7' },
-];
-
-const recentNotices = [
-    { title: 'Annual General Meeting 2026', date: '30 Mar 2026', type: 'Meeting', color: '#b06c40' },
-    { title: 'Tree Plantation Drive', date: '28 Mar 2026', type: 'Event', color: '#4a9e72' },
-    { title: 'Monthly Report Submission', date: '25 Mar 2026', type: 'Report', color: '#4a7ab5' },
-    { title: 'Volunteer Training Session', date: '22 Mar 2026', type: 'Training', color: '#7b5ea7' },
-];
-
-// Sample events — in production, fetch from your API
-const EVENTS: Record<string, { label: string; color: string }[]> = {
-    '2026-04-05': [{ label: 'Committee Meeting', color: '#b06c40' }],
-    '2026-04-10': [{ label: 'Volunteer Training', color: '#7b5ea7' }],
-    '2026-04-14': [{ label: 'Tree Plantation Drive', color: '#4a9e72' }],
-    '2026-04-18': [{ label: 'Annual Report Due', color: '#4a7ab5' }],
-    '2026-04-22': [{ label: 'General Meeting', color: '#c0514a' }],
-    '2026-04-28': [{ label: 'Volunteer Drive', color: '#2e9aaa' }],
-};
-
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-function Calendar() {
+function Calendar({ events = {} }: { events?: Record<string, { label: string; color: string }[]> }) {
     const [now, setNow] = useState(new Date());
     const [view, setView] = useState({ year: new Date().getFullYear(), month: new Date().getMonth() });
     const [selected, setSelected] = useState<string | null>(null);
@@ -174,7 +143,7 @@ function Calendar() {
     const nextMonth = () => setView(v => v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 });
     const goToday = () => { setView({ year: today.getFullYear(), month: today.getMonth() }); setSelected(todayKey); };
 
-    const selectedEvents = selected ? (EVENTS[selected] || []) : [];
+    const selectedEvents = selected ? (events[selected] || []) : [];
 
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
@@ -217,7 +186,7 @@ function Calendar() {
                 {cells.map((cell, i) => {
                     const isToday = cell.key === todayKey;
                     const isSelected = cell.key === selected;
-                    const hasEvents = !!EVENTS[cell.key];
+                    const hasEvents = !!events[cell.key];
                     return (
                         <div
                             key={i}
@@ -227,7 +196,7 @@ function Calendar() {
                             <span className="cal-day-num">{cell.day}</span>
                             {hasEvents && cell.cur && (
                                 <div className="cal-dots">
-                                    {EVENTS[cell.key].slice(0, 3).map((ev, ei) => (
+                                    {events[cell.key].slice(0, 3).map((ev, ei) => (
                                         <span key={ei} className="cal-dot" style={{ background: ev.color }} />
                                     ))}
                                 </div>
@@ -264,11 +233,55 @@ function Calendar() {
 
 export default function AdminDashboardPage() {
     const [now, setNow] = React.useState(new Date());
+    const [data, setData] = React.useState<any>(null);
+    const [loading, setLoading] = React.useState<boolean>(true);
+    const [error, setError] = React.useState<string | null>(null);
+
     React.useEffect(() => {
         const t = setInterval(() => setNow(new Date()), 1000);
         return () => clearInterval(t);
     }, []);
+
+    React.useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch('/api/admin/stats');
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch stats: ${res.statusText}`);
+                }
+                const result = await res.json();
+                setData(result);
+            } catch (err: any) {
+                console.error(err);
+                setError(err.message || 'An error occurred while fetching dashboard statistics.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchStats();
+    }, []);
+
     const dateLabel = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const stats = statsConfig.map(s => {
+        const key = s.key;
+        const statData = data?.stats?.[key] || { count: 0, trend: 'N/A' };
+        return {
+            title: s.title,
+            count: statData.count,
+            icon: s.icon,
+            accent: s.accent,
+            bg: s.bg,
+            trend: statData.trend,
+            trendUp: s.trendUp
+        };
+    });
+
+    const recentVolunteers = data?.recentVolunteers || [];
+
+    const recentNotices = data?.recentNotices || [];
+
     return (
         <>
             <style>{`
@@ -280,6 +293,17 @@ export default function AdminDashboardPage() {
                     background: #f7f5f2;
                     padding: 40px 32px 80px;
                     color: #1a1a1a;
+                }
+
+                .error-banner {
+                    background: #fdecea;
+                    border: 1px solid #c0514a;
+                    color: #c0514a;
+                    padding: 16px;
+                    border-radius: 12px;
+                    margin-bottom: 24px;
+                    font-size: 14px;
+                    font-weight: 500;
                 }
 
                 /* ── Header ── */
@@ -781,17 +805,23 @@ export default function AdminDashboardPage() {
                     </div>
                 </div>
 
+                {error && (
+                    <div className="error-banner">
+                        <strong>Error loading statistics:</strong> {error}
+                    </div>
+                )}
+
                 {/* ── Summary Bar ── */}
                 <div className="summary-bar">
                     {[
-                        { val: '124', key: 'Volunteers' },
-                        { val: '22', key: 'Programmes' },
-                        { val: '9', key: 'Projects' },
-                        { val: '15', key: 'Notices' },
-                        { val: '6', key: 'Reports' },
-                        { val: '8', key: 'Requests' },
-                        { val: '34', key: 'Materials' },
-                        { val: '12', key: 'Officers' },
+                        { val: data?.stats?.volunteers?.count ?? 0, key: 'Volunteers' },
+                        { val: data?.stats?.programmes?.count ?? 0, key: 'Programmes' },
+                        { val: data?.stats?.projects?.count ?? 0, key: 'Projects' },
+                        { val: data?.stats?.notices?.count ?? 0, key: 'Notices' },
+                        { val: data?.stats?.reports?.count ?? 0, key: 'Reports' },
+                        { val: data?.stats?.requests?.count ?? 0, key: 'Requests' },
+                        { val: data?.stats?.materials?.count ?? 0, key: 'Materials' },
+                        { val: data?.stats?.officers?.count ?? 0, key: 'Officers' },
                     ].map((s, i, arr) => (
                         <React.Fragment key={s.key}>
                             <div className="summary-item">
@@ -834,10 +864,10 @@ export default function AdminDashboardPage() {
                     <div className="panel">
                         <div className="panel-header">
                             <span className="panel-title">Recent Volunteers</span>
-                            <button className="panel-view-all">View all</button>
+                            <Link href="/admin/volunteers" className="panel-view-all">View all</Link>
                         </div>
-                        {recentVolunteers.map((v) => (
-                            <div key={v.name} className="row-item">
+                        {recentVolunteers.map((v: any, idx: number) => (
+                            <div key={`${v.name}-${idx}`} className="row-item">
                                 <div className="row-left">
                                     <div className="row-avatar" style={{ background: v.color }}>{v.initials}</div>
                                     <div>
@@ -856,10 +886,10 @@ export default function AdminDashboardPage() {
                     <div className="panel">
                         <div className="panel-header">
                             <span className="panel-title">Recent Notices</span>
-                            <button className="panel-view-all">View all</button>
+                            <Link href="/admin/notice" className="panel-view-all">View all</Link>
                         </div>
-                        {recentNotices.map((n) => (
-                            <div key={n.title} className="row-item">
+                        {recentNotices.map((n: any, idx: number) => (
+                            <div key={`${n.title}-${idx}`} className="row-item">
                                 <div className="row-left">
                                     <div className="row-avatar" style={{ background: n.color }}>
                                         <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -877,7 +907,7 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Real-time Calendar */}
-                    <Calendar />
+                    <Calendar events={data?.calendarEvents || {}} />
 
                 </div>
 

@@ -346,9 +346,17 @@ export default function VolunteerAttendancePage() {
                                     <tr key={record._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-xs font-black shadow-sm`}>
-                                                    {getInitials(record.name)}
-                                                </div>
+                                                {record.profilePic ? (
+                                                    <img
+                                                        src={record.profilePic}
+                                                        alt={record.name}
+                                                        className="w-9 h-9 rounded-xl object-cover shadow-sm"
+                                                    />
+                                                ) : (
+                                                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${getGradient(index)} flex items-center justify-center text-white text-xs font-black shadow-sm`}>
+                                                        {getInitials(record.name)}
+                                                    </div>
+                                                )}
                                                 <div className="flex flex-col">
                                                   <span className="text-sm font-bold text-gray-900">{record.name}</span>
                                                   <span className="text-[10px] text-gray-400 font-medium">{record.email}</span>
