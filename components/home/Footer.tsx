@@ -126,7 +126,7 @@ const Footer = () => {
                                         src={social.icon}
                                         alt={social.name}
                                         fill
-                                        className={`object-contain transition-all duration-300 ${social.name === 'instagram' ? 'group-hover:brightness-0 group-hover:invert' : social.name === 'x' ? 'brightness-0 invert group-hover:brightness-200' : ''}`}
+                                        className={`object-contain transition-all duration-300 ${['facebook', 'instagram', 'youtube'].includes(social.name) ? 'group-hover:brightness-0 group-hover:invert' : social.name === 'x' ? 'brightness-0 invert group-hover:brightness-200' : ''}`}
                                     />
                                 </div>
                             </Link>

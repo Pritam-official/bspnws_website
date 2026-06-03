@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/shared/Navbar';
-import Footer from '@/components/home/Footer';
 import Image from 'next/image';
 
 interface GalleryVideoItem {
@@ -245,7 +244,6 @@ export default function PublicVideoGalleryPage() {
                 </div>
             </main>
 
-            <Footer />
         </div>
     );
 }

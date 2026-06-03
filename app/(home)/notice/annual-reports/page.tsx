@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/shared/Navbar';
-import Footer from '@/components/home/Footer';
 
 interface AnnualReport {
     _id: string;
@@ -124,7 +123,6 @@ export default function AnnualReportsPage() {
                 </div>
             </main>
 
-            <Footer />
         </div>
     );
 }

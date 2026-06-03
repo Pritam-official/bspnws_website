@@ -20,6 +20,12 @@ export async function POST(req: Request) {
             }
         }
 
+        // Phone number validation: must be exactly 10 digits
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!data.phoneNumber || !phoneRegex.test(data.phoneNumber)) {
+            return NextResponse.json({ success: false, error: 'Phone number must be exactly 10 digits.' }, { status: 400 });
+        }
+
         const newRequest = await VolunteerRequest.create({
             fullName: data.fullName,
             email: data.email,

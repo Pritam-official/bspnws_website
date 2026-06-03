@@ -270,7 +270,6 @@ export default function NoticePage() {
                                 >
                                     <option value="all">All Users</option>
                                     <option value="volunteer">Volunteers Only</option>
-                                    <option value="staff">Staff Only</option>
                                 </select>
 
                                 <select

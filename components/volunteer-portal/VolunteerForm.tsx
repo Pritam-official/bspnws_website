@@ -43,7 +43,12 @@ export default function VolunteerForm() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        if (name === 'phoneNumber') {
+            const cleaned = value.replace(/\D/g, '').slice(0, 10);
+            setFormData(prev => ({ ...prev, [name]: cleaned }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,7 +229,7 @@ export default function VolunteerForm() {
                                             src={social.icon}
                                             alt={social.name}
                                             fill
-                                            className={`object-contain transition-all duration-300 ${social.name === 'Instagram' ? 'group-hover/soc:brightness-0 group-hover/soc:invert' : social.name === 'Twitter' ? 'brightness-0 invert group-hover/soc:brightness-200' : ''}`}
+                                            className={`object-contain transition-all duration-300 ${['Facebook', 'Instagram', 'YouTube'].includes(social.name) ? 'group-hover/soc:brightness-0 group-hover/soc:invert' : social.name === 'Twitter' ? 'brightness-0 invert group-hover/soc:brightness-200' : ''}`}
                                         />
                                     </div>
                                 </a>
@@ -283,7 +288,7 @@ export default function VolunteerForm() {
                             {[
                                 { label: 'Full Name', name: 'fullName', type: 'text', icon: User, placeholder: 'Ex. John Doe' },
                                 { label: 'Email Address', name: 'email', type: 'email', icon: Mail, placeholder: 'john@example.com' },
-                                { label: 'Phone Number', name: 'phoneNumber', type: 'tel', icon: Phone, placeholder: '+91 00000 00000' }
+                                { label: 'Phone Number', name: 'phoneNumber', type: 'tel', icon: Phone, placeholder: 'Enter 10-digit number' }
                             ].map((field, idx) => (
                                 <div key={field.name} className={`space-y-3 ${idx === 2 ? 'md:col-span-2' : ''}`}>
                                     <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">{field.label}</label>
@@ -300,6 +305,9 @@ export default function VolunteerForm() {
                                                 onChange={handleInputChange}
                                                 required
                                                 placeholder={field.placeholder}
+                                                maxLength={field.name === 'phoneNumber' ? 10 : undefined}
+                                                pattern={field.name === 'phoneNumber' ? '[0-9]{10}' : undefined}
+                                                title={field.name === 'phoneNumber' ? 'Please enter a 10-digit phone number' : undefined}
                                                 className="flex-1 bg-transparent py-4 px-6 outline-none font-bold text-gray-900 placeholder:text-gray-300 text-sm"
                                             />
                                         </div>

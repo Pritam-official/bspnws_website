@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/shared/Navbar';
-import Footer from '@/components/home/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -229,7 +228,6 @@ export default function GalleryPage() {
                 </div>
             </main>
 
-            <Footer />
         </div>
     );
 }

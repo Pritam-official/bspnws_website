@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/shared/Navbar';
-import Footer from '@/components/home/Footer';
 import Image from 'next/image';
 
 interface GalleryItem {
@@ -120,7 +119,6 @@ export default function GalleryDetailPage() {
                         <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">Loading beautiful memories...</p>
                     </div>
                 </div>
-                <Footer />
             </div>
         );
     }
@@ -146,7 +144,6 @@ export default function GalleryDetailPage() {
                         </button>
                     </div>
                 </div>
-                <Footer />
             </div>
         );
     }
@@ -346,7 +343,6 @@ export default function GalleryDetailPage() {
                 </div>
             )}
 
-            <Footer />
         </div>
     );
 }

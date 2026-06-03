@@ -30,7 +30,7 @@ export default function NoticePage() {
 
     const fetchNotices = async () => {
         try {
-            const res = await fetch('/api/notices');
+            const res = await fetch('/api/notices?targetAudience=volunteer');
             const data = await res.json();
             if (Array.isArray(data)) {
                 setNotices(data);
