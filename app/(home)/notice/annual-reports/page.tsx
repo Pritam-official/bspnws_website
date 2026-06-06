@@ -42,7 +42,7 @@ export default function AnnualReportsPage() {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navbar />
-            
+
             <main className="flex-grow pt-24 pb-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header */}
@@ -61,11 +61,10 @@ export default function AnnualReportsPage() {
                             <button
                                 key={type}
                                 onClick={() => setActiveTab(type)}
-                                className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
-                                    activeTab === type 
-                                    ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' 
-                                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                                }`}
+                                className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === type
+                                        ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105'
+                                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                                    }`}
                             >
                                 {type}
                             </button>
@@ -104,9 +103,9 @@ export default function AnnualReportsPage() {
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Published on {report.date}</p>
 
                                     <div className="mt-auto">
-                                        <a 
-                                            href={report.file} 
-                                            target="_blank" 
+                                        <a
+                                            href={report.file}
+                                            target="_blank"
                                             rel="noopener noreferrer"
                                             className="w-full bg-gray-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-primary transition-all shadow-lg hover:shadow-primary/20"
                                         >

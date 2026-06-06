@@ -12,6 +12,7 @@ import OurMemories from "@/components/home/OurMemories";
 import Navbar from "@/components/shared/Navbar";
 import adminConfig from "@/lib/admin-config.json";
 import ProgrammeSection from "@/components/home/ProgrammeSection";
+import ProjectOverviewSection from "@/components/home/ProjectOverviewSection";
 
 
 type SplashStage = "logo" | "text" | "transitioning" | "complete";
@@ -286,6 +287,9 @@ export default function Home() {
 
       {/* Mission and Vision Section */}
       <MissionVisionSection />
+
+      {/* Project Overview Section */}
+      <ProjectOverviewSection />
 
       {/* Dynamic Programmes Section */}
       <ProgrammeSection />

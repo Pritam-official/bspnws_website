@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/shared/Navbar';
+import ProjectOverviewSection from '@/components/home/ProjectOverviewSection';
 
 interface Project {
     _id: string;
@@ -328,6 +329,9 @@ export default function ProjectsPage() {
 
                 {/* ── GRID ── */}
                 <div className="max-w-7xl mx-auto px-6 py-16">
+                    {/* Project Overview Videos */}
+                    <ProjectOverviewSection isProjectsPage={true} />
+
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-48 gap-5">
                             <div className="relative w-10 h-10">

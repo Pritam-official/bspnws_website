@@ -39,7 +39,7 @@ export default function NoticePage() {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navbar />
-            
+
             <main className="flex-grow pt-24 pb-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header */}
@@ -90,9 +90,9 @@ export default function NoticePage() {
                                     </div>
 
                                     <div className="mt-8 pt-6 border-t border-gray-50">
-                                        <a 
-                                            href={notice.file} 
-                                            target="_blank" 
+                                        <a
+                                            href={notice.file}
+                                            target="_blank"
                                             rel="noopener noreferrer"
                                             className="inline-flex items-center gap-3 text-xs font-black text-primary uppercase tracking-widest hover:gap-4 transition-all"
                                         >

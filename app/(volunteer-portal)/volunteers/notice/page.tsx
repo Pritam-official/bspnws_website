@@ -114,9 +114,9 @@ export default function NoticePage() {
                                     </div>
 
                                     <div className="mt-8 pt-6 border-t border-gray-50">
-                                        <a 
-                                            href={notice.file} 
-                                            target="_blank" 
+                                        <a
+                                            href={notice.file}
+                                            target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-xs font-black text-pink-600 flex items-center gap-2 group-hover:translate-x-1 transition-transform cursor-pointer uppercase tracking-widest"
                                         >

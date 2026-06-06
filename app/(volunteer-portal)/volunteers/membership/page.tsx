@@ -69,7 +69,7 @@ export default function MembershipPage() {
         ];
 
         let maxVal = -1;
-        
+
         // Find the maximum (renewalYear * 12 + monthIndex) across all database records
         dbRecords.forEach((record: any) => {
             const idx = monthNames.indexOf(record.renewalMonth);
@@ -217,11 +217,10 @@ export default function MembershipPage() {
                                                     ₹{record.amount?.toLocaleString('en-IN')}
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className={`inline-flex items-center text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg ${
-                                                        record.paymentMethod === 'online'
-                                                            ? 'bg-blue-50 text-blue-600 border border-blue-100'
-                                                            : 'bg-amber-50 text-amber-600 border border-amber-100'
-                                                    }`}>
+                                                    <span className={`inline-flex items-center text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg ${record.paymentMethod === 'online'
+                                                        ? 'bg-blue-50 text-blue-600 border border-blue-100'
+                                                        : 'bg-amber-50 text-amber-600 border border-amber-100'
+                                                        }`}>
                                                         {record.paymentMethod}
                                                     </span>
                                                 </td>

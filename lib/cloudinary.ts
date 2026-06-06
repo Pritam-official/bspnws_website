@@ -88,3 +88,95 @@ export async function uploadToCloudinary(base64Image: string, folderName: string
         throw new Error(error.message || "Cloudinary image upload failed");
     }
 }
+
+/**
+ * Uploads a base64 encoded video string to Cloudinary.
+ * Supports standard data URIs (e.g. "data:video/mp4;base64,...") and raw base64.
+ * 
+ * @param base64Video The video in base64 format.
+ * @param folderName The destination folder on Cloudinary.
+ * @returns The secure URL and public ID of the uploaded video.
+ */
+export async function uploadVideoToCloudinary(
+    base64Video: string, 
+    folderName: string
+): Promise<{ secureUrl: string; publicId: string }> {
+    if (!base64Video) {
+        throw new Error("No video data provided for Cloudinary upload");
+    }
+
+    const { cloudName, apiKey, apiSecret } = loadCloudinaryConfig();
+
+    if (!cloudName || !apiKey || !apiSecret) {
+        throw new Error("Cloudinary credentials are not properly configured on the server");
+    }
+
+    // Configure Cloudinary SDK
+    cloudinary.config({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+        secure: true,
+    });
+
+    let videoPayload = base64Video;
+    if (!base64Video.startsWith("data:")) {
+        // Fallback guess (mp4) if no mime prefix is included
+        videoPayload = `data:video/mp4;base64,${base64Video}`;
+    }
+
+    try {
+        const uploadResponse = await cloudinary.uploader.upload(videoPayload, {
+            folder: folderName,
+            resource_type: "video",
+        });
+
+        return {
+            secureUrl: uploadResponse.secure_url,
+            publicId: uploadResponse.public_id,
+        };
+    } catch (error: any) {
+        console.error(`Error uploading video to Cloudinary in folder ${folderName}:`, error);
+        throw new Error(error.message || "Cloudinary video upload failed");
+    }
+}
+
+/**
+ * Deletes an asset (image or video) from Cloudinary.
+ * 
+ * @param publicId The public ID of the asset.
+ * @param resourceType The type of asset ("image" or "video").
+ * @returns The deletion result.
+ */
+export async function deleteFromCloudinary(
+    publicId: string, 
+    resourceType: "image" | "video" = "image"
+): Promise<any> {
+    if (!publicId) {
+        throw new Error("No public ID provided for Cloudinary deletion");
+    }
+
+    const { cloudName, apiKey, apiSecret } = loadCloudinaryConfig();
+
+    if (!cloudName || !apiKey || !apiSecret) {
+        throw new Error("Cloudinary credentials are not properly configured on the server");
+    }
+
+    // Configure Cloudinary SDK
+    cloudinary.config({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+        secure: true,
+    });
+
+    try {
+        const result = await cloudinary.uploader.destroy(publicId, {
+            resource_type: resourceType,
+        });
+        return result;
+    } catch (error: any) {
+        console.error(`Error deleting ${resourceType} from Cloudinary with publicId ${publicId}:`, error);
+        throw new Error(error.message || "Cloudinary deletion failed");
+    }
+}
