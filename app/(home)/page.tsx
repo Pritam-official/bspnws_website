@@ -13,6 +13,7 @@ import Navbar from "@/components/shared/Navbar";
 import adminConfig from "@/lib/admin-config.json";
 import ProgrammeSection from "@/components/home/ProgrammeSection";
 import ProjectOverviewSection from "@/components/home/ProjectOverviewSection";
+import WhatsAppButton from "@/components/home/WhatsAppButton";
 
 
 type SplashStage = "logo" | "text" | "transitioning" | "complete";
@@ -299,8 +300,7 @@ export default function Home() {
 
       <OurMemories />
 
-
-
+      <WhatsAppButton />
 
 
     </div>
