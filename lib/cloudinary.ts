@@ -180,3 +180,48 @@ export async function deleteFromCloudinary(
         throw new Error(error.message || "Cloudinary deletion failed");
     }
 }
+
+/**
+ * Uploads a base64 encoded file string (images or PDFs) to Cloudinary.
+ * Uses resource_type: "auto" to handle PDFs and documents correctly.
+ * 
+ * @param base64File The file in base64 format.
+ * @param folderName The destination folder on Cloudinary.
+ * @returns The secure URL link of the uploaded file.
+ */
+export async function uploadDocToCloudinary(base64File: string, folderName: string): Promise<string> {
+    if (!base64File) {
+        throw new Error("No file data provided for Cloudinary upload");
+    }
+
+    const { cloudName, apiKey, apiSecret } = loadCloudinaryConfig();
+
+    if (!cloudName || !apiKey || !apiSecret) {
+        throw new Error("Cloudinary credentials are not properly configured on the server");
+    }
+
+    cloudinary.config({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+        secure: true,
+    });
+
+    let filePayload = base64File;
+    if (!base64File.startsWith("data:")) {
+        filePayload = `data:image/jpeg;base64,${base64File}`;
+    }
+
+    try {
+        const uploadResponse = await cloudinary.uploader.upload(filePayload, {
+            folder: folderName,
+            resource_type: "auto",
+        });
+
+        return uploadResponse.secure_url;
+    } catch (error: any) {
+        console.error(`Error uploading file to Cloudinary in folder ${folderName}:`, error);
+        throw new Error(error.message || "Cloudinary file upload failed");
+    }
+}
+

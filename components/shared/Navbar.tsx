@@ -47,6 +47,7 @@ const navLinks = [
     ],
   },
   { label: "Our Handmade Materials", href: "/our-handmade-materials" },
+  { label: "Scholarship Apply", href: "/scholarship-apply" },
   { label: "Help Us", href: "/help", highlight: true },
 ];
 
@@ -113,13 +114,13 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden xl:flex items-center space-x-0.5 xl:space-x-1.5 2xl:space-x-3 flex-nowrap py-2">
+          <div className="hidden 2xl:flex items-center space-x-0.5 2xl:space-x-1.5 flex-nowrap py-2">
             {navLinks.map((link) =>
               link.children ? (
                 <div key={link.label} className="relative group py-2">
                   <button
                     onClick={() => toggleDropdown(link.label)}
-                    className={`px-1.5 xl:px-2.5 flex items-center text-[11px] xl:text-[12px] 2xl:text-sm font-bold transition-colors whitespace-nowrap ${
+                    className={`px-1.5 2xl:px-2.5 flex items-center text-[11px] 2xl:text-xs font-bold transition-colors whitespace-nowrap ${
                       activeDropdown === link.label ? "text-primary" : "text-gray-600 hover:text-primary"
                     }`}
                   >
@@ -150,7 +151,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href!}
-                  className={`px-1.5 xl:px-2.5 py-2 text-[11px] xl:text-[12px] 2xl:text-sm font-bold whitespace-nowrap transition-colors ${
+                  className={`px-1.5 2xl:px-2.5 py-2 text-[11px] 2xl:text-xs font-bold whitespace-nowrap transition-colors ${
                     link.highlight
                       ? "text-primary font-black hover:scale-105 transition-transform"
                       : pathname === link.href
@@ -220,7 +221,7 @@ export default function Navbar() {
             {/* Hamburger — mobile only */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="xl:hidden flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="2xl:hidden flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
               aria-label="Toggle navigation"
             >
               {mobileOpen ? (
@@ -240,14 +241,14 @@ export default function Navbar() {
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="xl:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          className="2xl:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Mobile Drawer */}
       <div
-        className={`xl:hidden fixed top-0 right-0 h-full w-[85vw] max-w-[340px] bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+        className={`2xl:hidden fixed top-0 right-0 h-full w-[85vw] max-w-[340px] bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
