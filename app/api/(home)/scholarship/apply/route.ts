@@ -27,6 +27,8 @@ export async function POST(req: Request) {
         const requiredFields = [
             'fullName',
             'phoneNumber',
+            'dob',
+            'gender',
             'address',
             'date',
             'fatherName',
@@ -76,28 +78,76 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: 'Result Copy must be a PDF, JPG, JPEG, or PNG file.' }, { status: 400 });
         }
 
-        // 4. Cloudinary Uploads
+        // Helper to extract file metadata from base64 data URL
+        const getFileMetadata = (base64Str: string) => {
+            const parts = base64Str.split(';base64,');
+            const mime = parts[0].split(':')[1];
+            const buffer = Buffer.from(parts[1], 'base64');
+            return { mime, size: buffer.length };
+        };
+
+        // Enforce size constraints
+        const docsToValidate = [
+            { name: 'Income Certificate', data: data.incomeCertificate },
+            { name: 'Result Copy', data: data.resultCopy }
+        ];
+
+        for (const doc of docsToValidate) {
+            const { mime, size } = getFileMetadata(doc.data);
+            if (mime === 'application/pdf') {
+                const minPdfSize = 50 * 1024; // 50 KB
+                const maxPdfSize = 200 * 1024; // 200 KB
+                if (size < minPdfSize || size > maxPdfSize) {
+                    return NextResponse.json({
+                        success: false,
+                        error: `${doc.name} PDF size must be between 50 KB and 200 KB. (Uploaded size: ${(size / 1024).toFixed(1)} KB)`
+                    }, { status: 400 });
+                }
+            } else {
+                const maxImgSize = 5 * 1024 * 1024; // 5 MB
+                if (size > maxImgSize) {
+                    return NextResponse.json({
+                        success: false,
+                        error: `${doc.name} image size must be under 5 MB. (Uploaded size: ${(size / (1024 * 1024)).toFixed(1)} MB)`
+                    }, { status: 400 });
+                }
+            }
+        }
+
+        // 4. Cloudinary Uploads & DB Storage Bypass for PDFs
         let incomeCertificateUrl = '';
         let resultCopyUrl = '';
 
-        try {
-            incomeCertificateUrl = await uploadDocToCloudinary(data.incomeCertificate, 'scholarship_income_certificates');
-        } catch (uploadErr: any) {
-            console.error('Failed to upload income certificate to Cloudinary:', uploadErr);
-            return NextResponse.json({ success: false, error: 'Failed to upload income certificate. Please try again.' }, { status: 500 });
+        const incomeMeta = getFileMetadata(data.incomeCertificate);
+        if (incomeMeta.mime === 'application/pdf') {
+            incomeCertificateUrl = data.incomeCertificate; // Store in DB directly as base64 string
+        } else {
+            try {
+                incomeCertificateUrl = await uploadDocToCloudinary(data.incomeCertificate, 'scholarship_income_certificates');
+            } catch (uploadErr: any) {
+                console.error('Failed to upload income certificate to Cloudinary:', uploadErr);
+                return NextResponse.json({ success: false, error: 'Failed to upload income certificate. Please try again.' }, { status: 500 });
+            }
         }
 
-        try {
-            resultCopyUrl = await uploadDocToCloudinary(data.resultCopy, 'scholarship_result_copies');
-        } catch (uploadErr: any) {
-            console.error('Failed to upload result copy to Cloudinary:', uploadErr);
-            return NextResponse.json({ success: false, error: 'Failed to upload result copy. Please try again.' }, { status: 500 });
+        const resultMeta = getFileMetadata(data.resultCopy);
+        if (resultMeta.mime === 'application/pdf') {
+            resultCopyUrl = data.resultCopy; // Store in DB directly as base64 string
+        } else {
+            try {
+                resultCopyUrl = await uploadDocToCloudinary(data.resultCopy, 'scholarship_result_copies');
+            } catch (uploadErr: any) {
+                console.error('Failed to upload result copy to Cloudinary:', uploadErr);
+                return NextResponse.json({ success: false, error: 'Failed to upload result copy. Please try again.' }, { status: 500 });
+            }
         }
 
         // 5. Create Database Entry
         const newApplication = await ScholarshipApplication.create({
             fullName: data.fullName,
             phoneNumber: data.phoneNumber,
+            dob: new Date(data.dob),
+            gender: data.gender,
             email: data.email || '',
             address: data.address,
             date: new Date(data.date),

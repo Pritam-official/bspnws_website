@@ -10,6 +10,14 @@ const ScholarshipApplicationSchema = new Schema(
             type: String,
             required: [true, "Please provide the phone number"],
         },
+        dob: {
+            type: Date,
+            required: [true, "Please provide the date of birth"],
+        },
+        gender: {
+            type: String,
+            required: [true, "Please select the gender"],
+        },
         email: {
             type: String,
             required: false,

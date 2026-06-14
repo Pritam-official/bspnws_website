@@ -133,8 +133,40 @@ export default function AdminScholarshipPage() {
     };
 
     const handleDownload = (url: string, filename: string) => {
-        // Since Cloudinary secure URLs can open directly, let's open in new tab
-        window.open(url, "_blank");
+        if (url && url.startsWith("data:")) {
+            try {
+                const parts = url.split(";base64,");
+                const contentType = parts[0].split(":")[1];
+                const raw = window.atob(parts[1]);
+                const rawLength = raw.length;
+                const uInt8Array = new Uint8Array(rawLength);
+                for (let i = 0; i < rawLength; ++i) {
+                    uInt8Array[i] = raw.charCodeAt(i);
+                }
+                const blob = new Blob([uInt8Array], { type: contentType });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                const link = document.createElement("a");
+                link.href = blobUrl;
+                let extension = ".pdf";
+                if (contentType === "image/jpeg" || contentType === "image/jpg") {
+                    extension = ".jpg";
+                } else if (contentType === "image/png") {
+                    extension = ".png";
+                }
+                link.download = filename + extension;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            } catch (err) {
+                console.error("Failed to download data URL:", err);
+                window.open(url, "_blank");
+            }
+        } else if (url) {
+            // Since Cloudinary secure URLs can open directly, let's open in new tab
+            window.open(url, "_blank");
+        }
     };
 
     // Filter applications
@@ -510,6 +542,16 @@ export default function AdminScholarshipPage() {
                                         <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs">
                                             <span className="text-[9px] text-gray-400 font-bold uppercase block tracking-wider">Phone Number</span>
                                             <span className="text-sm font-bold text-gray-700 block mt-0.5">{selectedApp.phoneNumber}</span>
+                                        </div>
+                                        <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs">
+                                            <span className="text-[9px] text-gray-400 font-bold uppercase block tracking-wider">Date of Birth</span>
+                                            <span className="text-sm font-bold text-gray-700 block mt-0.5">
+                                                {selectedApp.dob ? new Date(selectedApp.dob).toLocaleDateString("en-IN") : "N/A"}
+                                            </span>
+                                        </div>
+                                        <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs">
+                                            <span className="text-[9px] text-gray-400 font-bold uppercase block tracking-wider">Gender</span>
+                                            <span className="text-sm font-bold text-gray-700 block mt-0.5">{selectedApp.gender || "N/A"}</span>
                                         </div>
                                         <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs sm:col-span-2">
                                             <span className="text-[9px] text-gray-400 font-bold uppercase block tracking-wider">Email Address</span>

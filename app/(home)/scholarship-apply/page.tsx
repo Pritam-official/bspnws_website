@@ -9,11 +9,14 @@ export default function ScholarshipApplyPage() {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [declarationChecked, setDeclarationChecked] = useState(false);
 
     // Form fields
     const [formData, setFormData] = useState({
         fullName: "",
         phoneNumber: "",
+        dob: "",
+        gender: "",
         email: "",
         address: "",
         date: new Date().toISOString().split("T")[0],
@@ -83,16 +86,25 @@ export default function ScholarshipApplyPage() {
         if (!file) return;
 
         const allowedTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
-        const maxSize = 5 * 1024 * 1024; // 5 MB
 
         if (!allowedTypes.includes(file.type)) {
             setErrors(prev => ({ ...prev, [fieldName]: "Only PDF, JPG, JPEG, and PNG files are allowed." }));
             return;
         }
 
-        if (file.size > maxSize) {
-            setErrors(prev => ({ ...prev, [fieldName]: "Maximum file size is 5 MB." }));
-            return;
+        if (file.type === "application/pdf") {
+            const minPdfSize = 50 * 1024; // 50 KB
+            const maxPdfSize = 200 * 1024; // 200 KB
+            if (file.size < minPdfSize || file.size > maxPdfSize) {
+                setErrors(prev => ({ ...prev, [fieldName]: "PDF size must be between 50 KB and 200 KB." }));
+                return;
+            }
+        } else {
+            const maxSize = 5 * 1024 * 1024; // 5 MB
+            if (file.size > maxSize) {
+                setErrors(prev => ({ ...prev, [fieldName]: "Maximum file size for images is 5 MB." }));
+                return;
+            }
         }
 
         setErrors(prev => {
@@ -120,7 +132,7 @@ export default function ScholarshipApplyPage() {
         const newErrors: Record<string, string> = {};
 
         const requiredFields = [
-            "fullName", "phoneNumber", "address", "date", "fatherName",
+            "fullName", "phoneNumber", "dob", "gender", "address", "date", "fatherName",
             "fatherOccupation", "motherOccupation", "familyAnnualIncome",
             "studentName", "schoolName", "board", "examination", "obtainedMarks"
         ];
@@ -146,6 +158,10 @@ export default function ScholarshipApplyPage() {
 
         if (!files.resultCopy) {
             newErrors.resultCopy = "Result copy is required.";
+        }
+
+        if (!declarationChecked) {
+            newErrors.declaration = "You must accept the declaration to submit.";
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -180,6 +196,8 @@ export default function ScholarshipApplyPage() {
                 setFormData({
                     fullName: "",
                     phoneNumber: "",
+                    dob: "",
+                    gender: "",
                     email: "",
                     address: "",
                     date: new Date().toISOString().split("T")[0],
@@ -199,6 +217,7 @@ export default function ScholarshipApplyPage() {
                     incomeCertificate: null,
                     resultCopy: null,
                 });
+                setDeclarationChecked(false);
             } else {
                 alert(responseData.error || "Failed to submit scholarship application.");
             }
@@ -377,6 +396,38 @@ export default function ScholarshipApplyPage() {
                                                 className={`w-full px-4 py-2.5 rounded-lg bg-white border font-normal text-slate-900 text-sm outline-none transition-colors ${errors.date ? 'border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-100' : 'border-slate-300 focus:border-slate-900 focus:ring-1 focus:ring-slate-100'}`}
                                             />
                                             {errors.date && <p className="text-red-600 text-xs font-medium">{errors.date}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-semibold text-slate-900 uppercase tracking-wide flex items-center gap-1">
+                                                Date of Birth <span className="text-red-600">*</span>
+                                            </label>
+                                            <input
+                                                type="date"
+                                                name="dob"
+                                                value={formData.dob}
+                                                onChange={handleTextChange}
+                                                className={`w-full px-4 py-2.5 rounded-lg bg-white border font-normal text-slate-900 text-sm outline-none transition-colors ${errors.dob ? 'border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-100' : 'border-slate-300 focus:border-slate-900 focus:ring-1 focus:ring-slate-100'}`}
+                                            />
+                                            {errors.dob && <p className="text-red-600 text-xs font-medium">{errors.dob}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-semibold text-slate-900 uppercase tracking-wide flex items-center gap-1">
+                                                Gender <span className="text-red-600">*</span>
+                                            </label>
+                                            <select
+                                                name="gender"
+                                                value={formData.gender}
+                                                onChange={handleTextChange}
+                                                className={`w-full px-4 py-2.5 rounded-lg bg-white border font-normal text-slate-900 appearance-none text-sm outline-none transition-colors ${errors.gender ? 'border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-100' : 'border-slate-300 focus:border-slate-900 focus:ring-1 focus:ring-slate-100'}`}
+                                            >
+                                                <option value="" disabled>Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            {errors.gender && <p className="text-red-600 text-xs font-medium">{errors.gender}</p>}
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
@@ -565,7 +616,7 @@ export default function ScholarshipApplyPage() {
                                         <span className="w-8 h-8 bg-slate-900 text-white rounded flex items-center justify-center text-xs font-bold">4</span>
                                         Document Uploads
                                     </h3>
-                                    <p className="text-xs text-slate-600 font-normal mb-6">Accepted formats: PDF, JPG, PNG. Maximum 5 MB per file.</p>
+                                    <p className="text-xs text-slate-600 font-normal mb-6">Accepted formats: PDF (50 KB to 200 KB), JPG, PNG. Maximum 5 MB per file.</p>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {/* Income Certificate */}
@@ -637,6 +688,34 @@ export default function ScholarshipApplyPage() {
                                             placeholder="Describe your educational goals and financial situation..."
                                         />
                                     </div>
+                                </div>
+
+                                {/* Declaration Checkbox */}
+                                <div className="space-y-3 pt-2">
+                                    <label className="flex items-start gap-3 cursor-pointer select-none">
+                                        <input
+                                            type="checkbox"
+                                            id="declaration"
+                                            checked={declarationChecked}
+                                            onChange={(e) => {
+                                                setDeclarationChecked(e.target.checked);
+                                                if (errors.declaration) {
+                                                    setErrors(prev => {
+                                                        const copy = { ...prev };
+                                                        delete copy.declaration;
+                                                        return copy;
+                                                    });
+                                                }
+                                            }}
+                                            className="mt-1 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                                        />
+                                        <span className="text-sm font-semibold text-slate-700 leading-snug">
+                                            I declare that I have provided valid information and uploaded the required copies. <span className="text-red-600">*</span>
+                                        </span>
+                                    </label>
+                                    {errors.declaration && (
+                                        <p className="text-red-600 text-xs font-medium pl-7">{errors.declaration}</p>
+                                    )}
                                 </div>
 
                                 {/* Submit Button */}
