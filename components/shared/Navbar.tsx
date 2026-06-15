@@ -47,7 +47,13 @@ const navLinks = [
     ],
   },
   { label: "Our Handmade Materials", href: "/our-handmade-materials" },
-  { label: "Scholarship Apply", href: "/scholarship-apply" },
+  {
+    label: "Student Opportunities",
+    children: [
+      { label: "Scholarship Apply", href: "/scholarship-apply" },
+      { label: "Internship Apply", href: "/internship-apply" },
+    ],
+  },
   { label: "Help Us", href: "/help", highlight: true },
 ];
 
