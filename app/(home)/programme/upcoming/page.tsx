@@ -99,21 +99,30 @@ export default function UpcomingProgrammesPage() {
                                 className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
                             >
                                 {/* Event Cover */}
-                                <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                                <div className="relative h-48 w-full bg-slate-100 overflow-hidden flex items-center justify-center">
                                     {prog.image ? (
-                                        <img 
-                                            src={prog.image} 
-                                            alt={prog.title} 
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
+                                        <>
+                                            {/* Blurred background to prevent empty side spaces */}
+                                            <img
+                                                src={prog.image}
+                                                alt=""
+                                                className="absolute inset-0 w-full h-full object-cover blur-md scale-110 opacity-30 select-none pointer-events-none"
+                                            />
+                                            {/* Main uncropped image */}
+                                            <img
+                                                src={prog.image}
+                                                alt={prog.title}
+                                                className="relative z-10 max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                        </>
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-50">
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-50 relative z-10">
                                             <span className="text-4xl">🗓️</span>
                                             <span className="text-[10px] font-bold tracking-widest uppercase mt-2">BSPNWS</span>
                                         </div>
                                     )}
                                     {/* Date Badge */}
-                                    <div className="absolute top-4 left-4 bg-emerald-950/75 backdrop-blur-sm text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                                    <div className="absolute top-4 left-4 z-20 bg-emerald-950/75 backdrop-blur-sm text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
                                         <Calendar className="w-3 h-3" />
                                         {formatDate(prog.date)}
                                     </div>

@@ -44,7 +44,7 @@ export default function WhatsAppButton() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3 font-sans select-none pointer-events-none">
+    <div className="fixed bottom-6 right-6 z-30 flex flex-col items-end gap-3 font-sans select-none pointer-events-none">
       {/* Interactive Chat Bubble Notification */}
       {showTooltip && (
         <div className="bg-white text-gray-800 p-4 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-100 flex items-start gap-3 max-w-[280px] animate-fade-in-up pointer-events-auto relative">

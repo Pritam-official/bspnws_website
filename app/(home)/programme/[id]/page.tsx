@@ -111,21 +111,30 @@ export default function ProgrammeDetailPage() {
                 <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-100">
                     
                     {/* Header Image */}
-                    <div className="relative h-64 sm:h-[400px] w-full bg-slate-100">
+                    <div className="relative min-h-[250px] sm:min-h-[400px] max-h-[600px] w-full bg-slate-100 overflow-hidden flex items-center justify-center">
                         {programme.image ? (
-                            <img 
-                                src={programme.image} 
-                                alt={programme.title} 
-                                className="w-full h-full object-cover"
-                            />
+                            <>
+                                {/* Blurred background to fill margins */}
+                                <img 
+                                    src={programme.image} 
+                                    alt="" 
+                                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-30 select-none pointer-events-none"
+                                />
+                                {/* Main uncropped image */}
+                                <img 
+                                    src={programme.image} 
+                                    alt={programme.title} 
+                                    className="relative z-10 max-h-[600px] w-auto h-auto max-w-full object-contain"
+                                />
+                            </>
                         ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-100">
+                            <div className="w-full h-full min-h-[250px] sm:min-h-[400px] flex flex-col items-center justify-center text-slate-300 bg-slate-100 relative z-10">
                                 <span className="text-7xl">🗓️</span>
                                 <span className="text-xs font-black tracking-[0.2em] uppercase mt-4">BSPNWS Community Event</span>
                             </div>
                         )}
                         {/* Status Overlay Badge */}
-                        <div className="absolute top-6 right-6">
+                        <div className="absolute top-6 right-6 z-20">
                             <span className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest backdrop-blur-md shadow-md border ${
                                 isUpcoming 
                                     ? "bg-amber-500/90 text-white border-amber-400/20" 
