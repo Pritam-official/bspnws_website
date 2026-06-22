@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./(home)/globals.css";
 import ConditionalFooter from "@/components/shared/ConditionalFooter";
@@ -7,6 +7,11 @@ const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "Burdwan Sadar Pyara Nutrition Welfare Society",
@@ -23,6 +28,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var mode = localStorage.getItem('viewMode');
+                  if (mode === 'desktop') {
+                    var meta = document.querySelector('meta[name="viewport"]');
+                    if (meta) {
+                      meta.setAttribute('content', 'width=1200');
+                    }
+                  }
+                } catch (e) {}
+              })();
+            `
+          }}
+        />
+      </head>
       <body className={`${outfit.variable} font-sans antialiased flex flex-col min-h-screen`}>
         <main className="flex-grow">
           {children}

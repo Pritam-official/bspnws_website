@@ -149,41 +149,47 @@ export default function Home() {
 
   if (stage !== "complete") {
     return (
-      <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#050505] text-white ${stage === 'transitioning' ? 'animate-fade-out' : ''}`}>
-        {/* Stage 1: Logo entrance */}
-        {(stage === "logo" || stage === "text") && (
-          <div className="relative w-56 h-56 mb-12 animate-scale-in">
-            <Image
-              src="/logo.jpg"
-              alt="BSPNWS Logo"
-              fill
-              className="object-contain rounded-full border-4 border-primary/30 shadow-[0_0_60px_rgba(50,205,50,0.3)] animate-glow"
-              priority
-            />
-          </div>
-        )}
+      <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#000000] text-white p-4 ${stage === 'transitioning' ? 'animate-fade-out' : ''}`}>
+        
+        {/* Stable Logo - Always rendered, stays in a stable position */}
+        <div className="relative w-48 h-48 md:w-72 md:h-72 animate-scale-in">
+          <Image
+            src="/logo.jpg"
+            alt="BSPNWS Logo"
+            fill
+            className="object-contain rounded-full border-4 border-primary/30 shadow-[0_0_50px_rgba(221,112,48,0.35)] md:shadow-[0_0_60px_rgba(221,112,48,0.3)] animate-glow"
+            priority
+          />
+        </div>
 
-        {/* Stage 2: Text reveal */}
-        {stage === "text" && (
-          <div className="text-center px-6 max-w-4xl">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight animate-reveal bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
-              Welcome to
-            </h2>
-            <div className="mt-6 animate-slide-up-fade" style={{ animationDelay: '0.6s' }}>
-              <h1 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-[0.2em] leading-tight">
-                Burdwan Sadar Pyara
-              </h1>
-              <p className="text-primary font-black uppercase tracking-[0.4em] text-lg mt-3">
-                Nutrition Welfare Society
-              </p>
-            </div>
-            <div className="mt-12 flex justify-center animate-fade-in" style={{ animationDelay: '1.2s' }}>
-              <div className="w-1.5 h-1.5 bg-primary rounded-full mx-1 animate-bounce" style={{ animationDelay: '0s' }}></div>
-              <div className="w-1.5 h-1.5 bg-primary rounded-full mx-1 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-1.5 h-1.5 bg-primary rounded-full mx-1 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-            </div>
+        {/* Text Container - Occupies space from start, smoothly fades and slides up */}
+        <div 
+          className={`text-center px-4 max-w-lg md:max-w-4xl mt-8 md:mt-12 transition-all duration-1000 ease-out ${
+            stage === "text" || stage === "transitioning"
+              ? "opacity-100 transform translate-y-0" 
+              : "opacity-0 transform translate-y-6 md:translate-y-8"
+          }`}
+        >
+          <h2 className="text-lg md:text-2xl font-bold tracking-widest md:tracking-wide text-primary uppercase md:normal-case">
+            Welcome to
+          </h2>
+          <div className="mt-4 md:mt-6">
+            <h1 className="text-2xl md:text-4xl font-black text-white uppercase tracking-[0.15em] md:tracking-[0.2em] leading-tight">
+              Burdwan Sadar Pyara
+            </h1>
+            <p className="text-primary font-black uppercase tracking-[0.25em] md:tracking-[0.35em] text-[10px] md:text-lg mt-2.5 md:mt-4">
+              Nutrition Welfare Society
+            </p>
           </div>
-        )}
+          
+          {/* Centered orange dots '...' */}
+          <div className="mt-8 md:mt-12 text-xl md:text-3xl font-black text-primary tracking-[0.25em] md:tracking-[0.3em] flex justify-center items-center">
+            <span className="animate-pulse">.</span>
+            <span className="animate-pulse delay-200">.</span>
+            <span className="animate-pulse delay-400">.</span>
+          </div>
+        </div>
+
       </div>
     );
   }
