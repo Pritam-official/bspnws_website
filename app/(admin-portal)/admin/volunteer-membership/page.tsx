@@ -51,6 +51,8 @@ function getGradient(index: number) {
 export default function VolunteerMembershipPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterDate, setFilterDate] = useState('All');
+    const [filterMonth, setFilterMonth] = useState('All');
+    const [filterYear, setFilterYear] = useState('All');
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
     const [memberships, setMemberships] = useState<MembershipRecord[]>([]);
     const [loading, setLoading] = useState(true);
@@ -79,15 +81,90 @@ export default function VolunteerMembershipPage() {
         fetchMemberships(filterDate);
     }, [filterDate, fetchMemberships]);
 
-    // Client-side search filter (month filter is handled by API)
+    // Dynamic list of payment years present in the records
+    const uniqueYears = Array.from(
+        new Set(
+            memberships
+                .map((m) => {
+                    if (!m.date) return null;
+                    const parts = m.date.split('-');
+                    return parts[0] ? parseInt(parts[0], 10) : null;
+                })
+                .filter(Boolean) as number[]
+        )
+    );
+    const yearsList = uniqueYears.length > 0 ? uniqueYears.sort((a, b) => b - a) : [new Date().getFullYear()];
+
+    // Client-side search and month/year filters (day filter is handled by API)
     const filtered = memberships.filter((m) => {
         const term = searchTerm.toLowerCase();
-        return (
+        const matchesSearch =
             m.name.toLowerCase().includes(term) ||
             m.phoneNumber.includes(searchTerm) ||
-            (m.email && m.email.toLowerCase().includes(term))
-        );
+            (m.email && m.email.toLowerCase().includes(term));
+
+        let paymentMonth = '';
+        let paymentYear = '';
+        if (m.date) {
+            const parts = m.date.split('-');
+            if (parts.length >= 2) {
+                const monthVal = parseInt(parts[1], 10);
+                paymentMonth = months[monthVal - 1] || '';
+                paymentYear = parts[0] || '';
+            }
+        }
+
+        const matchesMonth = filterMonth === 'All' || paymentMonth === filterMonth;
+        const matchesYear = filterYear === 'All' || paymentYear === filterYear;
+
+        return matchesSearch && matchesMonth && matchesYear;
     });
+
+    const downloadCSV = () => {
+        const headers = [
+            "name",
+            "email",
+            "memberType",
+            "phoneNumber",
+            "date",
+            "membershipStatus",
+            "renewalMonth",
+            "renewalYear",
+            "paymentMethod",
+            "amount"
+        ];
+
+        const rows = filtered.map((m) => [
+            m.name || '',
+            m.email || '',
+            m.memberType || 'Normal Member',
+            m.phoneNumber || '',
+            m.date || '',
+            m.membershipStatus || '',
+            m.renewalMonth || '',
+            m.renewalYear || '',
+            m.paymentMethod || '',
+            m.amount || ''
+        ].map(value => {
+            const stringValue = String(value).replace(/"/g, '""');
+            return `"${stringValue}"`;
+        }).join(','));
+
+        const csvContent = [headers.join(','), ...rows].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        const monthSuffix = filterMonth !== 'All' ? `_${filterMonth}` : '';
+        const yearSuffix = filterYear !== 'All' ? `_${filterYear}` : '';
+        link.download = `membership_records${monthSuffix}${yearSuffix}.csv`;
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
 
     // Stats
     const totalRevenue = memberships.reduce((sum, m) => sum + (m.amount || 0), 0);
@@ -165,7 +242,7 @@ export default function VolunteerMembershipPage() {
                 {/* Filters */}
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-8 shadow-sm">
                     <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-                        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto">
+                        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto flex-wrap">
                             {/* Search */}
                             <div className="relative flex-1 min-w-[280px]">
                                 <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,26 +279,67 @@ export default function VolunteerMembershipPage() {
                                     </button>
                                 )}
                             </div>
+
+                            {/* Month Filter */}
+                            <div className="flex items-center gap-2">
+                                <select
+                                    value={filterMonth}
+                                    onChange={(e) => setFilterMonth(e.target.value)}
+                                    className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer min-w-[150px]"
+                                >
+                                    <option value="All">All Months (Payment)</option>
+                                    {months.map((m) => (
+                                        <option key={m} value={m}>{m}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Year Filter */}
+                            <div className="flex items-center gap-2">
+                                <select
+                                    value={filterYear}
+                                    onChange={(e) => setFilterYear(e.target.value)}
+                                    className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer min-w-[130px]"
+                                >
+                                    <option value="All">All Years (Payment)</option>
+                                    {yearsList.map((y) => (
+                                        <option key={y} value={y.toString()}>{y}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
-                        {/* View Mode Toggle */}
-                        <div className="flex items-center gap-2 bg-slate-100 rounded-xl p-1">
+                        {/* Download & View Mode Toggle */}
+                        <div className="flex flex-wrap items-center gap-3">
                             <button
-                                onClick={() => setViewMode('grid')}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'grid' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                onClick={downloadCSV}
+                                disabled={filtered.length === 0}
+                                className="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2 whitespace-nowrap"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                 </svg>
+                                Download CSV
                             </button>
-                            <button
-                                onClick={() => setViewMode('table')}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'table' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                            >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                                </svg>
-                            </button>
+
+                            <div className="flex items-center gap-2 bg-slate-100 rounded-xl p-1 shrink-0">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'grid' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('table')}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'table' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
