@@ -4,8 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import AdminVerificationModal from "@/components/admin-portal/AdminVerificationModal";
-import adminConfig from "@/lib/admin-config.json";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -62,7 +60,6 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
-  const [isAdminAuthOpen, setIsAdminAuthOpen] = useState(false);
   const [isDesktopMode, setIsDesktopMode] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -215,48 +212,18 @@ export default function Navbar() {
               Contact Us
             </Link>
 
-            {/* Login Dropdown */}
-            <div className="relative login-group group block">
-              <button className="flex items-center bg-white/70 backdrop-blur-md border border-gray-100 shadow-md sm:shadow-xl rounded-lg sm:rounded-2xl px-2 py-1.5 sm:px-5 sm:py-2.5 hover:bg-white transition-all">
-                <div className="w-5 h-5 sm:w-8 sm:h-8 bg-gray-900 rounded-md sm:rounded-lg flex items-center justify-center text-white mr-1 sm:mr-3">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-                <span className="text-[9px] sm:text-sm font-black text-gray-900 uppercase tracking-wider sm:tracking-widest mr-1 sm:mr-2">Login</span>
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+            {/* Login Button */}
+            <Link
+              href="/login"
+              className="flex items-center bg-white/70 backdrop-blur-md border border-gray-100 shadow-md sm:shadow-xl rounded-lg sm:rounded-2xl px-2.5 py-1.5 sm:px-5 sm:py-2.5 hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all group"
+            >
+              <div className="w-5 h-5 sm:w-8 sm:h-8 bg-gray-900 rounded-md sm:rounded-lg flex items-center justify-center text-white mr-1 sm:mr-3 group-hover:bg-primary transition-colors">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
                 </svg>
-              </button>
-              <div className="login-dropdown">
-                <Link href="/login/volunteer" className="login-link">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary mr-3">
-                    <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-black text-primary leading-none mb-1">VOLUNTEER</span>
-                    <span className="text-[10px] text-gray-400 font-bold leading-none">Portal Access</span>
-                  </div>
-                </Link>
-                <div className="h-px bg-gray-50 my-1 mx-2"></div>
-                <div
-                  onClick={() => setIsAdminAuthOpen(true)}
-                  className="login-link cursor-pointer"
-                >
-                  <div className="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary mr-3">
-                    <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-black text-secondary leading-none mb-1">ADMINISTRATOR</span>
-                    <span className="text-[10px] text-gray-400 font-bold leading-none">Security Login</span>
-                  </div>
-                </div>
               </div>
-            </div>
+              <span className="text-[9px] sm:text-sm font-black text-gray-900 uppercase tracking-wider sm:tracking-widest">Login</span>
+            </Link>
 
             {/* Hamburger — mobile only */}
             <button
@@ -377,27 +344,16 @@ export default function Navbar() {
           >
             Contact Us
           </Link>
-          <div className="grid grid-cols-2 gap-3">
-            <Link
-              href="/login/volunteer"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-primary/20 text-primary font-bold text-xs hover:bg-primary/5 transition-colors"
-            >
-              <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-              </svg>
-              Volunteer
-            </Link>
-            <button
-              onClick={() => { setIsAdminAuthOpen(true); setMobileOpen(false); }}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-secondary/20 text-secondary font-bold text-xs hover:bg-secondary/5 transition-colors"
-            >
-              <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-              Admin
-            </button>
-          </div>
+          <Link
+            href="/login"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border-2 border-primary/20 text-primary font-bold text-sm hover:bg-primary/5 transition-all shadow-md active:scale-95"
+          >
+            <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+            </svg>
+            Access Portals
+          </Link>
           
           {/* Desktop/Mobile View toggle button */}
           <button
@@ -423,11 +379,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      <AdminVerificationModal
-        isOpen={isAdminAuthOpen}
-        onClose={() => setIsAdminAuthOpen(false)}
-        adminCode={adminConfig.adminCode}
-      />
     </>
   );
 }

@@ -190,7 +190,15 @@ html {
   pointer-events: none;
 }
 
-.group:hover .nav-dropdown,
+@media (hover: hover) {
+  .group:hover .nav-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+}
+
 .nav-dropdown.is-open {
   opacity: 1;
   visibility: visible;
@@ -209,10 +217,12 @@ html {
   text-align: left;
 }
 
-.dropdown-link:hover {
-  background-color: #f8fafc;
-  color: var(--primary);
-  padding-left: 1.75rem;
+@media (hover: hover) {
+  .dropdown-link:hover {
+    background-color: #f8fafc;
+    color: var(--primary);
+    padding-left: 1.75rem;
+  }
 }
 
 @keyframes slide-from-left {
@@ -304,10 +314,12 @@ html {
   z-index: 110;
 }
 
-.login-group:hover .login-dropdown {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+@media (hover: hover) {
+  .login-group:hover .login-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
 }
 
 .login-link {
@@ -323,10 +335,12 @@ html {
   transition: all 0.2s;
 }
 
-.login-link:hover {
-  background: white;
-  color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+@media (hover: hover) {
+  .login-link:hover {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
 }
 
 @keyframes marquee {
@@ -340,8 +354,10 @@ html {
   animation: marquee 30s linear infinite;
 }
 
-.animate-marquee:hover {
-  animation-play-state: paused;
+@media (hover: hover) {
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes fade-in-up {
