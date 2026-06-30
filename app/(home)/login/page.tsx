@@ -449,7 +449,7 @@ export default function PortalSelectionPage() {
                 Can't access your portal or need technical support? Our team is ready to help.
               </p>
               <a
-                href="mailto:admin@bspnws.org"
+                href="mailto:bspnws.support@gmail.com"
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 4,
                   color: "#c9a84c", fontSize: 12.5, fontWeight: 600, textDecoration: "none",
