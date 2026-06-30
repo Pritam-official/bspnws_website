@@ -44,7 +44,7 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
       ></div>
 
       {/* Modal Content */}
-      <div className={`relative w-full max-w-md bg-white rounded-[32px] shadow-2xl overflow-hidden transition-all duration-500 transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
+      <div className={`relative w-full max-w-md bg-white rounded-[32px] shadow-2xl overflow-hidden transition-all duration-500 transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'} text-gray-900`}>
         {/* Header/Banner */}
         <div className="h-32 bg-purple-600 relative overflow-hidden flex items-center justify-center">
           <div className="absolute inset-0 opacity-10">
@@ -74,7 +74,7 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
                     type="password"
                     value={inputCode}
                     onChange={(e) => setInputCode(e.target.value)}
-                    className={`w-full bg-gray-50 border-2 rounded-2xl px-6 py-4 text-center text-lg font-black tracking-[0.5em] focus:outline-none transition-all duration-300 ${error ? 'border-red-500 animate-shake' : 'border-transparent focus:border-purple-600/20 focus:bg-white'}`}
+                    className={`w-full bg-gray-50 border-2 text-gray-900 rounded-2xl px-6 py-4 text-center text-lg font-black tracking-[0.5em] focus:outline-none transition-all duration-300 ${error ? 'border-red-500 animate-shake' : 'border-transparent focus:border-purple-600/20 focus:bg-white'}`}
                     placeholder="••••••"
                     autoFocus
                   />
