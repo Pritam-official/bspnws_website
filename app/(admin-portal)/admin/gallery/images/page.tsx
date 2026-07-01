@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const imageTypes = ['Events', 'Donations', 'Guests', 'Success Stories'];
-
 interface GalleryItem {
     _id: string;
     title: string;
@@ -20,9 +18,10 @@ export default function ImageGalleryPage() {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [projectNames, setProjectNames] = useState<string[]>([]);
 
     const [formData, setFormData] = useState({
-        type: 'Events',
+        type: '',
         title: '',
         date: '',
         description: '',
@@ -31,7 +30,26 @@ export default function ImageGalleryPage() {
 
     useEffect(() => {
         fetchItems();
+        fetchProjects();
     }, []);
+
+    const fetchProjects = async () => {
+        try {
+            const res = await fetch('/api/admin/projects');
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    const names = data.map((p: any) => p.name);
+                    setProjectNames(names);
+                    if (names.length > 0) {
+                        setFormData(prev => ({ ...prev, type: prev.type || names[0] }));
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Failed to fetch projects:", error);
+        }
+    };
 
     const fetchItems = async () => {
         try {
@@ -93,7 +111,7 @@ export default function ImageGalleryPage() {
             });
 
             if (res.ok) {
-                setFormData({ type: 'Events', title: '', date: '', description: '', images: [] });
+                setFormData({ type: projectNames[0] || '', title: '', date: '', description: '', images: [] });
                 setEditingId(null);
                 fetchItems();
                 alert(editingId ? 'Gallery item updated successfully!' : 'Gallery item added successfully!');
@@ -123,7 +141,7 @@ export default function ImageGalleryPage() {
 
     const handleCancelEdit = () => {
         setEditingId(null);
-        setFormData({ type: 'Events', title: '', date: '', description: '', images: [] });
+        setFormData({ type: projectNames[0] || '', title: '', date: '', description: '', images: [] });
     };
 
     const handleDelete = async (id: string) => {
@@ -190,8 +208,8 @@ export default function ImageGalleryPage() {
                                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
                                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all appearance-none cursor-pointer"
                             >
-                                {imageTypes.map((type) => (
-                                    <option key={type} value={type}>{type}</option>
+                                {projectNames.map((name) => (
+                                    <option key={name} value={name}>{name}</option>
                                 ))}
                             </select>
                         </div>
@@ -349,12 +367,7 @@ export default function ImageGalleryPage() {
 
                                     <div className="flex items-center justify-between border-t border-gray-100 pt-3 mt-auto">
                                         <div className="flex items-center gap-2">
-                                            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                                                img.type === 'Events' ? 'bg-emerald-50 text-emerald-600' :
-                                                img.type === 'Donations' ? 'bg-amber-50 text-amber-600' :
-                                                img.type === 'Guests' ? 'bg-blue-50 text-blue-600' :
-                                                'bg-pink-50 text-pink-600'
-                                            }`}>
+                                            <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-blue-50 text-blue-600 border border-blue-100">
                                                 {img.type}
                                             </span>
                                             <span className="text-[10px] font-bold text-gray-400">{img.date}</span>

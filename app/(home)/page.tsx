@@ -20,9 +20,10 @@ type SplashStage = "logo" | "text" | "transitioning" | "complete";
 
 const projectImages: Record<string, string> = {
   "BARISTHA VANDANA": "/baristha.jpg",
-  "ANNAPRASHANA": "/Annaprashan_Invitation.webp",
+  "ANNAPRASHANA": "/annaprashan_cartoon.png",
   "SWASTHYA VIKAS": "/swasta bikash.jpg",
   "SAMPARKER BANDHAN": "/bhai-dooj-ceremony-with-cartoon-character-free-vector.jpg",
+  "SOMPARKER BANDHAN": "/bhai-dooj-ceremony-with-cartoon-character-free-vector.jpg",
   "AANANDAM": "/picnic.jpg",
   "SHYAMALIMA": "/syamolima.webp",
   "UTSAHO": "/utsaho.jpg",
@@ -58,17 +59,29 @@ const ProjectIcon = ({ name, image }: { name: string; image?: string }) => {
   );
 };
 
-const ProjectCard = ({ name, image, side, delay }: { name: string; image?: string; side: "left" | "right", delay: string }) => (
-  <div className={`relative flex items-center gap-2 sm:gap-5 bg-white p-2 sm:p-5 rounded-xl sm:rounded-[2rem] shadow-[0_4px_12px_rgba(0,0,0,0.05)] sm:shadow-[0_12px_32px_rgba(0,0,0,0.1)] border-2 border-gray-100 hover:shadow-[0_24px_48px_rgba(0,0,0,0.15)] hover:-translate-y-1 sm:hover:-translate-y-2 hover:scale-[1.02] sm:hover:scale-[1.04] hover:border-primary/40 transition-all duration-500 cursor-pointer group ${side === "left" ? "animate-slide-left" : "animate-slide-right"} ${delay} text-left`}>
-    <div className={`w-8 h-8 sm:w-16 sm:h-16 relative flex-shrink-0 bg-gray-100 rounded-lg sm:rounded-2xl overflow-hidden shadow-inner group-hover:shadow-2xl transition-all duration-500 ring-2 sm:ring-4 ring-primary/10 group-hover:ring-primary/20`}>
-      <ProjectIcon name={name} image={image} />
+const ProjectCard = ({ name, image, side, delay, href }: { name: string; image?: string; side: "left" | "right"; delay: string; href?: string | null }) => {
+  const cardContent = (
+    <div className={`relative flex items-center gap-2 sm:gap-5 bg-white p-2 sm:p-5 rounded-xl sm:rounded-[2rem] shadow-[0_4px_12px_rgba(0,0,0,0.05)] sm:shadow-[0_12px_32px_rgba(0,0,0,0.1)] border-2 border-gray-100 hover:shadow-[0_24px_48px_rgba(0,0,0,0.15)] hover:-translate-y-1 sm:hover:-translate-y-2 hover:scale-[1.02] sm:hover:scale-[1.04] hover:border-primary/40 transition-all duration-500 cursor-pointer group ${side === "left" ? "animate-slide-left" : "animate-slide-right"} ${delay} text-left w-full`}>
+      <div className={`w-8 h-8 sm:w-16 sm:h-16 relative flex-shrink-0 bg-gray-100 rounded-lg sm:rounded-2xl overflow-hidden shadow-inner group-hover:shadow-2xl transition-all duration-500 ring-2 sm:ring-4 ring-primary/10 group-hover:ring-primary/20`}>
+        <ProjectIcon name={name} image={image} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-[7px] sm:text-[10px] font-black tracking-[0.2em] uppercase mb-0.5 sm:mb-1.5 transition-colors text-primary group-hover:text-primary/70 truncate">Initiative Portfolio</div>
+        <h3 className="text-[9px] sm:text-sm md:text-base font-black tracking-tight text-[#0F172A] leading-tight truncate">{name}</h3>
+      </div>
     </div>
-    <div className="flex-1 min-w-0">
-      <div className="text-[7px] sm:text-[10px] font-black tracking-[0.2em] uppercase mb-0.5 sm:mb-1.5 transition-colors text-primary group-hover:text-primary/70 truncate">Initiative Portfolio</div>
-      <h3 className="text-[9px] sm:text-sm md:text-base font-black tracking-tight text-[#0F172A] leading-tight truncate">{name}</h3>
-    </div>
-  </div>
-);
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className="block w-full">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
+};
 
 // Module-level variable persists during internal navigation but resets on full page refresh
 let hasShownSplashGlobal = false;
@@ -78,13 +91,12 @@ const backgrounds = [
   '/bg-3.jpg',
   '/bg-1.jpg',
   '/home-bg.jpg',
-
-
 ];
 
 export default function Home() {
   const [stage, setStage] = useState<SplashStage>("logo");
   const [bgIndex, setBgIndex] = useState(0);
+  const [dbProjects, setDbProjects] = useState<any[]>([]);
 
   useEffect(() => {
     // Fetch dynamic projects
@@ -92,13 +104,8 @@ export default function Home() {
       try {
         const res = await fetch('/api/admin/projects');
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          // Splitting projects for left and right
-          const mid = Math.ceil(data.length / 2);
-          setDynamicProjects({
-            left: data.slice(0, mid).map(p => ({ name: p.name, image: p.images?.[0] })),
-            right: data.slice(mid).map(p => ({ name: p.name, image: p.images?.[0] }))
-          });
+        if (Array.isArray(data)) {
+          setDbProjects(data);
         }
       } catch (error) {
         console.error("Failed to fetch projects:", error);
@@ -131,26 +138,39 @@ export default function Home() {
     };
   }, []);
 
-  const [dynamicProjects, setDynamicProjects] = useState<{ left: any[], right: any[] } | null>(null);
+  const leftNames = ["ANNAPRASHANA", "KUTUMBA", "UTSAHO", "SHYAMALIMA"];
+  const rightNames = ["SOMPARKER BANDHAN", "AANANDAM", "SWASTHYA VIKAS", "BARISTHA VANDANA"];
 
-  const leftProjects = dynamicProjects?.left || [
-    { name: "BARISTHA VANDANA" },
-    { name: "ANNAPRASHANA" },
-    { name: "SWASTHYA VIKAS" },
-    { name: "SAMPARKER BANDHAN" },
-  ];
+  const getMappedProject = (name: string) => {
+    const normalizedName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const matched = dbProjects.find(p => {
+      const dbNorm = p.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalizedName.includes("bandhan") && dbNorm.includes("bandhan")) return true;
+      return dbNorm === normalizedName;
+    });
 
-  const rightProjects = dynamicProjects?.right || [
-    { name: "AANANDAM" },
-    { name: "SHYAMALIMA" },
-    { name: "UTSAHO" },
-    { name: "KUTUMBA" },
-  ];
+    if (matched) {
+      return {
+        name: matched.name,
+        image: matched.images?.[0] || null,
+        href: `/projects/${matched._id}`
+      };
+    }
+
+    return {
+      name,
+      image: null,
+      href: null
+    };
+  };
+
+  const leftProjects = leftNames.map(getMappedProject);
+  const rightProjects = rightNames.map(getMappedProject);
 
   if (stage !== "complete") {
     return (
       <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#000000] text-white p-4 ${stage === 'transitioning' ? 'animate-fade-out' : ''}`}>
-        
+
         {/* Stable Logo - Always rendered, stays in a stable position */}
         <div className="relative w-48 h-48 md:w-72 md:h-72 animate-scale-in">
           <Image
@@ -163,12 +183,11 @@ export default function Home() {
         </div>
 
         {/* Text Container - Occupies space from start, smoothly fades and slides up */}
-        <div 
-          className={`text-center px-4 max-w-lg md:max-w-4xl mt-8 md:mt-12 transition-all duration-1000 ease-out ${
-            stage === "text" || stage === "transitioning"
-              ? "opacity-100 transform translate-y-0" 
-              : "opacity-0 transform translate-y-6 md:translate-y-8"
-          }`}
+        <div
+          className={`text-center px-4 max-w-lg md:max-w-4xl mt-8 md:mt-12 transition-all duration-1000 ease-out ${stage === "text" || stage === "transitioning"
+            ? "opacity-100 transform translate-y-0"
+            : "opacity-0 transform translate-y-6 md:translate-y-8"
+            }`}
         >
           <h2 className="text-lg md:text-2xl font-bold tracking-widest md:tracking-wide text-primary uppercase md:normal-case">
             Welcome to
@@ -181,7 +200,7 @@ export default function Home() {
               Nutrition Welfare Society
             </p>
           </div>
-          
+
           {/* Centered orange dots '...' */}
           <div className="mt-8 md:mt-12 text-xl md:text-3xl font-black text-primary tracking-[0.25em] md:tracking-[0.3em] flex justify-center items-center">
             <span className="animate-pulse">.</span>
@@ -223,7 +242,7 @@ export default function Home() {
           {/* Left Grid — visible on all screens, responsive grid */}
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-6 lg:gap-8 w-full max-w-5xl lg:max-w-[260px] xl:max-w-[290px] 2xl:max-w-[320px] order-2 lg:order-1">
             {leftProjects.map((p: any, index) => (
-              <ProjectCard key={p.name} name={p.name} image={p.image} side="left" delay={`delay-${(index + 1) * 100}`} />
+              <ProjectCard key={p.name} name={p.name} image={p.image} side="left" delay={`delay-${(index + 1) * 100}`} href={p.href} />
             ))}
           </div>
 
@@ -270,7 +289,7 @@ export default function Home() {
           {/* Right Grid — visible on all screens, responsive grid */}
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-6 lg:gap-8 w-full max-w-5xl lg:max-w-[260px] xl:max-w-[290px] 2xl:max-w-[320px] order-3">
             {rightProjects.map((p: any, index) => (
-              <ProjectCard key={p.name} name={p.name} image={p.image} side="right" delay={`delay-${(index + 1) * 100}`} />
+              <ProjectCard key={p.name} name={p.name} image={p.image} side="right" delay={`delay-${(index + 1) * 100}`} href={p.href} />
             ))}
           </div>
         </div>

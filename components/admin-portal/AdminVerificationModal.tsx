@@ -38,17 +38,17 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       ></div>
 
       {/* Modal Content */}
-      <div className={`relative w-full max-w-md bg-white rounded-[32px] shadow-2xl overflow-hidden transition-all duration-500 transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'} text-gray-900`}>
+      <div className={`relative w-full max-w-md bg-white rounded-[32px] shadow-2xl overflow-hidden transition-all duration-500 transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
         {/* Header/Banner */}
         <div className="h-32 bg-purple-600 relative overflow-hidden flex items-center justify-center">
           <div className="absolute inset-0 opacity-10">
-             <Image src="/logo.jpg" alt="Pattern" fill className="object-cover" />
+            <Image src="/logo.jpg" alt="Pattern" fill className="object-cover" />
           </div>
           <div className="relative z-10 w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30">
             <svg className="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
@@ -74,7 +74,7 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
                     type="password"
                     value={inputCode}
                     onChange={(e) => setInputCode(e.target.value)}
-                    className={`w-full bg-gray-50 border-2 text-gray-900 rounded-2xl px-6 py-4 text-center text-lg font-black tracking-[0.5em] focus:outline-none transition-all duration-300 ${error ? 'border-red-500 animate-shake' : 'border-transparent focus:border-purple-600/20 focus:bg-white'}`}
+                    className={`w-full bg-gray-50 border-2 rounded-2xl px-6 py-4 text-center text-lg font-black tracking-[0.5em] focus:outline-none transition-all duration-300 ${error ? 'border-red-500 animate-shake' : 'border-transparent focus:border-purple-600/20 focus:bg-white'}`}
                     placeholder="••••••"
                     autoFocus
                   />
@@ -86,7 +86,7 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
                 >
                   Verify Access
                 </button>
-                
+
                 <button
                   type="button"
                   onClick={onClose}
@@ -103,7 +103,7 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
               </div>
               <h2 className="text-2xl font-black text-gray-900 mb-2">Access Granted</h2>
               <p className="text-gray-500 font-medium mb-8">Choose your destination</p>
-              
+
               <div className="grid grid-cols-1 gap-4">
                 <button
                   onClick={() => handleNavigate('/login/admin')}
@@ -131,7 +131,7 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
           )}
         </div>
       </div>
-      
+
       <style jsx global>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }

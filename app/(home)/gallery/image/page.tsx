@@ -15,8 +15,6 @@ interface GalleryItem {
     createdAt: string;
 }
 
-const categories = ['All', 'Events', 'Donations', 'Guests', 'Success Stories'];
-
 const getGradientForType = (type: string) => {
     switch (type) {
         case 'Events':
@@ -43,12 +41,29 @@ export default function GalleryPage() {
     const [items, setItems] = useState<GalleryItem[]>([]);
     const [filteredItems, setFilteredItems] = useState<GalleryItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState<string[]>(['All']);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         fetchGallery();
+        fetchCategories();
     }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch('/api/admin/projects');
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    const names = data.map((p: any) => p.name);
+                    setCategories(['All', ...names]);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to fetch projects for categories:", err);
+        }
+    };
 
     useEffect(() => {
         let result = items;

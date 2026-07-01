@@ -12,7 +12,6 @@ const GalleryImageSchema = new Schema(
         },
         type: {
             type: String,
-            enum: ["Events", "Donations", "Guests", "Success Stories"],
             required: [true, "Please specify the type"],
         },
         date: {
