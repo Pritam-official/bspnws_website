@@ -256,7 +256,7 @@ export default function AboutPage() {
               </h1>
 
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
-                Burdwan Sadar Pyara Nutrition Welfare Society (BSPNWS), established in 2000, is a grassroots NGO based in Purba Bardhaman, West Bengal, dedicated to social justice and holistic community development.
+                Burdwan Sadar Pyara Nutrition Welfare Society (BSPNWS), established on 11 July 2022,is a grassroots NGO based in Purba Bardhaman, West Bengal, dedicated to social justice and holistic community development.
               </p>
 
               <div className="bg-white p-5 rounded-xl shadow-lg border-l-4 border-primary inline-block mx-auto lg:mx-0">
