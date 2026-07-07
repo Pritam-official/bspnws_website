@@ -1,10 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 const Footer = () => {
+    const [dbProjects, setDbProjects] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const res = await fetch("/api/admin/projects");
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    setDbProjects(data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch projects in footer:", error);
+            }
+        };
+        fetchProjects();
+    }, []);
+
+    const getMappedHref = (name: string) => {
+        const normalizedName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        const matched = dbProjects.find((p) => {
+            const dbNorm = p.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+            if (normalizedName.includes("bandhan") && dbNorm.includes("bandhan")) return true;
+            return dbNorm === normalizedName;
+        });
+        return matched ? `/projects/${matched._id}` : "/projects";
+    };
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -166,7 +193,7 @@ const Footer = () => {
                     <ul className="space-y-4">
                         {projects.map((project) => (
                             <li key={project} className="group">
-                                <Link href="/projects" className="text-sm font-medium text-gray-400 group-hover:text-emerald-500 transition-all flex items-center gap-2">
+                                <Link href={getMappedHref(project)} className="text-sm font-medium text-gray-400 group-hover:text-emerald-500 transition-all flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 bg-gray-700 rounded-full group-hover:bg-emerald-500 transition-colors"></span>
                                     {project}
                                 </Link>
