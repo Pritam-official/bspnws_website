@@ -24,6 +24,35 @@ interface GalleryItem {
     createdAt: string;
 }
 
+const getProjectLogo = (name: string): string | null => {
+    const lowerName = name.toLowerCase().trim();
+    if (lowerName.includes("baristha") || lowerName.includes("vandana")) {
+        return "/baristha_vandana_logo.png";
+    }
+    if (lowerName.includes("anandam") || lowerName.includes("aanandam")) {
+        return "/anandam_logo.png";
+    }
+    if (lowerName.includes("annaprashan") || lowerName.includes("annaprashana")) {
+        return "/annaprashan_logo.png";
+    }
+    if (lowerName.includes("kutumba")) {
+        return "/kutumba_logo.png";
+    }
+    if (lowerName.includes("samparker") || lowerName.includes("bondhon") || lowerName.includes("bandhan") || lowerName.includes("somparker")) {
+        return "/samparker bondhon.png";
+    }
+    if (lowerName.includes("shyamalima") || lowerName.includes("syamolima")) {
+        return "/shyamalima_logo.png";
+    }
+    if (lowerName.includes("swasthya") || lowerName.includes("sastha") || lowerName.includes("vikash") || lowerName.includes("vikas")) {
+        return "/swasthya_vikash_logo.png";
+    }
+    if (lowerName.includes("utsaho")) {
+        return "/utsaho_logo.png";
+    }
+    return null;
+};
+
 export default function ProjectDetailPage() {
     const params = useParams();
     const router = useRouter();
@@ -31,6 +60,8 @@ export default function ProjectDetailPage() {
     const [galleryImages, setGalleryImages] = useState<GalleryItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState<string | null>(null);
+
+    const logoUrl = project ? getProjectLogo(project.name) : null;
 
     useEffect(() => {
         if (!params?.id) return;
@@ -165,28 +196,43 @@ export default function ProjectDetailPage() {
                             </Link>
                         </div>
 
-                        {/* Title block */}
-                        <div className="max-w-3xl animate-[fadeUp_0.7s_ease-out]">
-                            <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-emerald-300 text-[10px] font-black tracking-widest uppercase px-3 py-1.5 rounded-full border border-white/15 mb-6">
-                                <Sparkles className="w-3 h-3" />
-                                Initiative Portfolio
-                            </span>
-
-                            <h1
-                                className="text-4xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-7 [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]"
-                                style={{ fontFamily: '"Fraunces", "Georgia", serif' }}
-                            >
-                                {project.name}
-                            </h1>
-
-                            <div className="flex flex-wrap items-center gap-3">
-                                <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 text-white text-xs font-bold px-3.5 py-2 rounded-full">
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Active Initiative
+                        {/* Title & Logo block */}
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 animate-[fadeUp_0.7s_ease-out]">
+                            <div className="max-w-3xl">
+                                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-emerald-300 text-[10px] font-black tracking-widest uppercase px-3 py-1.5 rounded-full border border-white/15 mb-6">
+                                    <Sparkles className="w-3 h-3" />
+                                    Initiative Portfolio
                                 </span>
-                                <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 text-white text-xs font-bold px-3.5 py-2 rounded-full">
-                                    <Heart className="w-3.5 h-3.5 text-rose-400" /> BSPNWS Welfare Council
-                                </span>
+
+                                <h1
+                                    className="text-4xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-7 [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]"
+                                    style={{ fontFamily: '"Fraunces", "Georgia", serif' }}
+                                >
+                                    {project.name}
+                                </h1>
+
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 text-white text-xs font-bold px-3.5 py-2 rounded-full">
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Active Initiative
+                                    </span>
+                                    <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 text-white text-xs font-bold px-3.5 py-2 rounded-full">
+                                        <Heart className="w-3.5 h-3.5 text-rose-400" /> BSPNWS Welfare Council
+                                    </span>
+                                </div>
                             </div>
+
+                            {/* Project Logo */}
+                            {logoUrl && (
+                                <div className="shrink-0 flex justify-center md:justify-end animate-[fadeIn_0.9s_ease-out_0.2s_both]">
+                                    <div className="relative w-48 h-48 sm:w-60 sm:h-60 rounded-full bg-white shadow-[0_20px_50px_rgba(0,0,0,0.35)] flex items-center justify-center overflow-hidden hover:scale-105 transition-all duration-300 border-2 border-white/20">
+                                        <img
+                                            src={logoUrl}
+                                            alt={`${project.name} Logo`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
