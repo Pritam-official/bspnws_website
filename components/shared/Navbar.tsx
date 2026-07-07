@@ -44,7 +44,7 @@ const navLinks = [
       { label: "Annual Reports", href: "/notice/annual-reports" },
     ],
   },
-  { label: "Our Handmade Materials", href: "/our-handmade-materials" },
+  { label: "Media Coverage", href: "/media-coverage" },
   {
     label: "Student Opportunities",
     children: [

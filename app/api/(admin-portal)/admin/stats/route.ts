@@ -6,7 +6,7 @@ import Notice from '@/models/Notice';
 import AnnualReport from '@/models/AnnualReport';
 import Programme from '@/models/Programme';
 import Project from '@/models/Project';
-import HandmadeMaterial from '@/models/HandmadeMaterial';
+import MediaCoverage from '@/models/MediaCoverage';
 import Officer from '@/models/Officer';
 
 export async function GET() {
@@ -21,7 +21,7 @@ export async function GET() {
             reportsCount,
             programmesCount,
             projectsCount,
-            materialsCount,
+            mediaCoverageCount,
             officersCount
         ] = await Promise.all([
             Volunteer.countDocuments({}),
@@ -30,7 +30,7 @@ export async function GET() {
             AnnualReport.countDocuments({}),
             Programme.countDocuments({}),
             Project.countDocuments({}),
-            HandmadeMaterial.countDocuments({}),
+            MediaCoverage.countDocuments({}),
             Officer.countDocuments({})
         ]);
 
@@ -46,14 +46,14 @@ export async function GET() {
             volunteersThisMonth,
             requestsPending,
             noticesThisWeek,
-            materialsAddedRecent,
+            mediaCoverageAddedRecent,
             upcomingProgrammes,
             latestReport
         ] = await Promise.all([
             Volunteer.countDocuments({ createdAt: { $gte: startOfMonth } }),
             VolunteerRequest.countDocuments({ status: 'pending' }),
             Notice.countDocuments({ createdAt: { $gte: startOfWeek } }),
-            HandmadeMaterial.countDocuments({ createdAt: { $gte: startOf30Days } }),
+            MediaCoverage.countDocuments({ createdAt: { $gte: startOf30Days } }),
             Programme.countDocuments({ type: 'upcoming' }),
             AnnualReport.findOne({}).sort({ createdAt: -1 })
         ]);
@@ -176,7 +176,7 @@ export async function GET() {
                 reports: { count: reportsCount, trend: `Last: ${latestReportLabel}` },
                 programmes: { count: programmesCount, trend: `${upcomingProgrammes} upcoming` },
                 projects: { count: projectsCount, trend: `${projectsCount} active` },
-                materials: { count: materialsCount, trend: `+${materialsAddedRecent} added` },
+                materials: { count: mediaCoverageCount, trend: `+${mediaCoverageAddedRecent} added` },
                 officers: { count: officersCount, trend: 'All active' }
             },
             recentVolunteers,

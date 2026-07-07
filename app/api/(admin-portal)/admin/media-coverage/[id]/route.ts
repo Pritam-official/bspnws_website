@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import HandmadeMaterial from "@/models/HandmadeMaterial";
+import MediaCoverage from "@/models/MediaCoverage";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 
-// PUT/PATCH to update a handmade material
+// PUT/PATCH to update a media coverage item
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         await connectDB();
@@ -13,38 +13,38 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         // If a new base64 image is uploaded, send it to Cloudinary
         if (data.image && data.image.startsWith("data:")) {
             try {
-                const cloudinaryUrl = await uploadToCloudinary(data.image, "handmade_materials");
+                const cloudinaryUrl = await uploadToCloudinary(data.image, "media_coverage");
                 data.image = cloudinaryUrl;
             } catch (err: any) {
-                console.error("Cloudinary upload failed during handmade material update. Saving Base64 fallback.", err);
+                console.error("Cloudinary upload failed during media coverage update. Saving Base64 fallback.", err);
             }
         }
 
-        const updatedMaterial = await HandmadeMaterial.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+        const updatedItem = await MediaCoverage.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
 
-        if (!updatedMaterial) {
-            return NextResponse.json({ error: "Material not found" }, { status: 404 });
+        if (!updatedItem) {
+            return NextResponse.json({ error: "Item not found" }, { status: 404 });
         }
 
-        return NextResponse.json(updatedMaterial, { status: 200 });
+        return NextResponse.json(updatedItem, { status: 200 });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
-// DELETE a handmade material
+// DELETE a media coverage item
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         await connectDB();
         const { id } = await params;
 
-        const deletedMaterial = await HandmadeMaterial.findByIdAndDelete(id);
+        const deletedItem = await MediaCoverage.findByIdAndDelete(id);
 
-        if (!deletedMaterial) {
-            return NextResponse.json({ error: "Material not found" }, { status: 404 });
+        if (!deletedItem) {
+            return NextResponse.json({ error: "Item not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ message: "Material deleted successfully" }, { status: 200 });
+        return NextResponse.json({ message: "Item deleted successfully" }, { status: 200 });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }

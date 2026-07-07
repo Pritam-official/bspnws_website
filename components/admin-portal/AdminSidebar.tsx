@@ -139,11 +139,11 @@ const navItems = [
         ),
     },
     {
-        name: 'Our Handmade Materials',
-        href: '/admin/our-handmade-materials',
+        name: 'Media Coverage',
+        href: '/admin/media-coverage',
         icon: (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 4a2 2 0 00-2-2m2 2v6a2 2 0 01-2 2h-2M9 9h4m-4 4h4" />
             </svg>
         ),
     },

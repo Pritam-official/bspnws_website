@@ -106,7 +106,7 @@ const Footer = () => {
         { name: "About us", href: "/about" },
         { name: "Notice", href: "/notice" },
         { name: "Our Volunteers", href: "/volunteers/our" },
-        { name: "Our Handmade Materials", href: "/our-handmade-materials" },
+        { name: "Media Coverage", href: "/media-coverage" },
         { name: "Contact us", href: "/contact" },
         { name: "Help us", href: "/help" },
         { name: "Privacy Policy", href: "/privacy" },
