@@ -3,19 +3,31 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/shared/Navbar";
-import { Sparkles, ArrowLeft, Info, Eye, X, ZoomIn } from "lucide-react";
+import { Sparkles, ArrowLeft, Info, Eye, X, ZoomIn, Play, ExternalLink } from "lucide-react";
 
 interface MediaItem {
     _id: string;
     type: "outlet" | "coverage";
     title: string;
     image: string;
+    newsLink?: string;
+    videoLink?: string;
 }
 
 export default function MediaCoverageShowcasePage() {
     const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [lightboxImage, setLightboxImage] = useState<MediaItem | null>(null);
+
+    const handleCoverageClick = (item: MediaItem) => {
+        if (item.videoLink) {
+            window.open(item.videoLink, '_blank');
+        } else if (item.newsLink) {
+            window.open(item.newsLink, '_blank');
+        } else {
+            setLightboxImage(item);
+        }
+    };
 
     useEffect(() => {
         const fetchMediaItems = async () => {
@@ -139,7 +151,7 @@ export default function MediaCoverageShowcasePage() {
                                         <div
                                             key={item._id}
                                             className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer"
-                                            onClick={() => setLightboxImage(item)}
+                                            onClick={() => handleCoverageClick(item)}
                                         >
                                             {/* Image Container */}
                                             <div className="relative h-64 w-full bg-slate-100 overflow-hidden border-b border-slate-100">
@@ -148,9 +160,23 @@ export default function MediaCoverageShowcasePage() {
                                                     alt={item.title}
                                                     className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
                                                 />
+                                                {/* Category Badge */}
+                                                {(item.videoLink || item.newsLink) && (
+                                                    <div className="absolute top-4 left-4 z-10">
+                                                        <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-1.5 rounded-xl shadow-md border backdrop-blur-md ${item.videoLink ? 'bg-purple-600/90 text-white border-purple-500/30' : 'bg-blue-600/90 text-white border-blue-500/30'}`}>
+                                                            {item.videoLink ? "Video" : "Article"}
+                                                        </span>
+                                                    </div>
+                                                )}
                                                 <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                                     <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white transform scale-90 group-hover:scale-100 transition-transform duration-300">
-                                                        <ZoomIn className="w-6 h-6" />
+                                                        {item.videoLink ? (
+                                                            <Play className="w-6 h-6 fill-current" />
+                                                        ) : item.newsLink ? (
+                                                            <ExternalLink className="w-6 h-6" />
+                                                        ) : (
+                                                            <ZoomIn className="w-6 h-6" />
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -164,8 +190,16 @@ export default function MediaCoverageShowcasePage() {
                                                     {item.title}
                                                 </h3>
                                                 <div className="pt-4 border-t border-slate-50 mt-4 flex items-center justify-between text-slate-400 group-hover:text-emerald-600 transition-colors">
-                                                    <span className="text-[10px] font-black uppercase tracking-wider">Click to enlarge</span>
-                                                    <Eye className="w-4 h-4" />
+                                                    <span className="text-[10px] font-black uppercase tracking-wider">
+                                                        {item.videoLink ? "Watch Video" : item.newsLink ? "Read Article" : "Click to enlarge"}
+                                                    </span>
+                                                    {item.videoLink ? (
+                                                        <Play className="w-4 h-4" />
+                                                    ) : item.newsLink ? (
+                                                        <ExternalLink className="w-4 h-4" />
+                                                    ) : (
+                                                        <Eye className="w-4 h-4" />
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

@@ -8,12 +8,14 @@ interface MediaItem {
     type: 'outlet' | 'coverage';
     title: string;
     image: string;
+    newsLink?: string;
+    videoLink?: string;
 }
 
 export default function MediaCoverageAdminPage() {
     const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState({ type: 'outlet' as 'outlet' | 'coverage', title: '', image: '' });
+    const [formData, setFormData] = useState({ type: 'outlet' as 'outlet' | 'coverage', title: '', image: '', newsLink: '', videoLink: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
 
@@ -66,7 +68,7 @@ export default function MediaCoverageAdminPage() {
 
             if (res.ok) {
                 alert(editId ? 'Media item updated successfully!' : 'Media item added successfully!');
-                setFormData({ type: 'outlet', title: '', image: '' });
+                setFormData({ type: 'outlet', title: '', image: '', newsLink: '', videoLink: '' });
                 setEditId(null);
                 fetchMediaItems();
             } else {
@@ -86,7 +88,9 @@ export default function MediaCoverageAdminPage() {
         setFormData({
             type: item.type,
             title: item.title,
-            image: item.image
+            image: item.image,
+            newsLink: item.newsLink || '',
+            videoLink: item.videoLink || ''
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -156,6 +160,31 @@ export default function MediaCoverageAdminPage() {
                         />
                     </div>
 
+                    {formData.type === 'coverage' && (
+                        <>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">News Article Link (Optional)</label>
+                                <input
+                                    type="url"
+                                    value={formData.newsLink || ''}
+                                    onChange={(e) => setFormData({ ...formData, newsLink: e.target.value })}
+                                    className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl px-6 py-4 focus:outline-none focus:border-pink-600/30 transition-all font-bold text-gray-700"
+                                    placeholder="e.g., https://example.com/news-article"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Video Link - Facebook/YouTube (Optional)</label>
+                                <input
+                                    type="url"
+                                    value={formData.videoLink || ''}
+                                    onChange={(e) => setFormData({ ...formData, videoLink: e.target.value })}
+                                    className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl px-6 py-4 focus:outline-none focus:border-pink-600/30 transition-all font-bold text-gray-700"
+                                    placeholder="e.g., https://facebook.com/watch/?v=..."
+                                />
+                            </div>
+                        </>
+                    )}
+
                     <div className="space-y-2 md:col-span-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Photo Upload (Cloudinary Auto-Upload)</label>
                         <input
@@ -188,7 +217,7 @@ export default function MediaCoverageAdminPage() {
                                 type="button"
                                 onClick={() => {
                                     setEditId(null);
-                                    setFormData({ type: 'outlet', title: '', image: '' });
+                                    setFormData({ type: 'outlet', title: '', image: '', newsLink: '', videoLink: '' });
                                 }}
                                 className="bg-gray-100 text-gray-600 border border-gray-200 rounded-2xl py-4 px-8 font-black uppercase tracking-widest hover:bg-gray-200 transition-all"
                             >
@@ -261,8 +290,22 @@ export default function MediaCoverageAdminPage() {
                                 </div>
                                 <div className="p-6 space-y-3 flex flex-col flex-1">
                                     <div className="flex justify-between items-start gap-4">
-                                        <h3 className="text-sm font-black text-gray-900 leading-snug line-clamp-2" title={item.title}>{item.title}</h3>
-                                        <div className="flex gap-1 shrink-0">
+                                        <div className="space-y-1.5 flex-1 min-w-0">
+                                            <h3 className="text-sm font-black text-gray-900 leading-snug line-clamp-2" title={item.title}>{item.title}</h3>
+                                            <div className="flex flex-wrap gap-1.5 pt-1">
+                                                {item.newsLink && (
+                                                    <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md border border-blue-100 truncate max-w-full" title={item.newsLink}>
+                                                        News Link
+                                                    </span>
+                                                )}
+                                                {item.videoLink && (
+                                                    <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-purple-50 text-purple-600 rounded-md border border-purple-100 truncate max-w-full" title={item.videoLink}>
+                                                        Video Link
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-1 shrink-0 pt-0.5">
                                             <button 
                                                 onClick={() => handleEdit(item)}
                                                 className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" 

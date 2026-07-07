@@ -15,9 +15,21 @@ const MediaCoverageSchema = new Schema(
             type: String, // Stores Cloudinary secure URL or base64 fallback
             required: [true, "Please upload an image/logo"],
         },
+        newsLink: {
+            type: String,
+            required: false,
+        },
+        videoLink: {
+            type: String,
+            required: false,
+        },
     },
     { timestamps: true }
 );
+
+if (process.env.NODE_ENV === "development") {
+    delete (mongoose.models as any).MediaCoverage;
+}
 
 const MediaCoverage = models.MediaCoverage || model("MediaCoverage", MediaCoverageSchema);
 
