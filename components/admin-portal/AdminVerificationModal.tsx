@@ -74,7 +74,7 @@ export default function AdminVerificationModal({ isOpen, onClose, adminCode }: A
                     type="password"
                     value={inputCode}
                     onChange={(e) => setInputCode(e.target.value)}
-                    className={`w-full bg-gray-50 border-2 rounded-2xl px-6 py-4 text-center text-lg font-black tracking-[0.5em] focus:outline-none transition-all duration-300 ${error ? 'border-red-500 animate-shake' : 'border-transparent focus:border-purple-600/20 focus:bg-white'}`}
+                    className={`w-full bg-gray-50 border-2 rounded-2xl px-6 py-4 text-center text-lg font-black tracking-[0.5em] text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-300 ${error ? 'border-red-500 animate-shake' : 'border-transparent focus:border-purple-600/20 focus:bg-white'}`}
                     placeholder="••••••"
                     autoFocus
                   />
