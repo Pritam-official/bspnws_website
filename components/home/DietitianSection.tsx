@@ -129,7 +129,7 @@ export default function DietitianSection() {
                   {[...Array(5)].map((_, i) => (
                     <StarIcon key={i} className="text-amber-400" />
                   ))}
-                  <span className="text-xs text-gray-500 ml-1">(128 reviews)</span>
+                  <span className="text-xs text-gray-500 ml-1">(2K reviews)</span>
                 </div>
 
                 {/* Name & Role */}
@@ -169,7 +169,9 @@ export default function DietitianSection() {
                     <span>Call Now</span>
                   </a>
                   <a
-                    href={`mailto:${dietitian.email}`}
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${dietitian.email}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-white border ${dietitian.buttonColor} rounded-xl text-gray-700 text-sm font-semibold transition-all duration-200`}
                   >
                     <MailIcon />
