@@ -169,9 +169,7 @@ export default function DietitianSection() {
                     <span>Call Now</span>
                   </a>
                   <a
-                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${dietitian.email}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`mailto:${dietitian.email}`}
                     className={`flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-white border ${dietitian.buttonColor} rounded-xl text-gray-700 text-sm font-semibold transition-all duration-200`}
                   >
                     <MailIcon />
