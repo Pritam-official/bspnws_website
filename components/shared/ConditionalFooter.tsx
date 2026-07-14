@@ -18,11 +18,15 @@ export default function ConditionalFooter() {
 
     if (isVolunteerDashboard) {
         return (
-            <div className="lg:ml-64">
+            <div className="lg:ml-64 relative z-0">
                 <Footer />
             </div>
         );
     }
 
-    return <Footer />;
+    return (
+        <div className="relative z-0">
+            <Footer />
+        </div>
+    );
 }

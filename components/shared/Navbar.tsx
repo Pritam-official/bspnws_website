@@ -52,6 +52,7 @@ const navLinks = [
       { label: "Internship Apply", href: "/internship-apply" },
     ],
   },
+  { label: "Reviews", href: "/reviews" },
   { label: "Help Us", href: "/help", highlight: true },
 ];
 

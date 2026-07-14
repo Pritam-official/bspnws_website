@@ -124,17 +124,21 @@ export default function Home() {
       return () => clearInterval(bgInterval);
     }
 
+    document.body.classList.add("splash-active");
+
     const timers = [
       setTimeout(() => setStage("text"), 1500),
       setTimeout(() => setStage("transitioning"), 4500),
       setTimeout(() => {
         setStage("complete");
         hasShownSplashGlobal = true;
+        document.body.classList.remove("splash-active");
       }, 5500),
     ];
 
     return () => {
       timers.forEach(clearTimeout);
+      document.body.classList.remove("splash-active");
     };
   }, []);
 

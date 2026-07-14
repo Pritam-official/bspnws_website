@@ -48,7 +48,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${outfit.variable} font-sans antialiased flex flex-col min-h-screen`}>
-        <main className="flex-grow">
+        <main className="flex-grow relative z-10">
           {children}
         </main>
         <ConditionalFooter />

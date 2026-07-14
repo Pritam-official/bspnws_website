@@ -109,6 +109,7 @@ const Footer = () => {
         { name: "Media Coverage", href: "/media-coverage" },
         { name: "Contact us", href: "/contact" },
         { name: "Help us", href: "/help" },
+        { name: "Reviews", href: "/reviews" },
         { name: "Privacy Policy", href: "/privacy" },
         { name: "Terms of Service", href: "/terms" },
     ];
