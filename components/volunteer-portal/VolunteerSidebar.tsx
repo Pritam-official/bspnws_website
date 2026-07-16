@@ -64,6 +64,7 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
     const pathname = usePathname();
     const router = useRouter();
     const [isStaff, setIsStaff] = useState(false);
+    const [isDesktopMode, setIsDesktopMode] = useState(false);
 
     useEffect(() => {
         const storedData = localStorage.getItem('volunteer_data');
@@ -77,7 +78,27 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                 console.error("Error parsing volunteer data in sidebar:", err);
             }
         }
+
+        const savedMode = localStorage.getItem("viewMode");
+        setIsDesktopMode(savedMode === "desktop");
     }, []);
+
+    const toggleDesktopView = () => {
+        const nextMode = !isDesktopMode;
+        setIsDesktopMode(nextMode);
+        localStorage.setItem("viewMode", nextMode ? "desktop" : "mobile");
+        
+        const content = nextMode 
+            ? "width=1200" 
+            : "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
+            
+        const meta = document.querySelector('meta[name="viewport"]');
+        if (meta) {
+            meta.setAttribute("content", content);
+        }
+        
+        setIsMobileMenuOpen?.(false);
+    };
 
     const activeNavItems = isStaff ? [...navItems, ...staffNavItems] : navItems;
 
@@ -145,6 +166,28 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                             <span className="text-xs font-bold text-gray-700">Active Volunteer</span>
                         </div>
                     </div>
+
+                    {/* Desktop/Mobile View toggle button */}
+                    <button 
+                        onClick={toggleDesktopView}
+                        className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-2xl border-2 border-gray-100 text-gray-500 hover:bg-gray-50 hover:text-pink-600 transition-all group active:scale-95 shadow-sm cursor-pointer"
+                    >
+                        {isDesktopMode ? (
+                            <>
+                                <svg className="w-5 h-5 text-gray-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <span className="font-black text-xs uppercase tracking-widest">Switch to Mobile</span>
+                            </>
+                        ) : (
+                            <>
+                                <svg className="w-5 h-5 text-gray-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <span className="font-black text-xs uppercase tracking-widest">Request Desktop</span>
+                            </>
+                        )}
+                    </button>
                     
                     <button 
                         onClick={handleLogout}
@@ -189,6 +232,27 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                             <span className="text-xs font-bold text-gray-700">Verified Volunteer</span>
                         </div>
                     </div>
+
+                    {/* Desktop/Mobile View toggle button */}
+                    <button 
+                        onClick={toggleDesktopView}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-pink-600 transition-all group cursor-pointer"
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-pink-100 group-hover:text-pink-600 transition-colors">
+                            {isDesktopMode ? (
+                                <svg className="w-4 h-4 text-gray-500 group-hover:text-pink-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                            ) : (
+                                <svg className="w-4 h-4 text-gray-500 group-hover:text-pink-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            )}
+                        </div>
+                        <span className="font-bold text-sm tracking-tight">
+                            {isDesktopMode ? "Mobile Site" : "Desktop Site"}
+                        </span>
+                    </button>
 
                     <button 
                         onClick={handleLogout}
