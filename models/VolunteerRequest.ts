@@ -20,7 +20,7 @@ const VolunteerRequestSchema = new Schema(
         },
         profilePic: {
             type: String, // Base64 string
-            required: false,
+            required: [true, "Please provide the profile picture"],
         },
         whyJoin: {
             type: String,

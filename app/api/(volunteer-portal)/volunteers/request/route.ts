@@ -10,8 +10,12 @@ export async function POST(req: Request) {
         
         let profilePicUrl = data.profilePic;
         
+        if (!profilePicUrl) {
+            return NextResponse.json({ success: false, error: 'Profile picture is required.' }, { status: 400 });
+        }
+        
         // Upload image to Cloudinary if provided as a Base64 data URI
-        if (profilePicUrl && profilePicUrl.startsWith("data:")) {
+        if (profilePicUrl.startsWith("data:")) {
             try {
                 const cloudinaryUrl = await uploadToCloudinary(profilePicUrl, "volunteer_profiles");
                 profilePicUrl = cloudinaryUrl;

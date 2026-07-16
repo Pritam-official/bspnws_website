@@ -112,6 +112,12 @@ export default function VolunteerForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!previewUrl) {
+            alert('Profile picture is required. Please upload a professional photo.');
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -256,7 +262,7 @@ export default function VolunteerForm() {
                                             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-3">
                                                 <Camera className="w-6 h-6 text-primary" />
                                             </div>
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Add Professional<br />Photo</span>
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Add Professional<br />Photo <span className="text-rose-500 font-bold">*</span></span>
                                         </div>
                                     )}
                                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
