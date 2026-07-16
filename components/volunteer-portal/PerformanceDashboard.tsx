@@ -48,6 +48,22 @@ const TopStatCard = ({ title, value, icon, color, progress }: { title: string; v
 const BarChart = ({ data }: { data: MonthData[] }) => {
     const max = Math.max(...data.map(d => d.held), 1);
     const ySteps = [max, Math.round(max * 0.75), Math.round(max * 0.5), Math.round(max * 0.25), 0];
+    const [activeTooltip, setActiveTooltip] = useState<{ index: number; type: 'held' | 'attended' } | null>(null);
+
+    useEffect(() => {
+        if (activeTooltip === null) return;
+        const handleOutsideClick = () => {
+            setActiveTooltip(null);
+        };
+        const timer = setTimeout(() => {
+            document.addEventListener('click', handleOutsideClick);
+        }, 10);
+        return () => {
+            clearTimeout(timer);
+            document.removeEventListener('click', handleOutsideClick);
+        };
+    }, [activeTooltip]);
+
     return (
         <div className="w-full h-full flex flex-col pt-4">
             <div className="flex-1 flex gap-4">
@@ -61,12 +77,28 @@ const BarChart = ({ data }: { data: MonthData[] }) => {
                     {data.map((d, i) => (
                         <div key={i} className="flex-1 flex flex-col items-center group relative z-10 h-full justify-end">
                             <div className="relative w-full h-[calc(100%-36px)] flex justify-center items-end gap-[3px] mb-9">
-                                <div className="relative w-1/3 flex flex-col items-center group/bar-held h-full justify-end">
-                                    <div className="absolute -top-10 opacity-0 group-hover/bar-held:opacity-100 transition-opacity bg-amber-500 text-white text-[10px] py-1 px-2 rounded-lg font-bold pointer-events-none z-20 whitespace-nowrap">Held: {d.held}</div>
+                                <div 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveTooltip(activeTooltip?.index === i && activeTooltip?.type === 'held' ? null : { index: i, type: 'held' });
+                                    }}
+                                    className="relative w-1/3 flex flex-col items-center group/bar-held h-full justify-end cursor-pointer"
+                                >
+                                    <div className={`absolute -top-10 transition-opacity bg-amber-500 text-white text-[10px] py-1 px-2 rounded-lg font-bold pointer-events-none z-20 whitespace-nowrap ${
+                                        activeTooltip?.index === i && activeTooltip?.type === 'held' ? 'opacity-100' : 'opacity-0 group-hover/bar-held:opacity-100'
+                                    }`}>Held: {d.held}</div>
                                     <div className="w-full bg-amber-400 rounded-t-sm transition-all duration-700 hover:bg-amber-500 shadow-sm" style={{ height: `${(d.held / max) * 100}%`, minHeight: d.held > 0 ? '4px' : '0' }} />
                                 </div>
-                                <div className="relative w-1/3 flex flex-col items-center group/bar-attended h-full justify-end">
-                                    <div className="absolute -top-10 opacity-0 group-hover/bar-attended:opacity-100 transition-opacity bg-emerald-600 text-white text-[10px] py-1 px-2 rounded-lg font-bold pointer-events-none z-20 whitespace-nowrap">Attended: {d.attended}</div>
+                                <div 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveTooltip(activeTooltip?.index === i && activeTooltip?.type === 'attended' ? null : { index: i, type: 'attended' });
+                                    }}
+                                    className="relative w-1/3 flex flex-col items-center group/bar-attended h-full justify-end cursor-pointer"
+                                >
+                                    <div className={`absolute -top-10 transition-opacity bg-emerald-600 text-white text-[10px] py-1 px-2 rounded-lg font-bold pointer-events-none z-20 whitespace-nowrap ${
+                                        activeTooltip?.index === i && activeTooltip?.type === 'attended' ? 'opacity-100' : 'opacity-0 group-hover/bar-attended:opacity-100'
+                                    }`}>Attended: {d.attended}</div>
                                     <div className="w-full bg-emerald-500 rounded-t-sm transition-all duration-700 hover:bg-emerald-600 shadow-sm" style={{ height: `${(d.attended / max) * 100}%`, minHeight: d.attended > 0 ? '4px' : '0' }} />
                                 </div>
                             </div>
