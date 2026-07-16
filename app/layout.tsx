@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./(home)/globals.css";
 import ConditionalFooter from "@/components/shared/ConditionalFooter";
+import ViewportSyncer from "@/components/shared/ViewportSyncer";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${outfit.variable} font-sans antialiased flex flex-col min-h-screen`}>
+        <ViewportSyncer />
         <main className="flex-grow relative z-10">
           {children}
         </main>
