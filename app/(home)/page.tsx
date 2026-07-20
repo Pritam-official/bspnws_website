@@ -16,6 +16,7 @@ import adminConfig from "@/lib/admin-config.json";
 import ProgrammeSection from "@/components/home/ProgrammeSection";
 import ProjectOverviewSection from "@/components/home/ProjectOverviewSection";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
+import PromoAdBanner from "@/components/home/PromoAdBanner";
 
 
 type SplashStage = "logo" | "text" | "transitioning" | "complete";
@@ -315,7 +316,9 @@ export default function Home() {
 
       {/* About Us Section */}
       <AboutSection />
-      {/* Top Right Login Dropdown */}
+
+      {/* Promo Ad Banner #1 - Birthday / Anniversary Donation Drive */}
+      <PromoAdBanner variant="birthday" />
 
       {/* Mission and Vision Section */}
       <MissionVisionSection />
@@ -326,10 +329,16 @@ export default function Home() {
       {/* Dynamic Programmes Section */}
       <ProgrammeSection />
 
+      {/* Promo Ad Banner #2 - Emergency Nutrition Drive */}
+      <PromoAdBanner variant="nutrition" />
+
       {/* Dietitian Section */}
       <DietitianSection />
 
       <OurMemories />
+
+      {/* Promo Ad Banner #3 - Volunteer Recruitment Drive */}
+      <PromoAdBanner variant="volunteer" />
 
       <MediaCoverageSection />
 
