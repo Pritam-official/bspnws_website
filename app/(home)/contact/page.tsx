@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/shared/Navbar";
+import LocationSection from "@/components/home/LocationSection";
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -254,51 +255,9 @@ export default function ContactPage() {
                         </form>
                     </div>
                 </div>
-
-                {/* Interactive Google Maps Section */}
-                <div className="mt-16 sm:mt-24 space-y-6">
-                    <div className="text-center max-w-2xl mx-auto space-y-3">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-widest border border-primary/20">
-                            Location Map
-                        </div>
-                        <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
-                            Find Us on <span className="text-primary">Google Maps</span>
-                        </h2>
-                        <p className="text-gray-600 text-sm sm:text-base font-medium">
-                            Visit our main society center in Bardhaman. Click on the map or get directions to navigate directly to our office.
-                        </p>
-                    </div>
-
-                    <div className="relative rounded-3xl overflow-hidden border-2 border-gray-100 shadow-2xl bg-gray-50 group">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.880629737154!2d87.8577956758832!3d23.22825690807982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f8499c857979a9%3A0xfc96a33f18e783ab!2sBurdwan%20Sadar%20Pyara%20Nutrition%20Welfare%20Society!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                            width="100%"
-                            height="480"
-                            style={{ border: 0 }}
-                            allowFullScreen={true}
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                            title="Burdwan Sadar Pyara Nutrition Welfare Society Google Map"
-                            className="w-full h-[380px] sm:h-[480px] rounded-3xl"
-                        ></iframe>
-
-                        <div className="absolute bottom-4 right-4 z-10">
-                            <a
-                                href="https://www.google.com/maps/place/Burdwan+Sadar+Pyara+Nutrition+Welfare+Society/@23.228238,87.8552997,16.9z/data=!4m22!1m15!4m14!1m6!1m2!1s0x39f8499c857979a9:0xfc96a33f18e783ab!2sBurdwan+Sadar+Pyara+Nutrition+Welfare+Society,+Sadarghat+Rd,+near+Hara+Chowmin+Stall,+Barabalidanga,+Bardhaman,+West+Bengal+713103!2m2!1d87.8603759!2d23.228252!1m6!1m2!1s0x39f8499c857979a9:0xfc96a33f18e783ab!2sBurdwan+Sadar+Pyara+Nutrition+Welfare+Society,+Sadarghat+Rd,+near+Hara+Chowmin+Stall,+Barabalidanga,+Bardhaman,+West+Bengal+713103!2m2!1d87.8603759!2d23.228252!3m5!1s0x39f8499c857979a9:0xfc96a33f18e783ab!8m2!3d23.228252!4d87.8603759!16s%2Fg%2F11vylzmhnt"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-primary hover:bg-green-600 text-white font-bold px-5 py-3 rounded-2xl shadow-xl transition-all hover:-translate-y-0.5 text-xs uppercase tracking-wider"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                Get Directions
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
+
+            <LocationSection />
         </div>
     );
 }
