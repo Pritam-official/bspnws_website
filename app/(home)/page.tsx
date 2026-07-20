@@ -9,6 +9,7 @@ import AdminVerificationModal from "@/components/admin-portal/AdminVerificationM
 import DietitianSection from "@/components/home/DietitianSection";
 import WelcomeTicker from "@/components/home/WelcomeTicker";
 import OurMemories from "@/components/home/OurMemories";
+import MediaCoverageSection from "@/components/home/MediaCoverageSection";
 import Navbar from "@/components/shared/Navbar";
 import adminConfig from "@/lib/admin-config.json";
 import ProgrammeSection from "@/components/home/ProgrammeSection";
@@ -328,6 +329,8 @@ export default function Home() {
       <DietitianSection />
 
       <OurMemories />
+
+      <MediaCoverageSection />
 
       <WhatsAppButton />
 
