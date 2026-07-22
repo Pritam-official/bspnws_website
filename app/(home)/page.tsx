@@ -17,6 +17,7 @@ import ProgrammeSection from "@/components/home/ProgrammeSection";
 import ProjectOverviewSection from "@/components/home/ProjectOverviewSection";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
 import PromoAdBanner from "@/components/home/PromoAdBanner";
+import BoardMembers from "@/components/home/BoardMembers";
 
 
 type SplashStage = "logo" | "text" | "transitioning" | "complete";
@@ -328,6 +329,9 @@ export default function Home() {
 
       {/* Dynamic Programmes Section */}
       <ProgrammeSection />
+
+      {/* Static Board Members Section */}
+      <BoardMembers />
 
       {/* Promo Ad Banner #2 - Emergency Nutrition Drive */}
       <PromoAdBanner variant="nutrition" />
