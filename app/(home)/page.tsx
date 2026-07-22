@@ -12,6 +12,7 @@ import OurMemories from "@/components/home/OurMemories";
 import MediaCoverageSection from "@/components/home/MediaCoverageSection";
 import LocationSection from "@/components/home/LocationSection";
 import Navbar from "@/components/shared/Navbar";
+import ReportCardSection from "@/components/home/ReportCardSection";
 import adminConfig from "@/lib/admin-config.json";
 import ProgrammeSection from "@/components/home/ProgrammeSection";
 import ProjectOverviewSection from "@/components/home/ProjectOverviewSection";
@@ -345,6 +346,8 @@ export default function Home() {
       <PromoAdBanner variant="volunteer" />
 
       <MediaCoverageSection />
+
+      <ReportCardSection />
 
       <LocationSection />
 
