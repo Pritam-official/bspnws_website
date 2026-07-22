@@ -213,11 +213,24 @@ export default function PromoAdBanner({ variant = "birthday", className = "", ta
   // variant === "volunteer"
   return (
     <div className={`container mx-auto px-4 my-8 md:my-14 ${className}`}>
-      <div className="relative bg-gradient-to-br from-amber-50/80 via-white to-orange-50/50 border-2 md:border-[3.5px] border-amber-500 rounded-2xl md:rounded-[2rem] p-4 sm:p-6 md:p-8 lg:p-10 shadow-[0_12px_40px_rgba(245,158,11,0.15)] transition-all duration-500 hover:shadow-[0_20px_50px_rgba(245,158,11,0.22)]">
+      <div className="relative border-2 md:border-[3.5px] border-amber-500 rounded-2xl md:rounded-[2rem] p-4 sm:p-6 md:p-8 lg:p-10 shadow-[0_16px_50px_rgba(245,158,11,0.2)] overflow-hidden group transition-all duration-500 hover:shadow-[0_24px_60px_rgba(245,158,11,0.3)]">
+        {/* Background Image with Dark Overlay Gradients */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/volunteer_ad_group.jpg"
+            alt="BSP Volunteer Group"
+            fill
+            className="object-cover object-center group-hover:scale-105 transition-transform duration-1000 brightness-95"
+            priority
+          />
+          {/* Dual Overlay Gradients for maximum text readability and photo atmosphere */}
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-950/95 via-amber-950/85 to-black/75 md:from-amber-950/90 md:via-amber-950/75 md:to-black/60"></div>
+        </div>
+
         {/* Dismiss (X) Button */}
         <button
           onClick={() => setDismissed(true)}
-          className="absolute top-2 right-2 sm:top-4 sm:right-4 w-7 h-7 sm:w-9 sm:h-9 bg-gray-100 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center text-gray-500 transition-colors z-20 shadow-sm"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 w-7 h-7 sm:w-9 sm:h-9 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 transition-colors z-20 shadow-md"
           title="Dismiss Ad"
           aria-label="Dismiss Advertisement"
         >
@@ -226,60 +239,62 @@ export default function PromoAdBanner({ variant = "birthday", className = "", ta
           </svg>
         </button>
 
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10">
           {/* Left Content Area */}
           <div className="w-full lg:w-[48%] flex flex-col items-start text-left">
-            <div className="text-amber-950 font-black text-2xl sm:text-4xl md:text-5xl lg:text-5xl italic uppercase tracking-wider mb-2 md:mb-3">
+            <div className="text-white font-black text-2xl sm:text-4xl md:text-5xl lg:text-5xl italic uppercase tracking-wider mb-2 md:mb-3 drop-shadow-md">
               BE A HERO....
             </div>
 
             {/* Highlight Box */}
-            <div className="bg-amber-500 text-white font-black text-base sm:text-2xl md:text-3xl lg:text-3xl px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-md md:rounded-lg shadow-md tracking-tight uppercase inline-block mb-3 sm:mb-4">
+            <div className="bg-amber-500 text-white font-black text-base sm:text-2xl md:text-3xl lg:text-3xl px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-md md:rounded-lg shadow-xl tracking-tight uppercase inline-block mb-3 sm:mb-4 border border-amber-400/50">
               JOIN OUR VOLUNTEER FAMILY !!
             </div>
 
-            <p className="text-gray-800 font-serif italic text-base sm:text-xl md:text-2xl lg:text-2xl mt-1 tracking-wide leading-snug">
+            <p className="text-amber-100 font-serif italic text-base sm:text-xl md:text-2xl lg:text-2xl mt-1 tracking-wide leading-snug drop-shadow">
               Transform Lives & Drive Health Awareness in Burdwan District!
             </p>
           </div>
 
           {/* Right Content Area: Checklist + CTA & Graphic */}
           <div className="w-full lg:w-[52%] flex flex-col justify-between items-start lg:items-end gap-5">
-            {/* Checklist */}
-            <ul className="space-y-2.5 sm:space-y-3 text-left w-full">
-              {[
-                "Flexible weekend community outreach & meal distribution drives.",
-                "Official volunteer ID card & leadership recognition certificate.",
-                "Hands-on experience in public health & nutrition awareness.",
-                "Direct opportunity to manage district-level social events.",
-                "Join a network of passionate changemakers making real impact."
-              ].map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm md:text-base font-medium text-gray-700 leading-snug">
-                  <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-amber-500 bg-amber-100 text-amber-800 flex items-center justify-center mt-0.5 shadow-sm">
-                    <svg className="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+            {/* Checklist with Translucent High-Contrast Backdrop */}
+            <div className="w-full bg-black/45 backdrop-blur-md p-3.5 sm:p-5 rounded-2xl border border-white/15 shadow-xl">
+              <ul className="space-y-2.5 sm:space-y-3 text-left w-full">
+                {[
+                  "Flexible weekend community outreach & meal distribution drives.",
+                  "Official volunteer ID card & leadership recognition certificate.",
+                  "Hands-on experience in public health & nutrition awareness.",
+                  "Direct opportunity to manage district-level social events.",
+                  "Join a network of passionate changemakers making real impact."
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm md:text-base font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] leading-snug">
+                    <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-amber-400 bg-amber-500 text-white flex items-center justify-center mt-0.5 shadow-md">
+                      <svg className="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             {/* Bottom CTA Row */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 w-full pt-2 sm:pt-4 border-t border-amber-200">
+            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 w-full pt-3 sm:pt-4 border-t border-white/20">
               <Link
                 href="/volunteers/become"
-                className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-full font-black text-sm sm:text-base tracking-wide flex items-center gap-2 hover:opacity-95 hover:scale-105 transition-all shadow-lg shadow-amber-500/30 group"
+                className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-full font-black text-sm sm:text-base tracking-wide flex items-center gap-2 hover:opacity-95 hover:scale-105 transition-all shadow-xl shadow-amber-500/40 group"
               >
                 <span>JOIN AS VOLUNTEER</span>
                 <span className="text-lg group-hover:scale-125 transition-transform">🤝</span>
               </Link>
 
-              <div className="flex items-center gap-2 bg-amber-100/70 px-4 py-2 rounded-2xl border border-amber-300/60 shadow-inner">
+              <div className="flex items-center gap-2 bg-amber-950/70 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20 shadow-lg">
                 <div className="text-3xl sm:text-4xl animate-bounce">🌟</div>
                 <div className="text-left">
-                  <span className="block text-[10px] uppercase tracking-widest font-black text-amber-900">Be The Change</span>
-                  <span className="block text-xs font-bold text-amber-800">Apply Today</span>
+                  <span className="block text-[10px] uppercase tracking-widest font-black text-amber-300">Be The Change</span>
+                  <span className="block text-xs font-bold text-white">Apply Today</span>
                 </div>
               </div>
             </div>
