@@ -19,6 +19,7 @@ import ProjectOverviewSection from "@/components/home/ProjectOverviewSection";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
 import PromoAdBanner from "@/components/home/PromoAdBanner";
 import BoardMembers from "@/components/home/BoardMembers";
+import HonoraryMembers from "@/components/home/HonoraryMembers";
 
 
 type SplashStage = "logo" | "text" | "transitioning" | "complete";
@@ -333,6 +334,9 @@ export default function Home() {
 
       {/* Static Board Members Section */}
       <BoardMembers />
+
+      {/* Honorary Members Section */}
+      <HonoraryMembers />
 
       {/* Promo Ad Banner #2 - Emergency Nutrition Drive */}
       <PromoAdBanner variant="nutrition" />

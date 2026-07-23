@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import BookConsultationModal from "./BookConsultationModal";
 
 // Inline SVG components for professional look without extra dependencies
 const PhoneIcon = () => (
@@ -81,6 +82,8 @@ const dietitians = [
 ];
 
 export default function DietitianSection() {
+  const [selectedDietitian, setSelectedDietitian] = useState<any | null>(null);
+
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white" id="dietitians">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -178,7 +181,10 @@ export default function DietitianSection() {
                 </div>
 
                 {/* Book Appointment */}
-                <button className="w-full mt-3 py-2 bg-gray-900 hover:bg-gray-800 rounded-xl text-white text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setSelectedDietitian(dietitian)}
+                  className="w-full mt-3 py-2 bg-gray-900 hover:bg-gray-800 rounded-xl text-white text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                >
                   <CalendarIcon />
                   <span>Book Consultation</span>
                 </button>
@@ -194,6 +200,12 @@ export default function DietitianSection() {
           </p>
         </div>
       </div>
+
+      <BookConsultationModal
+        isOpen={selectedDietitian !== null}
+        onClose={() => setSelectedDietitian(null)}
+        dietitian={selectedDietitian}
+      />
     </section>
   );
 }
