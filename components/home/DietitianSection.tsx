@@ -48,6 +48,8 @@ const dietitians = [
     accentColor: "text-emerald-600",
     badgeColor: "bg-emerald-50 text-emerald-700",
     buttonColor: "hover:bg-emerald-50 border-emerald-200",
+    rating: 5.0,
+    reviewsCount: "2.1K reviews",
   },
   {
     name: "Ankita Sam",
@@ -63,6 +65,8 @@ const dietitians = [
     accentColor: "text-amber-600",
     badgeColor: "bg-amber-50 text-amber-700",
     buttonColor: "hover:bg-amber-50 border-amber-200",
+    rating: 4.8,
+    reviewsCount: "1.8K reviews",
   },
   {
     name: "Ayan Maji",
@@ -78,6 +82,8 @@ const dietitians = [
     accentColor: "text-blue-600",
     badgeColor: "bg-blue-50 text-blue-700",
     buttonColor: "hover:bg-blue-50 border-blue-200",
+    rating: 4.9,
+    reviewsCount: "2.3K reviews",
   },
 ];
 
@@ -129,10 +135,16 @@ export default function DietitianSection() {
               <div className="p-5">
                 {/* Rating */}
                 <div className="flex items-center gap-1 mb-3">
+                  <span className="text-xs font-bold text-amber-500 mr-0.5">
+                    {dietitian.rating.toFixed(1)}
+                  </span>
                   {[...Array(5)].map((_, i) => (
-                    <StarIcon key={i} className="text-amber-400" />
+                    <StarIcon
+                      key={i}
+                      className={i < Math.round(dietitian.rating) ? "text-amber-400" : "text-gray-200"}
+                    />
                   ))}
-                  <span className="text-xs text-gray-500 ml-1">(2K reviews)</span>
+                  <span className="text-xs text-gray-500 ml-1">({dietitian.reviewsCount})</span>
                 </div>
 
                 {/* Name & Role */}
