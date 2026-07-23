@@ -62,16 +62,20 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [isDesktopMode, setIsDesktopMode] = useState(false);
+  const [forceMobile, setForceMobile] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
 
   // Initialize and apply viewport settings based on viewMode preference
   useEffect(() => {
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.screen.width < 768;
+    setForceMobile(isMobile);
+
     const savedMode = localStorage.getItem("viewMode");
     const isDesktop = savedMode === "desktop";
     setIsDesktopMode(isDesktop);
     
     const content = isDesktop 
-      ? "width=1200" 
+      ? "width=1280" 
       : "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
       
     const meta = document.querySelector('meta[name="viewport"]');
@@ -86,7 +90,7 @@ export default function Navbar() {
     localStorage.setItem("viewMode", nextMode ? "desktop" : "mobile");
     
     const content = nextMode 
-      ? "width=1200" 
+      ? "width=1280" 
       : "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
       
     const meta = document.querySelector('meta[name="viewport"]');
@@ -142,8 +146,8 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm sm:text-base lg:text-lg font-black tracking-tighter text-gray-900 leading-none truncate">
-                <span className="hidden 2xl:inline">Burdawn Sadar Pyara Nutrition</span>
-                <span className="2xl:hidden">BSPNWS</span>
+                <span className={forceMobile ? "hidden" : "hidden xl:inline"}>Burdwan Sadar Pyara Nutrition</span>
+                <span className={forceMobile ? "inline" : "xl:hidden"}>BSPNWS</span>
               </span>
               <span className="text-[9px] sm:text-[10px] font-bold text-primary uppercase tracking-widest leading-none mt-0.5">
                 Welfare Society
@@ -152,13 +156,13 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden 2xl:flex items-center space-x-0.5 2xl:space-x-1.5 flex-nowrap py-2">
+          <div className={forceMobile ? "hidden" : "hidden xl:flex items-center space-x-0.5 xl:space-x-1.5 flex-nowrap py-2"}>
             {navLinks.map((link) =>
               link.children ? (
                 <div key={link.label} className="relative group py-2">
                   <button
                     onClick={() => toggleDropdown(link.label)}
-                    className={`px-1.5 2xl:px-2.5 flex items-center text-[11px] 2xl:text-xs font-bold transition-colors whitespace-nowrap ${
+                    className={`px-1.5 xl:px-2.5 flex items-center text-[11px] xl:text-xs font-bold transition-colors whitespace-nowrap ${
                       activeDropdown === link.label ? "text-primary" : "text-gray-600 hover:text-primary"
                     }`}
                   >
@@ -189,7 +193,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href!}
-                  className={`px-1.5 2xl:px-2.5 py-2 text-[11px] 2xl:text-xs font-bold whitespace-nowrap transition-colors ${
+                  className={`px-1.5 xl:px-2.5 py-2 text-[11px] xl:text-xs font-bold whitespace-nowrap transition-colors ${
                     link.highlight
                       ? "text-primary font-black hover:scale-105 transition-transform"
                       : pathname === link.href
@@ -229,7 +233,7 @@ export default function Navbar() {
             {/* Hamburger — mobile only */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="2xl:hidden flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+              className={`${forceMobile ? "flex" : "xl:hidden flex"} items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors`}
               aria-label="Toggle navigation"
             >
               {mobileOpen ? (
@@ -249,14 +253,14 @@ export default function Navbar() {
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="2xl:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          className={`${forceMobile ? "" : "xl:hidden"} fixed inset-0 bg-black/50 z-40 backdrop-blur-sm`}
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Mobile Drawer */}
       <div
-        className={`2xl:hidden fixed top-0 right-0 h-full w-[85vw] max-w-[340px] bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+        className={`${forceMobile ? "" : "xl:hidden"} fixed top-0 right-0 h-full w-[85vw] max-w-[340px] bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

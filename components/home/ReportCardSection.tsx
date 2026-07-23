@@ -759,10 +759,6 @@ export default function ReportCardSection() {
                     51% { transform: translateX(-50px); opacity: 0; }
                     100% { transform: translateX(0); opacity: 1; }
                 }
-
-                .hidden {
-                    display: none !important;
-                }
             `}</style>
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">

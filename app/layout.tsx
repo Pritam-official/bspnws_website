@@ -39,7 +39,7 @@ export default function RootLayout({
                   if (mode === 'desktop') {
                     var meta = document.querySelector('meta[name="viewport"]');
                     if (meta) {
-                      meta.setAttribute('content', 'width=1200');
+                      meta.setAttribute('content', 'width=1280');
                     }
                   }
                 } catch (e) {}

@@ -12,7 +12,7 @@ export default function ViewportSyncer() {
       const isDesktop = savedMode === "desktop";
       
       const content = isDesktop 
-        ? "width=1200" 
+        ? "width=1280" 
         : "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
         
       const meta = document.querySelector('meta[name="viewport"]');

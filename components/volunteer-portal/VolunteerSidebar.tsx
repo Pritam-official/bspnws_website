@@ -89,7 +89,7 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
         localStorage.setItem("viewMode", nextMode ? "desktop" : "mobile");
         
         const content = nextMode 
-            ? "width=1200" 
+            ? "width=1280" 
             : "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
             
         const meta = document.querySelector('meta[name="viewport"]');
