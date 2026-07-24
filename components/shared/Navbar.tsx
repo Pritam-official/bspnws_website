@@ -53,7 +53,7 @@ const navLinks = [
     ],
   },
   { label: "Reviews", href: "/reviews" },
-  { label: "Help Us", href: "/help", highlight: true },
+  { label: "Donate", href: "/donate", highlight: true },
 ];
 
 export default function Navbar() {
@@ -193,13 +193,15 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href!}
-                  className={`px-1.5 xl:px-2.5 py-2 text-[11px] xl:text-xs font-bold whitespace-nowrap transition-colors ${
+                  className={
                     link.highlight
-                      ? "text-primary font-black hover:scale-105 transition-transform"
-                      : pathname === link.href
-                      ? "text-primary"
-                      : "text-gray-600 hover:text-primary"
-                  }`}
+                      ? "px-4 py-2 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white rounded-full text-[11px] xl:text-xs font-black whitespace-nowrap transition-all duration-300 shadow-md shadow-rose-500/25 hover:shadow-lg hover:shadow-rose-500/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+                      : `px-1.5 xl:px-2.5 py-2 text-[11px] xl:text-xs font-bold whitespace-nowrap transition-colors ${
+                          pathname === link.href
+                            ? "text-primary"
+                            : "text-gray-600 hover:text-primary"
+                        }`
+                  }
                 >
                   {link.label}
                 </Link>
@@ -326,13 +328,15 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href!}
                 onClick={() => setMobileOpen(false)}
-                className={`flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
+                className={
                   link.highlight
-                    ? "text-primary bg-primary/5 hover:bg-primary/10"
-                    : pathname === link.href
-                    ? "text-primary bg-primary/5"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
+                    ? "flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-black text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 shadow-md shadow-rose-500/25 active:scale-95 transition-all my-1 text-center"
+                    : `flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
+                        pathname === link.href
+                          ? "text-primary bg-primary/5"
+                          : "text-gray-700 hover:bg-gray-50"
+                      }`
+                }
               >
                 {link.label}
               </Link>

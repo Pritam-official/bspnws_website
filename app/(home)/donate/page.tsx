@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default function HelpUsPage() {
+export default function DonatePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -22,12 +22,12 @@ export default function HelpUsPage() {
         {/* Hero Content */}
         <div className="container mx-auto px-6 h-full flex flex-col justify-center relative z-10">
           <h1 className="text-3xl sm:text-4xl md:text-7xl font-black text-white mb-4 tracking-tight">
-            HELP US
+            DONATE
           </h1>
           <div className="flex items-center text-white/80 text-sm md:text-base font-medium space-x-2">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>»</span>
-            <span className="text-white">Help Us</span>
+            <span className="text-white">Donate</span>
           </div>
         </div>
       </div>

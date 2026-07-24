@@ -108,7 +108,7 @@ const Footer = () => {
         { name: "Our Volunteers", href: "/volunteers/our" },
         { name: "Media Coverage", href: "/media-coverage" },
         { name: "Contact us", href: "/contact" },
-        { name: "Help us", href: "/help" },
+        { name: "Donate", href: "/donate" },
         { name: "Reviews", href: "/reviews" },
         { name: "Privacy Policy", href: "/privacy" },
         { name: "Terms of Service", href: "/terms" },

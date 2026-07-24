@@ -12,7 +12,7 @@ interface PromoAdBannerProps {
   targetUrl?: string;
 }
 
-export default function PromoAdBanner({ variant = "birthday", className = "", targetUrl = "/help" }: PromoAdBannerProps) {
+export default function PromoAdBanner({ variant = "birthday", className = "", targetUrl = "/donate" }: PromoAdBannerProps) {
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
