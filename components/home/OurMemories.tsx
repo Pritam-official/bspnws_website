@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface GalleryItem {
     _id: string;
@@ -11,6 +12,7 @@ interface GalleryItem {
     type: string;
     date: string;
     images: string[];
+    facebookLink?: string;
     createdAt: string;
 }
 
@@ -37,6 +39,7 @@ const formatDate = (dateStr: string) => {
 };
 
 const OurMemories = () => {
+    const router = useRouter();
     const [memories, setMemories] = useState<GalleryItem[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -100,9 +103,9 @@ const OurMemories = () => {
                             const coverImage = memory.images && memory.images.length > 0 ? memory.images[0] : '/bg-2.jpg';
                             
                             return (
-                                <Link
+                                <div
                                     key={memory._id}
-                                    href={`/gallery/image/${memory._id}`}
+                                    onClick={() => router.push(`/gallery/image/${memory._id}`)}
                                     className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer flex flex-col justify-between"
                                 >
                                     <div>
@@ -137,6 +140,27 @@ const OurMemories = () => {
                                             <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4">
                                                 {memory.description}
                                             </p>
+
+                                            {memory.facebookLink && (
+                                                <div className="mt-3 pt-3 border-t border-gray-50" onClick={(e) => e.stopPropagation()}>
+                                                    <a
+                                                        href={memory.facebookLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-full inline-flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 hover:bg-blue-50/40 border border-slate-100 hover:border-blue-100 text-slate-700 hover:text-blue-600 transition-all duration-300 text-[11px] font-bold group/btn"
+                                                    >
+                                                        <span className="flex items-center gap-1.5">
+                                                            <svg className="w-3.5 h-3.5 fill-[#1877F2] shrink-0" viewBox="0 0 24 24">
+                                                                <path d="M9.101 23.681v-9.554H6.07V10.62h3.031V7.896c0-3.104 1.896-4.799 4.671-4.799 1.328 0 2.47.099 2.802.143v3.249l-1.923.001c-1.506 0-1.798.716-1.798 1.767v2.363h3.599l-.469 3.507h-3.13v9.554H9.101z" />
+                                                            </svg>
+                                                            See this programme related full images and videoes
+                                                        </span>
+                                                        <svg className="w-3 h-3 text-slate-400 group-hover/btn:translate-x-0.5 group-hover/btn:text-blue-500 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -152,7 +176,7 @@ const OurMemories = () => {
                                             </span>
                                         </div>
                                     </div>
-                                </Link>
+                                </div>
                             );
                         })}
                     </div>

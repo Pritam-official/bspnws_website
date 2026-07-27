@@ -10,6 +10,7 @@ interface GalleryItem {
     type: string;
     date: string;
     images: string[];
+    facebookLink?: string;
     createdAt: string;
 }
 
@@ -25,7 +26,8 @@ export default function ImageGalleryPage() {
         title: '',
         date: '',
         description: '',
-        images: [] as string[]
+        images: [] as string[],
+        facebookLink: '',
     });
 
     useEffect(() => {
@@ -111,7 +113,7 @@ export default function ImageGalleryPage() {
             });
 
             if (res.ok) {
-                setFormData({ type: projectNames[0] || '', title: '', date: '', description: '', images: [] });
+                setFormData({ type: projectNames[0] || '', title: '', date: '', description: '', images: [], facebookLink: '' });
                 setEditingId(null);
                 fetchItems();
                 alert(editingId ? 'Gallery item updated successfully!' : 'Gallery item added successfully!');
@@ -134,14 +136,15 @@ export default function ImageGalleryPage() {
             title: item.title,
             date: item.date,
             description: item.description,
-            images: item.images || []
+            images: item.images || [],
+            facebookLink: item.facebookLink || '',
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleCancelEdit = () => {
         setEditingId(null);
-        setFormData({ type: projectNames[0] || '', title: '', date: '', description: '', images: [] });
+        setFormData({ type: projectNames[0] || '', title: '', date: '', description: '', images: [], facebookLink: '' });
     };
 
     const handleDelete = async (id: string) => {
@@ -223,6 +226,18 @@ export default function ImageGalleryPage() {
                                 value={formData.date}
                                 onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
                                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all cursor-pointer"
+                            />
+                        </div>
+
+                        {/* Facebook Link (Optional) */}
+                        <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Facebook Link (Optional)</label>
+                            <input
+                                type="url"
+                                value={formData.facebookLink}
+                                onChange={(e) => setFormData(prev => ({ ...prev, facebookLink: e.target.value }))}
+                                placeholder="e.g. https://facebook.com/media/set/?set=..."
+                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all"
                             />
                         </div>
                     </div>

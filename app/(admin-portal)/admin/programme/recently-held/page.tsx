@@ -11,6 +11,8 @@ interface Programme {
     date: string;
     location: string;
     image?: string;
+    imagesLink?: string;
+    videosLink?: string;
     type: "recently-held" | "upcoming";
 }
 
@@ -34,6 +36,8 @@ export default function RecentlyHeldAdminPage() {
         shortDescription: '',
         fullDescription: '',
         image: '',
+        imagesLink: '',
+        videosLink: '',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
@@ -93,7 +97,7 @@ export default function RecentlyHeldAdminPage() {
 
             if (res.ok) {
                 alert(editId ? 'Programme updated successfully!' : 'Programme added successfully!');
-                setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '' });
+                setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '', imagesLink: '', videosLink: '' });
                 setEditId(null);
                 fetchProgrammes();
             } else {
@@ -116,7 +120,9 @@ export default function RecentlyHeldAdminPage() {
             location: prog.location,
             shortDescription: prog.shortDescription,
             fullDescription: prog.fullDescription,
-            image: prog.image || ''
+            image: prog.image || '',
+            imagesLink: prog.imagesLink || '',
+            videosLink: prog.videosLink || '',
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -563,6 +569,28 @@ export default function RecentlyHeldAdminPage() {
                                 </div>
                             </div>
 
+                            <div className="rhp-form-group">
+                                <label className="rhp-label">Images Link (Optional)</label>
+                                <input
+                                    type="url"
+                                    value={formData.imagesLink}
+                                    onChange={e => setFormData({ ...formData, imagesLink: e.target.value })}
+                                    className="rhp-input"
+                                    placeholder="e.g. https://facebook.com/your-album"
+                                />
+                            </div>
+
+                            <div className="rhp-form-group">
+                                <label className="rhp-label">Videos Link (Optional)</label>
+                                <input
+                                    type="url"
+                                    value={formData.videosLink}
+                                    onChange={e => setFormData({ ...formData, videosLink: e.target.value })}
+                                    className="rhp-input"
+                                    placeholder="e.g. https://facebook.com/your-video"
+                                />
+                            </div>
+
                             <div className="rhp-form-group full">
                                 <label className="rhp-label">Short Description * (For listings preview)</label>
                                 <input
@@ -613,7 +641,7 @@ export default function RecentlyHeldAdminPage() {
                                         type="button" 
                                         onClick={() => {
                                             setEditId(null);
-                                            setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '' });
+                                            setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '', imagesLink: '', videosLink: '' });
                                         }}
                                         className="bg-gray-100 text-gray-600 border border-gray-200 rounded-xl px-6 py-3 font-semibold uppercase tracking-wider hover:bg-gray-200 transition-all text-xs"
                                     >

@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
         await connectDB();
         const data = await req.json();
 
-        const { title, description, type, date, images } = data;
+        const { title, description, type, date, images, facebookLink } = data;
 
         if (!title || !description || !type || !date || !images || !Array.isArray(images) || images.length === 0) {
             return NextResponse.json({ error: "Missing required fields or images are empty" }, { status: 400 });
@@ -103,6 +103,7 @@ export async function POST(req: NextRequest) {
             type,
             date,
             images: imageUrls,
+            facebookLink,
         });
 
         return NextResponse.json(newItem, { status: 201 });
@@ -124,7 +125,7 @@ export async function PUT(req: NextRequest) {
         }
 
         const data = await req.json();
-        const { title, description, type, date, images } = data;
+        const { title, description, type, date, images, facebookLink } = data;
 
         if (!title || !description || !type || !date || !images || !Array.isArray(images) || images.length === 0) {
             return NextResponse.json({ error: "Missing required fields or images are empty" }, { status: 400 });
@@ -161,6 +162,7 @@ export async function PUT(req: NextRequest) {
         existingItem.type = type;
         existingItem.date = date;
         existingItem.images = finalImageUrls;
+        existingItem.facebookLink = facebookLink;
 
         await existingItem.save();
 

@@ -12,6 +12,7 @@ interface GalleryItem {
     type: string;
     date: string;
     images: string[];
+    facebookLink?: string;
     createdAt: string;
 }
 
@@ -207,6 +208,22 @@ export default function GalleryDetailPage() {
                                         {item.description}
                                     </p>
                                 </div>
+
+                                {item.facebookLink && (
+                                    <div className="pt-2">
+                                        <a
+                                            href={item.facebookLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-6 py-3.5 rounded-2xl text-sm transition-all duration-300 shadow-md shadow-blue-500/10 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5 group"
+                                        >
+                                            <svg className="w-4.5 h-4.5 fill-current shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
+                                                <path d="M9.101 23.681v-9.554H6.07V10.62h3.031V7.896c0-3.104 1.896-4.799 4.671-4.799 1.328 0 2.47.099 2.802.143v3.249l-1.923.001c-1.506 0-1.798.716-1.798 1.767v2.363h3.599l-.469 3.507h-3.13v9.554H9.101z" />
+                                            </svg>
+                                            See this programme related full images and videoes
+                                        </a>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Right Image Show / First Image Hero (7 cols) */}

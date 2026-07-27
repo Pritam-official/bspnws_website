@@ -22,6 +22,10 @@ const GalleryImageSchema = new Schema(
             type: [String], // Array of Cloudinary secure URLs
             required: [true, "Please provide at least one image URL"],
         },
+        facebookLink: {
+            type: String,
+            required: false,
+        },
     },
     { timestamps: true }
 );

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Calendar, MapPin, ArrowUpRight, ArrowRight, Heart } from "lucide-react";
 
 interface Programme {
@@ -12,6 +13,8 @@ interface Programme {
     date: string;
     location: string;
     image?: string;
+    imagesLink?: string;
+    videosLink?: string;
     type: "recently-held" | "upcoming";
 }
 
@@ -26,6 +29,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function ProgrammeSection() {
+    const router = useRouter();
     const [recentProgrammes, setRecentProgrammes] = useState<Programme[]>([]);
     const [upcomingProgrammes, setUpcomingProgrammes] = useState<Programme[]>([]);
     const [loading, setLoading] = useState(true);
@@ -120,10 +124,10 @@ export default function ProgrammeSection() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {displayedProgrammes.map((prog) => (
-                            <Link
-                                href={`/programme/${prog._id}`}
+                            <div
+                                onClick={() => router.push(`/programme/${prog._id}`)}
                                 key={prog._id}
-                                className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
+                                className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col cursor-pointer"
                             >
                                 {/* Cover Image */}
                                 <div className="relative h-48 w-full bg-gray-100 overflow-hidden flex items-center justify-center">
@@ -173,6 +177,48 @@ export default function ProgrammeSection() {
                                         {prog.shortDescription}
                                     </p>
 
+                                    {/* Action Links */}
+                                    {activeTab === "recent" && (prog.imagesLink || prog.videosLink) && (
+                                        <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-slate-100" onClick={e => e.stopPropagation()}>
+                                            {prog.imagesLink && (
+                                                <a
+                                                    href={prog.imagesLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full inline-flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 hover:bg-blue-50/40 border border-slate-100 hover:border-blue-100 text-slate-700 hover:text-blue-600 transition-all duration-300 text-[11px] font-bold group/btn"
+                                                >
+                                                    <span className="flex items-center gap-1.5">
+                                                        <svg className="w-3.5 h-3.5 fill-[#1877F2] shrink-0" viewBox="0 0 24 24">
+                                                            <path d="M9.101 23.681v-9.554H6.07V10.62h3.031V7.896c0-3.104 1.896-4.799 4.671-4.799 1.328 0 2.47.099 2.802.143v3.249l-1.923.001c-1.506 0-1.798.716-1.798 1.767v2.363h3.599l-.469 3.507h-3.13v9.554H9.101z" />
+                                                        </svg>
+                                                        See this programme related full images
+                                                    </span>
+                                                    <svg className="w-3 h-3 text-slate-400 group-hover/btn:translate-x-0.5 group-hover/btn:text-blue-500 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </a>
+                                            )}
+                                            {prog.videosLink && (
+                                                <a
+                                                    href={prog.videosLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full inline-flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 hover:bg-blue-50/40 border border-slate-100 hover:border-blue-100 text-slate-700 hover:text-blue-600 transition-all duration-300 text-[11px] font-bold group/btn"
+                                                >
+                                                    <span className="flex items-center gap-1.5">
+                                                        <svg className="w-3.5 h-3.5 fill-[#1877F2] shrink-0" viewBox="0 0 24 24">
+                                                            <path d="M9.101 23.681v-9.554H6.07V10.62h3.031V7.896c0-3.104 1.896-4.799 4.671-4.799 1.328 0 2.47.099 2.802.143v3.249l-1.923.001c-1.506 0-1.798.716-1.798 1.767v2.363h3.599l-.469 3.507h-3.13v9.554H9.101z" />
+                                                        </svg>
+                                                        See this programme related full videos
+                                                    </span>
+                                                    <svg className="w-3 h-3 text-slate-400 group-hover/btn:translate-x-0.5 group-hover/btn:text-blue-500 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </a>
+                                            )}
+                                        </div>
+                                    )}
+
                                     <div className="pt-4 border-t border-gray-50 mt-auto flex items-center justify-between text-xs font-black uppercase tracking-wider text-primary group-hover:text-primary/70 transition-colors">
                                         {activeTab === "upcoming" ? (
                                             <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5 fill-current text-primary" /> Join / Support</span>
@@ -182,7 +228,7 @@ export default function ProgrammeSection() {
                                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         ))}
                     </div>
                 )}
