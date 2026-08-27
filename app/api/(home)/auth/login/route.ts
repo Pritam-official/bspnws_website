@@ -32,6 +32,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
         }
 
+        // Check if user account is active (for non-admin users)
+        if (role !== "admin" && user.isActive === false) {
+            return NextResponse.json({ error: "your account is deactivate please contact to admin for activate your account" }, { status: 403 });
+        }
+
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {

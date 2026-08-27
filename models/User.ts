@@ -40,6 +40,10 @@ const UserSchema = new Schema(
             enum: ["user", "admin", "volunteer", "staff"],
             default: "volunteer",
         },
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
     },
     { timestamps: true }
 );
