@@ -74,6 +74,20 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
                 if (parsed.role === 'staff') {
                     setIsStaff(true);
                 }
+                
+                // Check if user is still active
+                if (parsed.id) {
+                    fetch(`/api/user/profile/${parsed.id}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data.isActive === false) {
+                                // User has been deactivated by admin, log them out
+                                localStorage.removeItem('volunteer_data');
+                                router.push('/login/volunteer');
+                            }
+                        })
+                        .catch(err => console.error("Error checking user status:", err));
+                }
             } catch (err) {
                 console.error("Error parsing volunteer data in sidebar:", err);
             }
@@ -81,7 +95,7 @@ export default function VolunteerSidebar({ isMobileMenuOpen = false, setIsMobile
 
         const savedMode = localStorage.getItem("viewMode");
         setIsDesktopMode(savedMode === "desktop");
-    }, []);
+    }, [router]);
 
     const toggleDesktopView = () => {
         const nextMode = !isDesktopMode;

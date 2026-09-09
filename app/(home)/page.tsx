@@ -20,6 +20,8 @@ import WhatsAppButton from "@/components/home/WhatsAppButton";
 import PromoAdBanner from "@/components/home/PromoAdBanner";
 import BoardMembers from "@/components/home/BoardMembers";
 import HonoraryMembers from "@/components/home/HonoraryMembers";
+import OurJourneySection from "@/components/home/OurJourneySection";
+
 
 
 type SplashStage = "logo" | "text" | "transitioning" | "complete";
@@ -325,6 +327,9 @@ export default function Home() {
 
       {/* Mission and Vision Section */}
       <MissionVisionSection />
+
+      {/* Our Journey Section */}
+      <OurJourneySection />
 
       {/* Project Overview Section */}
       <ProjectOverviewSection />
