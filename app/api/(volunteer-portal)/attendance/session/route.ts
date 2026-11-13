@@ -29,6 +29,42 @@ export async function PATCH(req: NextRequest) {
     }
 }
 
+export async function PUT(req: NextRequest) {
+    try {
+        await connectDB();
+        const body = await req.json();
+        const recordId = body.recordId || body.id;
+        const { status } = body;
+
+        if (!recordId) {
+            return NextResponse.json({ error: "Record ID is required" }, { status: 400 });
+        }
+
+        if (!status || !["Present", "Absent"].includes(status)) {
+            return NextResponse.json(
+                { error: "Invalid status. Must be either 'Present' or 'Absent'." },
+                { status: 400 }
+            );
+        }
+
+        const record = await VolunteerAttendanceRecord.findOne({
+            _id: recordId,
+            volunteerId: { $ne: "SESSION_MASTER" },
+        });
+
+        if (!record) {
+            return NextResponse.json({ error: "Attendance record not found" }, { status: 404 });
+        }
+
+        record.status = status;
+        await record.save();
+
+        return NextResponse.json({ message: "Attendance status updated successfully", record }, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         await connectDB();
