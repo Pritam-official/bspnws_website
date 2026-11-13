@@ -97,9 +97,9 @@ export default function FacebookMediaEmbed({ url, type = "auto", title }: Facebo
 
     return (
         <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col w-full max-w-[500px] mx-auto">
-            {/* Embed Frame Area without distracting outer header */}
-            <div className={`relative w-full bg-white flex items-center justify-center overflow-hidden ${
-                isVideoVisual ? "aspect-video min-h-[300px]" : "min-h-[600px] sm:min-h-[680px]"
+            {/* Embed Frame Area */}
+            <div className={`relative w-full bg-white ${
+                isVideoVisual ? "aspect-video" : "min-h-[700px] sm:min-h-[780px]"
             }`}>
                 {/* Loading Skeleton */}
                 {isLoading && (
@@ -114,8 +114,8 @@ export default function FacebookMediaEmbed({ url, type = "auto", title }: Facebo
                         key={embedSrc}
                         src={embedSrc}
                         title={title || "Facebook Post"}
-                        className={`w-full border-0 transition-opacity duration-300 ${isLoading ? "opacity-0" : "opacity-100"} ${
-                            isVideoVisual ? "h-full min-h-[320px]" : "h-[650px] sm:h-[720px]"
+                        className={`w-full border-0 transition-opacity duration-300 block ${isLoading ? "opacity-0" : "opacity-100"} ${
+                            isVideoVisual ? "absolute inset-0 h-full" : "h-[700px] sm:h-[780px]"
                         }`}
                         style={{ border: "none", overflow: "hidden" }}
                         scrolling="no"
