@@ -46,3 +46,53 @@ export async function GET(req: NextRequest) {
         );
     }
 }
+
+// DELETE – admin deletes a membership record
+export async function DELETE(req: NextRequest) {
+    try {
+        await connectDB();
+
+        let id = "";
+
+        // Check query parameter
+        const { searchParams } = new URL(req.url);
+        id = searchParams.get("id") || "";
+
+        // If not in query params, check JSON body
+        if (!id) {
+            try {
+                const body = await req.json();
+                id = body.id || "";
+            } catch {
+                // Ignore parse error
+            }
+        }
+
+        if (!id) {
+            return NextResponse.json(
+                { success: false, message: "Membership Record ID is required." },
+                { status: 400 }
+            );
+        }
+
+        const deletedRecord = await VolunteerMembership.findByIdAndDelete(id);
+
+        if (!deletedRecord) {
+            return NextResponse.json(
+                { success: false, message: "Membership record not found." },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json(
+            { success: true, message: "Membership record deleted successfully." },
+            { status: 200 }
+        );
+    } catch (error: any) {
+        console.error("Admin membership DELETE error:", error);
+        return NextResponse.json(
+            { success: false, message: error.message || "Internal Server Error" },
+            { status: 500 }
+        );
+    }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { Trash2, AlertTriangle, X, Loader2 } from 'lucide-react';
 
 const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -57,6 +58,38 @@ export default function VolunteerMembershipPage() {
     const [memberships, setMemberships] = useState<MembershipRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Deletion states
+    const [recordToDelete, setRecordToDelete] = useState<MembershipRecord | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    const handleDeleteConfirm = async () => {
+        if (!recordToDelete) return;
+        setIsDeleting(true);
+        setDeleteError(null);
+        try {
+            const res = await fetch(`/api/admin/volunteer-membership?id=${recordToDelete._id}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (data.success) {
+                setMemberships((prev) => prev.filter((m) => m._id !== recordToDelete._id));
+                setRecordToDelete(null);
+                setToastMessage(`Membership record for ${recordToDelete.name} deleted successfully.`);
+                setTimeout(() => {
+                    setToastMessage(null);
+                }, 4000);
+            } else {
+                setDeleteError(data.message || 'Failed to delete membership record.');
+            }
+        } catch {
+            setDeleteError('Network error. Could not delete record.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     const fetchMemberships = useCallback(async (date: string) => {
         setLoading(true);
@@ -436,25 +469,38 @@ export default function VolunteerMembershipPage() {
                                         <span className="text-slate-500 capitalize">{m.membershipStatus}</span>
                                         <span className="text-emerald-600 font-medium bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">Complete</span>
                                     </div>
-                                    {m.receiptImage ? (
+                                    <div className="flex items-center gap-2">
+                                        {m.receiptImage ? (
+                                            <button
+                                                onClick={() => {
+                                                    const win = window.open();
+                                                    if (win) {
+                                                        win.document.write(`<iframe src="${m.receiptImage}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                                                    }
+                                                }}
+                                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors p-1.5 rounded-lg hover:bg-indigo-50 cursor-pointer"
+                                                title="View Receipt"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                Receipt
+                                            </button>
+                                        ) : (
+                                            <span className="text-[10px] text-slate-400 font-medium px-1">No Receipt</span>
+                                        )}
                                         <button
                                             onClick={() => {
-                                                const win = window.open();
-                                                if (win) {
-                                                    win.document.write(`<iframe src="${m.receiptImage}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
-                                                }
+                                                setDeleteError(null);
+                                                setRecordToDelete(m);
                                             }}
-                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
-                                            title="View Receipt"
+                                            className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100 hover:border-rose-200 transition-all cursor-pointer active:scale-95"
+                                            title="Delete Membership Record"
                                         >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                            Receipt
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                            <span>Delete</span>
                                         </button>
-                                    ) : (
-                                        <span className="text-[10px] text-slate-400 font-medium">No Receipt</span>
-                                    )}
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -476,6 +522,7 @@ export default function VolunteerMembershipPage() {
                                         <th className="text-left px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden lg:table-cell">Amount</th>
                                         <th className="text-left px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Method</th>
                                         <th className="text-left px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receipt</th>
+                                        <th className="text-center px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
@@ -542,6 +589,19 @@ export default function VolunteerMembershipPage() {
                                                      <span className="text-xs text-slate-400 font-medium">None</span>
                                                  )}
                                              </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <button
+                                                    onClick={() => {
+                                                        setDeleteError(null);
+                                                        setRecordToDelete(m);
+                                                    }}
+                                                    className="p-1.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg border border-rose-100 hover:border-rose-200 transition-all inline-flex items-center gap-1 text-xs font-semibold cursor-pointer active:scale-95"
+                                                    title="Delete Record"
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                    <span className="hidden sm:inline">Delete</span>
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -564,6 +624,115 @@ export default function VolunteerMembershipPage() {
                                 ? `No membership payments recorded for ${formatDate(filterDate)}.`
                                 : 'No membership records exist yet.'}
                         </p>
+                    </div>
+                )}
+
+                {/* Delete Confirmation Modal */}
+                {recordToDelete && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
+                        <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all p-6 sm:p-7">
+                            {/* Header */}
+                            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                                        <Trash2 className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-slate-900">Delete Membership</h3>
+                                        <p className="text-xs text-slate-500 font-medium">Permanently remove this record</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        if (!isDeleting) setRecordToDelete(null);
+                                    }}
+                                    disabled={isDeleting}
+                                    className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            {/* Error banner if delete failed */}
+                            {deleteError && (
+                                <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-700 text-xs font-semibold">
+                                    <AlertTriangle className="w-4 h-4 shrink-0" />
+                                    <span>{deleteError}</span>
+                                </div>
+                            )}
+
+                            {/* Summary Card */}
+                            <div className="mt-5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Volunteer</span>
+                                    <span className="text-sm font-bold text-slate-900 truncate max-w-[200px]">{recordToDelete.name}</span>
+                                </div>
+                                {recordToDelete.email && (
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="font-medium text-slate-500">Email</span>
+                                        <span className="font-semibold text-slate-700 truncate max-w-[200px]">{recordToDelete.email}</span>
+                                    </div>
+                                )}
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="font-medium text-slate-500">Paid Up To</span>
+                                    <span className="font-bold text-indigo-600">{recordToDelete.renewalMonth} {recordToDelete.renewalYear || ''}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="font-medium text-slate-500">Amount</span>
+                                    <span className="font-bold text-slate-900">₹{recordToDelete.amount?.toLocaleString('en-IN')}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="font-medium text-slate-500">Payment Date</span>
+                                    <span className="font-semibold text-slate-700">{formatDate(recordToDelete.date)}</span>
+                                </div>
+                            </div>
+
+                            {/* Warning note */}
+                            <p className="mt-4 text-xs text-slate-500 leading-relaxed">
+                                Are you sure you want to delete this volunteer membership data? This action cannot be undone.
+                            </p>
+
+                            {/* Action Buttons */}
+                            <div className="mt-6 flex items-center justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setRecordToDelete(null)}
+                                    disabled={isDeleting}
+                                    className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleDeleteConfirm}
+                                    disabled={isDeleting}
+                                    className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs font-bold transition-all shadow-md shadow-rose-600/20 flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                                >
+                                    {isDeleting ? (
+                                        <>
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                            <span>Deleting...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                            <span>Delete Record</span>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Toast Notification */}
+                {toastMessage && (
+                    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-800 text-xs font-semibold animate-in slide-in-from-bottom duration-300">
+                        <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></div>
+                        <span>{toastMessage}</span>
+                        <button onClick={() => setToastMessage(null)} className="ml-2 text-slate-400 hover:text-white cursor-pointer">
+                            <X className="w-3.5 h-3.5" />
+                        </button>
                     </div>
                 )}
             </div>
