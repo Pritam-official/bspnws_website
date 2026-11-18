@@ -43,6 +43,34 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        // Check for duplicate payment for the same volunteer, month and year
+        const existingRecord = await VolunteerMembership.findOne({
+            $or: [
+                { email: { $regex: new RegExp(`^${email.trim()}$`, "i") } },
+                { phoneNumber: cleanPhone },
+                { phoneNumber: phoneNumber.trim() }
+            ],
+            renewalMonth: renewalMonth.trim(),
+            renewalYear: Number(renewalYear),
+        });
+
+        if (existingRecord) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    conflict: true,
+                    message: `You have already submitted your membership payment for ${renewalMonth} ${renewalYear}.`,
+                    conflictData: {
+                        renewalMonth: renewalMonth.trim(),
+                        renewalYear: Number(renewalYear),
+                        existingPaymentDate: existingRecord.date,
+                        existingAmount: existingRecord.amount,
+                    }
+                },
+                { status: 409 }
+            );
+        }
+
         const record = await VolunteerMembership.create({
             name,
             email,

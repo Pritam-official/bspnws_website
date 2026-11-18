@@ -31,6 +31,12 @@ const ProgrammeSchema = new Schema(
             enum: ["recently-held", "upcoming"],
             required: [true, "Please specify the programme type (recently-held or upcoming)"],
         },
+        projectType: {
+            type: String,
+            required: false,
+            trim: true,
+            default: "",
+        },
         imagesLink: {
             type: String,
             required: false,

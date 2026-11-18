@@ -14,6 +14,7 @@ interface Programme {
     imagesLink?: string;
     videosLink?: string;
     type: "recently-held" | "upcoming";
+    projectType?: string;
 }
 
 function formatDate(dateStr: string) {
@@ -29,10 +30,12 @@ function formatDate(dateStr: string) {
 export default function RecentlyHeldAdminPage() {
     const [programmes, setProgrammes] = useState<Programme[]>([]);
     const [loading, setLoading] = useState(true);
+    const [projectNames, setProjectNames] = useState<string[]>([]);
     const [formData, setFormData] = useState({
         title: '',
         date: '',
         location: '',
+        projectType: '',
         shortDescription: '',
         fullDescription: '',
         image: '',
@@ -44,7 +47,26 @@ export default function RecentlyHeldAdminPage() {
 
     useEffect(() => {
         fetchProgrammes();
+        fetchProjects();
     }, []);
+
+    const fetchProjects = async () => {
+        try {
+            const res = await fetch('/api/admin/projects');
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    const names = data.map((p: any) => p.name);
+                    setProjectNames(names);
+                    if (names.length > 0) {
+                        setFormData(prev => ({ ...prev, projectType: prev.projectType || names[0] }));
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Failed to fetch projects:", error);
+        }
+    };
 
     const fetchProgrammes = async () => {
         try {
@@ -73,9 +95,9 @@ export default function RecentlyHeldAdminPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { title, date, location, shortDescription, fullDescription } = formData;
-        if (!title || !date || !location || !shortDescription || !fullDescription) {
-            alert('Please fill in all required fields');
+        const { title, date, location, shortDescription, fullDescription, projectType } = formData;
+        if (!title || !date || !location || !shortDescription || !fullDescription || !projectType) {
+            alert('Please fill in all required fields including Type (Project)');
             return;
         }
 
@@ -97,7 +119,17 @@ export default function RecentlyHeldAdminPage() {
 
             if (res.ok) {
                 alert(editId ? 'Programme updated successfully!' : 'Programme added successfully!');
-                setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '', imagesLink: '', videosLink: '' });
+                setFormData({
+                    title: '',
+                    date: '',
+                    location: '',
+                    projectType: projectNames[0] || '',
+                    shortDescription: '',
+                    fullDescription: '',
+                    image: '',
+                    imagesLink: '',
+                    videosLink: ''
+                });
                 setEditId(null);
                 fetchProgrammes();
             } else {
@@ -118,6 +150,7 @@ export default function RecentlyHeldAdminPage() {
             title: prog.title,
             date: prog.date,
             location: prog.location,
+            projectType: prog.projectType || projectNames[0] || '',
             shortDescription: prog.shortDescription,
             fullDescription: prog.fullDescription,
             image: prog.image || '',
@@ -540,6 +573,21 @@ export default function RecentlyHeldAdminPage() {
                             </div>
 
                             <div className="rhp-form-group">
+                                <label className="rhp-label">Type (Project) *</label>
+                                <select
+                                    required
+                                    value={formData.projectType}
+                                    onChange={e => setFormData({ ...formData, projectType: e.target.value })}
+                                    className="rhp-input cursor-pointer"
+                                >
+                                    <option value="">Select Project</option>
+                                    {projectNames.map((name) => (
+                                        <option key={name} value={name}>{name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="rhp-form-group">
                                 <label className="rhp-label">Date *</label>
                                 <input
                                     type="date"
@@ -641,9 +689,19 @@ export default function RecentlyHeldAdminPage() {
                                         type="button" 
                                         onClick={() => {
                                             setEditId(null);
-                                            setFormData({ title: '', date: '', location: '', shortDescription: '', fullDescription: '', image: '', imagesLink: '', videosLink: '' });
+                                            setFormData({
+                                                title: '',
+                                                date: '',
+                                                location: '',
+                                                projectType: projectNames[0] || '',
+                                                shortDescription: '',
+                                                fullDescription: '',
+                                                image: '',
+                                                imagesLink: '',
+                                                videosLink: ''
+                                            });
                                         }}
-                                        className="bg-gray-100 text-gray-600 border border-gray-200 rounded-xl px-6 py-3 font-semibold uppercase tracking-wider hover:bg-gray-200 transition-all text-xs"
+                                        className="bg-gray-100 text-gray-600 border border-gray-200 rounded-xl px-6 py-3 font-semibold uppercase tracking-wider hover:bg-gray-200 transition-all text-xs cursor-pointer"
                                     >
                                         Cancel Edit
                                     </button>
@@ -692,7 +750,14 @@ export default function RecentlyHeldAdminPage() {
                                     {/* Body */}
                                     <div className="prog-body">
                                         <div className="prog-header">
-                                            <h3 className="prog-title">{prog.title}</h3>
+                                            <div>
+                                                {prog.projectType && (
+                                                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-pink-50 text-pink-700 border border-pink-200 mb-1.5">
+                                                        {prog.projectType}
+                                                    </span>
+                                                )}
+                                                <h3 className="prog-title">{prog.title}</h3>
+                                            </div>
                                             <div className="prog-actions">
                                                 <button onClick={() => handleEdit(prog)} className="prog-action-btn edit" title="Edit">
                                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">

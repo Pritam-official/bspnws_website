@@ -9,10 +9,14 @@ export async function GET(req: Request) {
         await connectDB();
         const { searchParams } = new URL(req.url);
         const type = searchParams.get("type");
+        const projectType = searchParams.get("projectType");
 
-        let filter = {};
+        let filter: Record<string, any> = {};
         if (type === "recently-held" || type === "upcoming") {
-            filter = { type };
+            filter.type = type;
+        }
+        if (projectType) {
+            filter.projectType = { $regex: new RegExp(`^${projectType.trim()}$`, "i") };
         }
 
         const programmes = await Programme.find(filter).sort({ date: -1, createdAt: -1 });

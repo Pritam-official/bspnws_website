@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
+import Link from 'next/link';
+import { AlertTriangle, X } from 'lucide-react';
 
 interface MembershipUpdateFormProps {
     onRenewalMonthChange: (monthIndex: number, year?: number) => void;
@@ -29,6 +31,7 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
     const [submitting, setSubmitting] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+    const [conflictData, setConflictData] = useState<{ month: string; year: string; message?: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     React.useEffect(() => {
@@ -110,6 +113,32 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
             return;
         }
 
+        const selectedMonthName = months[parseInt(formData.renewalMonth)];
+        const selectedYearNum = Number(formData.renewalYear);
+
+        // Pre-check for duplicate submission before uploading receipt
+        try {
+            const checkRes = await fetch(`/api/volunteers/membership?phoneNumber=${encodeURIComponent(formData.phoneNumber)}`);
+            if (checkRes.ok) {
+                const checkData = await checkRes.json();
+                if (checkData.success && Array.isArray(checkData.data)) {
+                    const alreadyPaid = checkData.data.some(
+                        (r: any) => r.renewalMonth === selectedMonthName && Number(r.renewalYear) === selectedYearNum
+                    );
+                    if (alreadyPaid) {
+                        setConflictData({
+                            month: selectedMonthName,
+                            year: String(selectedYearNum),
+                            message: `You have already submitted your membership payment for ${selectedMonthName} ${selectedYearNum}.`
+                        });
+                        return;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Duplicate pre-check failed, continuing with POST validation:", e);
+        }
+
         setSubmitting(true);
 
         try {
@@ -120,8 +149,8 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                 phoneNumber: formData.phoneNumber,
                 date: formData.date,
                 membershipStatus: formData.membershipStatus,
-                renewalMonth: months[parseInt(formData.renewalMonth)], // Store as month name
-                renewalYear: Number(formData.renewalYear),
+                renewalMonth: selectedMonthName, // Store as month name
+                renewalYear: selectedYearNum,
                 paymentMethod: formData.paymentMethod,
                 amount: Number(formData.amount),
             };
@@ -175,6 +204,12 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                 setReceiptFileName('');
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 onRenewalMonthChange(-1); // Reset dashboard preview
+            } else if (res.status === 409 || data.conflict) {
+                setConflictData({
+                    month: selectedMonthName,
+                    year: String(selectedYearNum),
+                    message: data.message || `You have already submitted payment for ${selectedMonthName} ${selectedYearNum}.`
+                });
             } else {
                 showToast('error', data.message || 'Submission failed. Please try again.');
             }
@@ -483,7 +518,7 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                     <button
                         type="submit"
                         disabled={submitting || uploading}
-                        className="w-full bg-pink-600 text-white rounded-2xl py-5 font-black uppercase tracking-widest shadow-xl shadow-pink-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-3"
+                        className="w-full bg-pink-600 text-white rounded-2xl py-5 font-black uppercase tracking-widest shadow-xl shadow-pink-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-3 cursor-pointer"
                     >
                         {uploading ? (
                             <>
@@ -507,6 +542,77 @@ const MembershipUpdateForm: React.FC<MembershipUpdateFormProps> = ({ onRenewalMo
                     </button>
                 </div>
             </form>
+
+            {/* Duplicate Payment Conflict Modal */}
+            {conflictData && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+                    <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all p-6 sm:p-7 animate-in zoom-in-95 duration-200">
+                        {/* Header Icon & Title */}
+                        <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3.5">
+                                <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shrink-0 shadow-sm">
+                                    <AlertTriangle className="w-6 h-6 stroke-[2.2]" />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-100/70 px-2.5 py-0.5 rounded-full border border-amber-200">
+                                        Duplicate Payment Alert
+                                    </span>
+                                    <h3 className="text-lg font-bold text-slate-900 mt-1">Payment Already Submitted</h3>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setConflictData(null)}
+                                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Content Body */}
+                        <div className="mt-5 p-4 rounded-2xl bg-amber-50/70 border border-amber-200/90 space-y-2">
+                            <p className="text-xs font-semibold text-amber-950 leading-relaxed">
+                                For <span className="font-extrabold underline decoration-amber-500 decoration-2">{conflictData.month} {conflictData.year}</span>, you have already submitted your membership payment.
+                            </p>
+                            <p className="text-[11px] text-amber-900/80 leading-normal">
+                                You cannot submit payment twice for the exact same month and year. Your payment record for this period is already verified in our system.
+                            </p>
+                        </div>
+
+                        {/* Bottom Support Section: Is it any problem? + Contact Us Link */}
+                        <div className="mt-6 pt-5 border-t border-slate-100 text-center space-y-3">
+                            <p className="text-xs font-semibold text-slate-600">
+                                Is there any problem with your payment record?
+                            </p>
+                            <div className="flex items-center justify-center gap-3 text-xs font-bold">
+                                <Link
+                                    href="/contact"
+                                    className="inline-flex items-center gap-1.5 text-pink-600 hover:text-pink-700 transition-colors py-2 px-3.5 rounded-xl bg-pink-50 hover:bg-pink-100/80 border border-pink-100 shadow-xs"
+                                >
+                                    <span>Contact Us Page</span> &rarr;
+                                </Link>
+                                <Link
+                                    href="/volunteers/contact-admin"
+                                    className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 transition-colors py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200"
+                                >
+                                    <span>Contact Admin</span>
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Dismiss Button */}
+                        <div className="mt-6">
+                            <button
+                                type="button"
+                                onClick={() => setConflictData(null)}
+                                className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-md cursor-pointer active:scale-98"
+                            >
+                                Understood &amp; Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

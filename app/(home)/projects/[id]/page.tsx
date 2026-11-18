@@ -58,6 +58,7 @@ export default function ProjectDetailPage() {
     const router = useRouter();
     const [project, setProject] = useState<Project | null>(null);
     const [galleryImages, setGalleryImages] = useState<GalleryItem[]>([]);
+    const [projectProgrammes, setProjectProgrammes] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState<string | null>(null);
 
@@ -77,7 +78,10 @@ export default function ProjectDetailPage() {
                 if (data.images && data.images.length > 0) {
                     setActiveImage(data.images[0]);
                 }
-                await fetchProjectGallery(data.name);
+                await Promise.all([
+                    fetchProjectGallery(data.name),
+                    fetchProjectProgrammes(data.name)
+                ]);
             } catch (error) {
                 console.error("Failed to fetch project details:", error);
             } finally {
@@ -96,6 +100,20 @@ export default function ProjectDetailPage() {
                 }
             } catch (e) {
                 console.error("Failed to fetch project gallery:", e);
+            }
+        };
+
+        const fetchProjectProgrammes = async (projectName: string) => {
+            try {
+                const res = await fetch(`/api/admin/programmes?type=recently-held&projectType=${encodeURIComponent(projectName)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        setProjectProgrammes(data);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to fetch project programmes:", e);
             }
         };
 
@@ -383,6 +401,90 @@ export default function ProjectDetailPage() {
                         </div>
                     </div>
 
+                </div>
+
+                {/* Programmes Under This Initiative */}
+                <div className="mt-16 pt-12 border-t border-slate-200/80">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <span className="text-[10px] font-black tracking-widest uppercase text-emerald-600 block mb-1">
+                                Field Activities
+                            </span>
+                            <h2 className="text-2xl sm:text-3xl font-black text-slate-900" style={{ fontFamily: '"Fraunces", "Georgia", serif' }}>
+                                Programmes Under This Project
+                            </h2>
+                        </div>
+                        <Link
+                            href="/programme/recent"
+                            className="text-xs font-bold text-slate-500 hover:text-slate-950 transition-colors uppercase tracking-wider border-b border-slate-300 hover:border-slate-950 pb-0.5"
+                        >
+                            View All Programmes
+                        </Link>
+                    </div>
+
+                    {projectProgrammes.length === 0 ? (
+                        <div className="bg-white rounded-3xl p-10 text-center border border-slate-100 shadow-xs">
+                            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                                📅
+                            </div>
+                            <h3 className="text-sm font-extrabold text-slate-800 mb-1">No Programmes Uploaded Yet</h3>
+                            <p className="text-xs font-medium text-slate-400">Recently held programmes for this project will appear here as soon as they are added.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {projectProgrammes.map((prog, idx) => (
+                                <Link
+                                    href={`/programme/${prog._id}`}
+                                    key={prog._id}
+                                    style={{ animationDelay: `${idx * 80}ms` }}
+                                    className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_16px_40px_rgba(15,23,42,0.1)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group/card animate-[fadeUp_0.6s_ease-out_both]"
+                                >
+                                    {/* Image */}
+                                    <div className="relative h-48 bg-slate-100 overflow-hidden">
+                                        {prog.image ? (
+                                            <img
+                                                src={prog.image}
+                                                alt={prog.title}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100 text-xs font-bold">
+                                                No Preview Image
+                                            </div>
+                                        )}
+                                        <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                                            <span>📅</span>
+                                            <span>{prog.date}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Body */}
+                                    <div className="p-6 flex flex-col flex-1">
+                                        <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1.5 mb-2">
+                                            <span>📍</span>
+                                            <span className="truncate">{prog.location}</span>
+                                        </div>
+
+                                        <h4
+                                            className="font-extrabold text-slate-900 text-lg mb-2 line-clamp-1 group-hover/card:text-emerald-700 transition-colors"
+                                            style={{ fontFamily: '"Fraunces", serif' }}
+                                        >
+                                            {prog.title}
+                                        </h4>
+
+                                        <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-6 flex-1">
+                                            {prog.shortDescription}
+                                        </p>
+
+                                        <span className="inline-flex items-center justify-between text-xs font-bold text-slate-900 group-hover/card:text-emerald-700 transition-colors mt-auto border-t border-slate-50 pt-4">
+                                            <span>View Programme Coverage</span>
+                                            <span className="group-hover/card:translate-x-1 transition-transform">&rarr;</span>
+                                        </span>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Explore Other Initiatives (Project Gallery) */}
