@@ -202,11 +202,11 @@ export default function BoardOfDirectorsAdminPage() {
                     </div>
                     <div className="mt-6 flex flex-col items-center gap-4 w-full max-w-md">
                         <div className="w-full space-y-2">
-                           <div className="flex justify-between text-xs font-black text-white uppercase tracking-widest">
+                            <div className="flex justify-between text-xs font-black text-white uppercase tracking-widest">
                                 <span>Zoom</span>
                                 <span>{Math.round(zoom * 100)}%</span>
-                           </div>
-                           <input
+                            </div>
+                            <input
                                 type="range"
                                 value={zoom}
                                 min={1}
@@ -238,7 +238,7 @@ export default function BoardOfDirectorsAdminPage() {
             {/* Page Header */}
             <div className="mb-8">
                 <h1 className="text-2xl font-black text-gray-900 tracking-tight">Board of Directors</h1>
-                <p className="text-sm text-gray-400 font-bold mt-1">Manage governing board members</p>
+                <p className="text-sm text-gray-400 font-bold mt-1">Manage governing board member</p>
             </div>
 
             {/* Add New Member Form */}
@@ -303,7 +303,7 @@ export default function BoardOfDirectorsAdminPage() {
                             <div className={`w-full h-full border-2 border-dashed ${formData.image ? 'border-pink-500 bg-pink-50' : 'border-gray-200 bg-gray-50'} rounded-xl flex items-center justify-center gap-2 px-4 transition-all overflow-hidden`}>
                                 {formData.image ? (
                                     <>
-                                        <img src={formData.image} className="w-8 h-8 rounded-full border border-pink-200" alt="Preview"/>
+                                        <img src={formData.image} className="w-8 h-8 rounded-full border border-pink-200" alt="Preview" />
                                         <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">Photo Cropped</span>
                                     </>
                                 ) : (
@@ -387,7 +387,7 @@ export default function BoardOfDirectorsAdminPage() {
                                     <td className="px-6 py-5 text-xs text-gray-500 font-bold hidden sm:table-cell">{m.joiningDate || "Active"}</td>
                                     <td className="px-6 py-5 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => handleEdit(m)}
                                                 className="p-2.5 bg-gray-50 hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-xl transition-all hover:scale-110 active:scale-95 group/edit border border-gray-100 hover:border-blue-100" title="Edit Director"
                                             >
@@ -395,7 +395,7 @@ export default function BoardOfDirectorsAdminPage() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => handleDelete(m._id)}
                                                 className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-xl transition-all hover:scale-110 active:scale-95 group/del border border-gray-100 hover:border-red-100" title="Remove Director"
                                             >
